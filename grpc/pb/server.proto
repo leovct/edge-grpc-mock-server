@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package v1;
+
+option go_package = "grpc/pb";
+
+import "google/protobuf/empty.proto";
+
+// This proto file defines the gRPC service and messages for the System service.
+// The System service provides methods to fetch blockchain data.
+// Note: This code is a copy/paste of a part of the edge codebase.
+// https://github.com/0xPolygon/polygon-edge/blob/19d140a43d1da027a664ae7d2a44cfc35d415f8d/server/proto/system.proto#L27
+service System {
+  // GetInfo returns info about the client.
+  rpc GetStatus(google.protobuf.Empty) returns (StatusResponse);
+
+  // GetTrace returns the trace for a given block height.
+  rpc GetTrace(BlockNumberRequest) returns (TraceResponse);
+
+  // BlockByNumber returns blockchain data for a given block number.
+  rpc BlockByNumber(BlockNumberRequest) returns (BlockResponse);
+}
+
+// Response message for the GetStatus RPC method.
+message StatusResponse {
+  int64 network = 1;
+  string genesis = 2;
+  Block current = 3;
+  string p2pAddr = 4;
+
+  message Block {
+    // The block number for which the data is requested.
+    // Note: This is the only field of the StatusResponse message that's used by the prover at the moment.
+    int64 number = 1;
+    string hash = 2;
+  }
+}
+
+// Request message using a block number.
+message BlockNumberRequest {
+  // The block number for which the data is requested.
+  uint64 number = 1;
+}
+
+// Response message for the GetTrace RPC method.
+message TraceResponse {
+  // The trace of the block represented as a byte array.
+  bytes trace = 1;
+}
+
+// Response message for the BlockByNumber RPC method.
+message BlockResponse {
+  // The data of the block represented as a byte array.
+  bytes data = 1;
+}
