@@ -76,16 +76,8 @@ jobs:
 
       - name: Check if code is up to date
         run: |
-          echo "Show git diffs"
           git --no-pager diff
-
-          echo "Check if there are any diffs"
-          if [[ $(git status --porcelain) ]]; then
-            echo "❌ Error: gRPC service is not up to date. Please run 'make gen' and commit your changes."
-            exit 1
-          else
-            echo "✅ gRPC service is up to date."
-          fi
+          ./scripts/diff.sh
 
   build:
     name: build
