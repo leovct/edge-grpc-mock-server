@@ -68,6 +68,7 @@ jobs:
       
       - name: Check if code is up to date
         run: |
+          git status
           if git status --porcelain=v1 2>/dev/null | wc -l | grep -q '^0$'; then
             echo "✅ gRPC service is up to date."
             exit 0
