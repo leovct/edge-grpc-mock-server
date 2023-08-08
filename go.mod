@@ -1,6 +1,6 @@
 module zero-provers/server
 
-go 1.20
+go 1.21
 
 require (
 	github.com/0xPolygon/polygon-edge v1.1.0
