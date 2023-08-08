@@ -57,9 +57,15 @@ jobs:
       
       - name: Install protoc and plugins for go
         run: |
+          # Install packages
           sudo apt install protobuf-compiler
           go install google.golang.org/protobuf/cmd/protoc-gen-go@v${{ env.PROTOC_GEN_GO_VERSION }}
           go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${{ env.PROTOC_GEN_GO_GRPC_VERSION }}
+
+          # Display versions
+          protoc --version
+          protoc-gen-go --version
+          protoc-gen-go-grpc --version
 
       - name: Generate code
         run: make gen
