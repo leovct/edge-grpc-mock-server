@@ -20,6 +20,12 @@ clean: ## Delete generated go code.
 build: gen ## Build binary.
 	go build -o out/mock-server main.go
 
+##@ Test
+
+.PHONY: test
+test: ## Send a few gRPC/HTTP requests to the mock server.
+	sh test.sh
+
 ##@ Lint
 
 .PHONY: tidy
