@@ -25,7 +25,7 @@ const (
 	BlocksFile = "block.json"
 	TraceFile  = "trace.json"
 
-	// Constant block height returned by the `/GetStatus` endpoint.
+	// Constant dummy block height returned by the `/GetStatus` endpoint.
 	constantBlockHeight = 100_000_000_000_000_000
 )
 
