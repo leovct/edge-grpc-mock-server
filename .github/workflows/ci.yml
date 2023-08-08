@@ -40,6 +40,34 @@ jobs:
       - name: Run linters
         run: make lint
   
+  up-to-date:
+    name: up-to-date
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      
+      - name: Install protobuf
+        run: apt-get install protobuf-compiler
+
+      - name: Generate code
+        run: make gen
+      
+      - name: Check if code is up to date
+        run: |
+          if git status --porcelain | grep -q '^[MADRC]'; then
+            echo "❌ Error: gRPC service is not up to date. Please run `make gen` and commit your changes."
+            exit 1  # Exit with an error code
+          else
+            echo "✅ gRPC service go up to date."
+            exit 0
+          fi
+
   build:
     name: build
     needs: lint
