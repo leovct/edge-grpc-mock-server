@@ -5,20 +5,25 @@ import (
 	"zero-provers/server/grpc"
 	"zero-provers/server/http"
 
+	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
 )
 
 type Config struct {
 	// Port of the gRPC server.
-	GRPCServerPort int
+	gRPCServerPort int
 	// Port of the HTTP server.
-	HTTPServerPort int
+	hTTPServerPort int
 	// URL path of the HTTP server save endpoint.
-	HTTPServerSaveEndpoint string
+	hTTPServerSaveEndpoint string
 	// Directory in which proofs are stored.
-	ProofsOutputDir string
+	proofsOutputDir string
 	// Directory in which mock data is provided.
-	MockDataDir string
+	mockDataDir string
+	// Set to true if debug mode is enabled.
+	debug bool
+	// Verbosity of the logs.
+	logLevel zerolog.Level
 }
 
 func main() {
@@ -29,21 +34,28 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			// Start the gRPC server.
 			go func() {
-				log.Fatal(grpc.StartgRPCServer(config.GRPCServerPort, config.MockDataDir))
+				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, config.mockDataDir))
 			}()
 
 			// Start the HTTP server.
-			log.Fatal(http.StartHTTPServer(config.HTTPServerPort, config.HTTPServerSaveEndpoint, config.ProofsOutputDir))
+			log.Fatal(http.StartHTTPServer(config.logLevel, config.hTTPServerPort, config.hTTPServerSaveEndpoint, config.proofsOutputDir))
 		},
 	}
 
 	// Define flags for configuration
-	rootCmd.Flags().IntVarP(&config.GRPCServerPort, "grpc-port", "g", 8546, "gRPC server port")
-	rootCmd.Flags().IntVarP(&config.HTTPServerPort, "http-port", "p", 8080, "HTTP server port")
-	rootCmd.Flags().StringVarP(&config.HTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
-	rootCmd.Flags().StringVarP(&config.ProofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
-	rootCmd.Flags().StringVarP(&config.MockDataDir, "mock-data-dir", "m", "data", "Mock data directory containing mock status (status.json), block (block.json) and trace (trace.json) files")
+	rootCmd.PersistentFlags().IntVarP(&config.gRPCServerPort, "grpc-port", "g", 8546, "gRPC server port")
+	rootCmd.PersistentFlags().IntVarP(&config.hTTPServerPort, "http-port", "p", 8080, "HTTP server port")
+	rootCmd.PersistentFlags().StringVarP(&config.hTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
+	rootCmd.PersistentFlags().StringVarP(&config.proofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
+	rootCmd.PersistentFlags().StringVarP(&config.mockDataDir, "mock-data-dir", "m", "data", "Mock data directory containing mock status (status.json), block (block.json) and trace (trace.json) files")
+	rootCmd.PersistentFlags().BoolVarP(&config.debug, "debug", "d", false, "Enable verbose mode")
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
+	}
+
+	// Set log level.
+	config.logLevel = zerolog.InfoLevel
+	if config.debug {
+		config.logLevel = zerolog.DebugLevel
 	}
 }

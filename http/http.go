@@ -28,10 +28,10 @@ var (
 // StartHTTPServer starts an HTTP server on the specified port and sets up the necessary endpoints.
 // The server listens for incoming requests and handles them accordingly.
 // The `/save` endpoint allows clients to save data to a file in the specified output directory.
-func StartHTTPServer(port int, _saveEndpoint string, outputDir string) error {
+func StartHTTPServer(logLevel zerolog.Level, port int, _saveEndpoint string, outputDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
-		Level:       zerolog.InfoLevel,
+		Level:       logLevel,
 		CallerField: "http",
 	}
 	log = logger.NewLogger(lc)

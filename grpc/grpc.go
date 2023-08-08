@@ -52,10 +52,10 @@ type server struct {
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(port int, mockDataDir string) error {
+func StartgRPCServer(logLevel zerolog.Level, port int, mockDataDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
-		Level:       zerolog.InfoLevel,
+		Level:       logLevel,
 		CallerField: "grpc-server",
 	}
 	log = logger.NewLogger(lc)
