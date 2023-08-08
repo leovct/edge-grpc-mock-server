@@ -24,7 +24,7 @@ build: gen ## Build binary.
 
 .PHONY: test
 test: ## Send a few gRPC/HTTP requests to the mock server.
-	sh test.sh
+	sh scripts/test.sh
 
 ##@ Lint
 

@@ -17,6 +17,10 @@ concurrency:
 
 env:
   GO_VERSION: "1.21"
+  # Check https://grpc.io/docs/languages/go/quickstart/ for `protoc` versions.
+  PROTOC_VERSION: "23.4"
+  PROTOC_GEN_GO_VERSION: "1.28"
+  PROTOC_GEN_GO_GRPC_VERSION: "1.2"
 
 jobs:
   lint:
@@ -40,9 +44,49 @@ jobs:
       - name: Run linters
         run: make lint
   
-  build:
-    name: build
-    needs: lint
+  up-to-date:
+    name: up-to-date
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      
+      - name: Install protoc
+        run: |
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC_VERSION }}/protoc-${{ env.PROTOC_VERSION }}-linux-x86_64.zip
+          unzip protoc-23.4-linux-x86_64.zip
+          sudo mv bin/protoc /usr/local/bin/
+          sudo mv include/google /usr/local/include
+          protoc --version
+      
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Install protoc plugins for go
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v${{ env.PROTOC_GEN_GO_VERSION }}
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${{ env.PROTOC_GEN_GO_GRPC_VERSION }}
+          protoc-gen-go --version
+          protoc-gen-go-grpc --version
+
+      - name: Generate code
+        run: make gen
+
+      - name: Check if code is up to date
+        run: |
+          git update-index --really-refresh
+          if $(git diff-index --quiet HEAD); then 
+            echo "✅ gRPC service is up to date."
+          else
+            echo "❌ Error: gRPC service is not up to date. Please run 'make gen' and commit your changes."
+            exit 1
+          fi
+
+  test:
+    name: test
+    needs: [lint, up-to-date]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -54,15 +98,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
 
       - name: Build code
-        run: go build main.go
-  
-  test:
-    name: test
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
+        run: go build -o mock-server main.go
       
       - name: Install grpcurl
         run: |
@@ -71,14 +107,8 @@ jobs:
           sudo mv grpcurl /usr/local/bin/
           sudo chmod +x /usr/local/bin/grpcurl
           grpcurl --version
-      
-      - name: Install go
-        uses: actions/setup-go@v4
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      
-      - name: Run the mock server in background
-        run: go run main.go --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
 
       - name: Run tests
-        run: make test
+        run: |
+          ./mock-server --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
+          make test
