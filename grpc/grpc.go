@@ -21,10 +21,9 @@ import (
 
 const (
 	// Mock data file paths.
-	InputDataDir = "data"
-	StatusFile   = "status.json"
-	BlocksFile   = "block.json"
-	TraceFile    = "trace.json"
+	StatusFile = "status.json"
+	BlocksFile = "block.json"
+	TraceFile  = "trace.json"
 
 	// Constant block height returned by the `/GetStatus` endpoint.
 	constantBlockHeight = 100_000_000_000_000_000
@@ -39,6 +38,7 @@ var (
 	counterStep int = 50
 
 	// Mock data provided by the user.
+	mockDir        string
 	mockStatusData *pb.StatusResponse
 	mockBlockData  *pb.BlockResponse
 	mockTraceData  *pb.TraceResponse
@@ -52,7 +52,7 @@ type server struct {
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(port int) error {
+func StartgRPCServer(port int, mockDataDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
 		Level:       zerolog.InfoLevel,
@@ -72,6 +72,8 @@ func StartgRPCServer(port int) error {
 	pb.RegisterSystemServer(s, &server{})
 
 	// Load mock data if provided.
+	log.Info().Msgf("Fetching mock data from `%s` directory", mockDataDir)
+	mockDir = mockDataDir
 	mockStatusData, mockBlockData, mockTraceData, err = loadMockData()
 	if err != nil {
 		log.Error().Err(err).Msg("Unable to load mock data")
@@ -91,7 +93,7 @@ func StartgRPCServer(port int) error {
 func loadMockData() (*pb.StatusResponse, *pb.BlockResponse, *pb.TraceResponse, error) {
 	// Load status mock data.
 	var mockStatus pb.StatusResponse
-	statusMockFilePath := fmt.Sprintf("%s/%s", InputDataDir, StatusFile)
+	statusMockFilePath := fmt.Sprintf("%s/%s", mockDir, StatusFile)
 	if _, err := os.Stat(statusMockFilePath); err == nil {
 		data, err := os.ReadFile(statusMockFilePath)
 		if err != nil {
@@ -108,7 +110,7 @@ func loadMockData() (*pb.StatusResponse, *pb.BlockResponse, *pb.TraceResponse, e
 
 	// Load block mock data.
 	var mockBlock pb.BlockResponse
-	blocksMockFilePath := fmt.Sprintf("%s/%s", InputDataDir, BlocksFile)
+	blocksMockFilePath := fmt.Sprintf("%s/%s", mockDir, BlocksFile)
 	if _, err := os.Stat(blocksMockFilePath); err == nil {
 		data, err := os.ReadFile(blocksMockFilePath)
 		if err != nil {
@@ -125,7 +127,7 @@ func loadMockData() (*pb.StatusResponse, *pb.BlockResponse, *pb.TraceResponse, e
 
 	// Load trace mock data.
 	var mockTrace pb.TraceResponse
-	tracesMockFilePath := fmt.Sprintf("%s/%s", InputDataDir, TraceFile)
+	tracesMockFilePath := fmt.Sprintf("%s/%s", mockDir, TraceFile)
 	if _, err := os.Stat(tracesMockFilePath); err == nil {
 		data, err := os.ReadFile(tracesMockFilePath)
 		if err != nil {
