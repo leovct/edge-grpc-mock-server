@@ -56,7 +56,7 @@ jobs:
         run: sudo apt install protobuf-compiler
 
       - name: Install protoc-gen-go
-        run: go get -u google.golang.org/protobuf
+        run: go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 
       - name: Generate code
         run: make gen
