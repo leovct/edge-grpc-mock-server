@@ -110,5 +110,5 @@ jobs:
 
       - name: Run tests
         run: |
-          mock-server --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
+          ./mock-server --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
           make test
