@@ -16,9 +16,9 @@ wait_for_service() {
   echo "$name port is now open."
 }
 
-echo "Waiting for services..."
-wait_for_service 8546 "gRPC"
-wait_for_service 8080 "HTTP"
+#echo "Waiting for services..."
+#wait_for_service 8546 "gRPC"
+#wait_for_service 8080 "HTTP"
 
 echo "Sending gRPC requests..."
 grpcurl -plaintext  127.0.0.1:8546 v1.System/GetStatus	
