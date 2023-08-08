@@ -76,13 +76,7 @@ jobs:
 
       - name: Check if code is up to date
         run: |
-          # Update index
           git update-index --really-refresh
-
-          # Show diffs
-          git --no-pager diff
-
-          # Check diffs
           if $(git diff-index --quiet HEAD); then 
             echo "✅ gRPC service is up to date."
           else
