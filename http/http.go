@@ -39,8 +39,7 @@ func StartHTTPServer(logLevel zerolog.Level, port int, _saveEndpoint string, out
 	// Create the proofs directory if it doesn't exist.
 	if _, err := os.Stat(outputDir); err != nil {
 		if os.IsNotExist(err) {
-			err := os.Mkdir(outputDir, 0755)
-			if err != nil {
+			if err = os.Mkdir(outputDir, 0755); err != nil {
 				log.Error().Err(err).Msg("Unable to create the proofs directory")
 				return err
 			}
