@@ -17,6 +17,9 @@ concurrency:
 
 env:
   GO_VERSION: "1.21"
+  # Check https://grpc.io/docs/languages/go/quickstart/ for `protoc` versions.
+  PROTOC_GEN_GO_VERSION: "1.28"
+  PROTOC_GEN_GO_GRPC_VERSION: "1.2"
 
 jobs:
   lint:
@@ -52,11 +55,13 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       
-      - name: Install protobuf
+      - name: Install protoc
         run: sudo apt install protobuf-compiler
 
-      - name: Install protoc-gen-go
-        run: go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+      - name: Install protoc plugins for go
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v${{ env.PROTOC_GEN_GO_VERSION }}
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${{ env.PROTOC_GEN_GO_VERSION }}
 
       - name: Generate code
         run: make gen
