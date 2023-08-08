@@ -18,12 +18,12 @@ wait_for_service() {
 
 if ! command -v grpcurl &> /dev/null; then
   echo "grpcurl could not be found - please install grpcurl"
-  exit
+  exit 1
 fi
 
 if ! command -v curl &> /dev/null; then
   echo "curl could not be found - please install curl"
-  exit
+  exit 1
 fi
 
 echo "Waiting for services..."
