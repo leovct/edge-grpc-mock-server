@@ -11,12 +11,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// saveEndpoint is the URL path for the save endpoint.
-const saveEndpoint = "/save"
-
 var (
 	// log is the package-level variable used for logging messages and errors.
 	log zerolog.Logger
+
+	// saveEndpoint is the URL path for the save endpoint.
+	saveEndpoint string
 
 	// proofsDir is the repository in which proofs are saved to the disk.
 	proofsDir string
@@ -28,7 +28,7 @@ var (
 // StartHTTPServer starts an HTTP server on the specified port and sets up the necessary endpoints.
 // The server listens for incoming requests and handles them accordingly.
 // The `/save` endpoint allows clients to save data to a file in the specified output directory.
-func StartHTTPServer(port int, outputDir string) error {
+func StartHTTPServer(port int, _saveEndpoint string, outputDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
 		Level:       zerolog.InfoLevel,
@@ -52,8 +52,10 @@ func StartHTTPServer(port int, outputDir string) error {
 	proofsDir = outputDir
 
 	// Start the HTTP server.
-	log.Info().Msgf("HTTP server is starting on port %d", port)
+	saveEndpoint = _saveEndpoint
 	http.HandleFunc(saveEndpoint, saveHandler)
+	log.Info().Msgf("HTTP server save endpoint: %s ready", saveEndpoint)
+	log.Info().Msgf("HTTP server is starting on port %d", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		log.Error().Err(err).Msg("Unable to start the HTTP server")
 		return err

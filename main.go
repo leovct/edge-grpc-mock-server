@@ -9,10 +9,16 @@ import (
 )
 
 type Config struct {
-	GRPCServerPort  int
-	HTTPServerPort  int
+	// Port of the gRPC server.
+	GRPCServerPort int
+	// Port of the HTTP server.
+	HTTPServerPort int
+	// URL path of the HTTP server save endpoint.
+	HTTPServerSaveEndpoint string
+	// Directory in which proofs are stored.
 	ProofsOutputDir string
-	MockDataDir     string
+	// Directory in which mock data is provided.
+	MockDataDir string
 }
 
 func main() {
@@ -27,13 +33,14 @@ func main() {
 			}()
 
 			// Start the HTTP server.
-			log.Fatal(http.StartHTTPServer(config.HTTPServerPort, config.ProofsOutputDir))
+			log.Fatal(http.StartHTTPServer(config.HTTPServerPort, config.HTTPServerSaveEndpoint, config.ProofsOutputDir))
 		},
 	}
 
 	// Define flags for configuration
-	rootCmd.Flags().IntVar(&config.GRPCServerPort, "grpc", 8546, "gRPC server port")
-	rootCmd.Flags().IntVar(&config.HTTPServerPort, "http", 8080, "HTTP server port")
+	rootCmd.Flags().IntVarP(&config.GRPCServerPort, "grpc-port", "g", 8546, "gRPC server port")
+	rootCmd.Flags().IntVarP(&config.HTTPServerPort, "http-port", "p", 8080, "HTTP server port")
+	rootCmd.Flags().StringVarP(&config.HTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
 	rootCmd.Flags().StringVarP(&config.ProofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
 	rootCmd.Flags().StringVarP(&config.MockDataDir, "mock-data-dir", "m", "data", "Mock data directory containing mock status (status.json), block (block.json) and trace (trace.json) files")
 	if err := rootCmd.Execute(); err != nil {
