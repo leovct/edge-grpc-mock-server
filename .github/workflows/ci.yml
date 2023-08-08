@@ -68,12 +68,12 @@ jobs:
       
       - name: Check if code is up to date
         run: |
-          if git status --porcelain | grep -q '^[MADRC]'; then
-            echo "❌ Error: gRPC service is not up to date. Please run `make gen` and commit your changes."
-            exit 1  # Exit with an error code
-          else
-            echo "✅ gRPC service go up to date."
+          if git status --porcelain=v1 2>/dev/null | wc -l | grep -q '^0$'; then
+            echo "✅ gRPC service is up to date."
             exit 0
+          else
+            echo "❌ Error: gRPC service is not up to date. Please run 'make gen' and commit your changes."
+            exit 1  # Exit with an error code
           fi
 
   build:
