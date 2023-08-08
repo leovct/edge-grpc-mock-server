@@ -39,7 +39,7 @@ message StatusResponse {
 // Request message using a block number.
 message BlockNumberRequest {
   // The block number for which the data is requested.
-  string number = 1;
+  uint64 number = 1;
 }
 
 // Response message for the GetTrace RPC method.
