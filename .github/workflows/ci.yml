@@ -120,8 +120,9 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: ${{ env.GO_VERSION }}
+      
+      - name: Start the mock server
+        run: go run main.go --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
 
       - name: Run tests
-        run: |
-          go run main.go --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
-          make test
+        run: make test
