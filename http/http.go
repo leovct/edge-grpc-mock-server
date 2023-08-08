@@ -36,11 +36,18 @@ func StartHTTPServer(port int, outputDir string) error {
 	}
 	log = logger.NewLogger(lc)
 
-	// Create proof directory.
-	err := os.Mkdir(outputDir, 0755)
-	if err != nil {
-		log.Error().Err(err).Msg("Unable to create the proofs directory")
-		return err
+	// Create the proofs directory if it doesn't exist.
+	if _, err := os.Stat(outputDir); err != nil {
+		if os.IsNotExist(err) {
+			err := os.Mkdir(outputDir, 0755)
+			if err != nil {
+				log.Error().Err(err).Msg("Unable to create the proofs directory")
+				return err
+			}
+		} else {
+			log.Error().Err(err).Msg("Unable to check if the proofs directory exists")
+			return err
+		}
 	}
 	proofsDir = outputDir
 
