@@ -23,7 +23,7 @@ func NewLogger(config LoggerConfig) zerolog.Logger {
 		TimeFormat: time.UnixDate,
 	}
 	return zerolog.New(output).
-		Level(zerolog.InfoLevel).
+		Level(config.Level).
 		With().
 		Caller().
 		Timestamp().

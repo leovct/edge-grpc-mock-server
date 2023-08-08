@@ -11,12 +11,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
-// saveEndpoint is the URL path for the save endpoint.
-const saveEndpoint = "/save"
-
 var (
 	// log is the package-level variable used for logging messages and errors.
 	log zerolog.Logger
+
+	// saveEndpoint is the URL path for the save endpoint.
+	saveEndpoint string
 
 	// proofsDir is the repository in which proofs are saved to the disk.
 	proofsDir string
@@ -28,25 +28,33 @@ var (
 // StartHTTPServer starts an HTTP server on the specified port and sets up the necessary endpoints.
 // The server listens for incoming requests and handles them accordingly.
 // The `/save` endpoint allows clients to save data to a file in the specified output directory.
-func StartHTTPServer(port int, outputDir string) error {
+func StartHTTPServer(logLevel zerolog.Level, port int, _saveEndpoint string, outputDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
-		Level:       zerolog.InfoLevel,
+		Level:       logLevel,
 		CallerField: "http",
 	}
 	log = logger.NewLogger(lc)
 
-	// Create proof directory.
-	err := os.Mkdir(outputDir, 0755)
-	if err != nil {
-		log.Error().Err(err).Msg("Unable to create the proofs directory")
-		return err
+	// Create the proofs directory if it doesn't exist.
+	if _, err := os.Stat(outputDir); err != nil {
+		if os.IsNotExist(err) {
+			if err = os.Mkdir(outputDir, 0755); err != nil {
+				log.Error().Err(err).Msg("Unable to create the proofs directory")
+				return err
+			}
+		} else {
+			log.Error().Err(err).Msg("Unable to check if the proofs directory exists")
+			return err
+		}
 	}
 	proofsDir = outputDir
 
 	// Start the HTTP server.
-	log.Info().Msgf("HTTP server is starting on port %d", port)
+	saveEndpoint = _saveEndpoint
 	http.HandleFunc(saveEndpoint, saveHandler)
+	log.Info().Msgf("HTTP server save endpoint: %s ready", saveEndpoint)
+	log.Info().Msgf("HTTP server is starting on port %d", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
 		log.Error().Err(err).Msg("Unable to start the HTTP server")
 		return err
