@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/0xPolygon/polygon-edge v1.1.0
 	github.com/rs/zerolog v1.29.1
+	github.com/spf13/cobra v1.7.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
 )
@@ -12,7 +13,6 @@ require (
 require (
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 )
 
