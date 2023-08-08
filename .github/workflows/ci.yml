@@ -2,6 +2,8 @@ name: ci
 
 on:
   push:
+    branches:
+      - "main"
   pull_request:
     paths-ignore:
       - 'README.md'
@@ -53,3 +55,30 @@ jobs:
 
       - name: Build code
         run: go build main.go
+  
+  test:
+    name: test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      
+      - name: Install grpcurl
+        run: |
+          wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz
+          tar -xvf grpcurl_1.8.7_linux_x86_64.tar.gz
+          sudo mv grpcurl /usr/local/bin/
+          sudo chmod +x /usr/local/bin/grpcurl
+          grpcurl --version
+      
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      
+      - name: Run the mock server in background
+        run: go run main.go --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
+
+      - name: Run tests
+        run: make test
