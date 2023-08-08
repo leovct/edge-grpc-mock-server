@@ -58,7 +58,7 @@ jobs:
       
       - name: Install protoc
         run: |
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC_VERSION }}/protoc-${{ env.PROTOC_VERSION }}-linux-x86_64.zip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC_VERSION }}/protobuf-${{ env.PROTOC_VERSION }}.tar.gz
           tar -xvf protoc-${{ env.PROTOC_VERSION }}-linux-x86_64.zip
           sudo mv bin/protoc /usr/local/bin/
           protoc --version
