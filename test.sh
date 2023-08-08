@@ -16,6 +16,16 @@ wait_for_service() {
   echo "$name port is now open."
 }
 
+if ! command -v grpcurl &> /dev/null; then
+  echo "grpcurl could not be found - please install grpcurl"
+  exit
+fi
+
+if ! command -v curl &> /dev/null; then
+  echo "curl could not be found - please install curl"
+  exit
+fi
+
 echo "Waiting for services..."
 wait_for_service 8546 "gRPC"
 wait_for_service 8080 "HTTP"
