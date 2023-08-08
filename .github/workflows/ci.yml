@@ -78,7 +78,7 @@ jobs:
 
   build:
     name: build
-    needs: lint
+    needs: [lint, up-to-date]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
