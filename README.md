@@ -178,7 +178,7 @@ Install the [protobuf compiler](https://grpc.io/docs/protoc-installation/).
 
 ```sh
 # On Ubuntu using `apt`.
-apt-get install protobuf-compiler
+apt install protobuf-compiler
 protoc --version
 
 # On MacOS using `homebrew`.
