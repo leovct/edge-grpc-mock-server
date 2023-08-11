@@ -1,0 +1,39 @@
+name: test
+
+on:
+  workflow_run:
+    workflows: ["ci"]
+    types:
+      - completed
+
+env:
+  GO_VERSION: "1.21"
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Build code
+        run: go build -o mock-server main.go
+      
+      - name: Install grpcurl
+        run: |
+          wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz
+          tar -xvf grpcurl_1.8.7_linux_x86_64.tar.gz
+          sudo mv grpcurl /usr/local/bin/
+          sudo chmod +x /usr/local/bin/grpcurl
+          grpcurl --version
+
+      - name: Run tests
+        run: |
+          ./mock-server --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
+          make test

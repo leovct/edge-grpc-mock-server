@@ -1,0 +1,32 @@
+name: lint
+
+on:
+  workflow_run:
+    workflows: ["ci"]
+    types:
+      - completed
+
+env:
+  GO_VERSION: "1.21"
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      
+      - name: Install golangci-lint
+        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+      
+      - name: Install shadow
+        run: go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest
+
+      - name: Run linters
+        run: make lint

@@ -1,0 +1,55 @@
+name: grpc-code-consistency
+
+on:
+  workflow_run:
+    workflows: ["ci"]
+    types:
+      - completed
+
+env:
+  GO_VERSION: "1.21"
+  # Check https://grpc.io/docs/languages/go/quickstart/ for `protoc` versions.
+  PROTOC_VERSION: "23.4"
+  PROTOC_GEN_GO_VERSION: "1.28"
+  PROTOC_GEN_GO_GRPC_VERSION: "1.2"
+
+jobs:
+  grpc-code-consistency:
+    name: grpc-code-consistency
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      
+      - name: Install protoc
+        run: |
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v${{ env.PROTOC_VERSION }}/protoc-${{ env.PROTOC_VERSION }}-linux-x86_64.zip
+          unzip protoc-23.4-linux-x86_64.zip
+          sudo mv bin/protoc /usr/local/bin/
+          sudo mv include/google /usr/local/include
+          protoc --version
+      
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Install protoc plugins for go
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@v${{ env.PROTOC_GEN_GO_VERSION }}
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v${{ env.PROTOC_GEN_GO_GRPC_VERSION }}
+          protoc-gen-go --version
+          protoc-gen-go-grpc --version
+
+      - name: Generate code
+        run: make gen
+
+      - name: Check if code is up to date
+        run: |
+          git update-index --really-refresh
+          if $(git diff-index --quiet HEAD); then 
+            echo "✅ gRPC service is up to date."
+          else
+            echo "❌ Error: gRPC service is not up to date. Please run 'make gen' and commit your changes."
+            exit 1
+          fi
