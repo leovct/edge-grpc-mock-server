@@ -3,7 +3,7 @@ name: grpc-code-consistency
 on:
   workflow_call:
     inputs:
-      go- :
+      go-version:
         required: true
         type: string
 
