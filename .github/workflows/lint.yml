@@ -1,13 +1,11 @@
 name: lint
 
 on:
-  workflow_run:
-    workflows: ["ci"]
-    types:
-      - completed
-
-env:
-  GO_VERSION: "1.21"
+  workflow_call:
+    inputs:
+      go- :
+        required: true
+        type: string
 
 jobs:
   lint:
@@ -20,7 +18,7 @@ jobs:
       - name: Install go
         uses: actions/setup-go@v4
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version: ${{ inputs.go-version }}
       
       - name: Install golangci-lint
         run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin

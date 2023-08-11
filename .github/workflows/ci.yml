@@ -11,6 +11,9 @@ on:
       - 'data/**'
       - '.gitignore'
 
+env:
+  GO_VERSION: "1.21"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
@@ -18,13 +21,19 @@ concurrency:
 jobs:
   lint:
     uses: ./.github/workflows/lint.yml
+    with:
+      go-version: ${{ env.GO_VERSION }}
 
   grpc-code-consistency:
-    uses: ./.github/workflows/grpc-code-consistency.yml
     needs: lint
+    uses: ./.github/workflows/grpc-code-consistency.yml
+    with:
+      go-version: ${{ env.GO_VERSION }}
 
   test:
-    uses: ./.github/workflows/test.yml
     needs:
       - lint
       - grpc-code-consistency
+    uses: ./.github/workflows/test.yml
+    with:
+      go-version: ${{ env.GO_VERSION }}
