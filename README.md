@@ -168,6 +168,7 @@ $ cat out/1.json
 }
 
 # Decode the first proof.
+# Note that this proof is very simple, if you want to see a more complex proof, check `data/trace2.json` and `data/decoded_trace2.json`.
 $ cat out/1.json | jq -r .trace | base64 -d | jq
 {
   "accountTrie": null,
