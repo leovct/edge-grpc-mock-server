@@ -150,6 +150,7 @@ Got a got completed message for ProofKey { intern: ProofKeyIntern { b_height: 1,
 You can check the content of the proofs folder. Note that the number of proofs may vary depending on how long you let the mock server run.
 
 ```sh
+# Check the content of the proofs folder.
 $ tree out
 out
 ├── 1.json
@@ -160,9 +161,20 @@ out
 
 1 directory, 5 files
 
+# Check the content of the first proof.
 $ cat out/1.json
 {
   "trace": "eyJhY2NvdW50VHJpZSI6bnVsbCwic3RvcmFnZVRyaWUiOm51bGwsInBhcmVudFN0YXRlUm9vdCI6IjB4MDhkMGRkZDA3ZDBhYmM5YWFlOGI1ODkzMDUyYmU1YjU3MTU5OWRjZTFjZjcwYjRhZjc5ODJlZDQxOWFhMjhhMCIsInRyYW5zYWN0aW9uVHJhY2VzIjpbXX0="
+}
+
+# Decode the first proof.
+# Note that this proof is very simple, if you want to see a more complex proof, check `data/trace2.json` and `data/decoded_trace2.json`.
+$ cat out/1.json | jq -r .trace | base64 -d | jq
+{
+  "accountTrie": null,
+  "storageTrie": null,
+  "parentStateRoot": "0x08d0ddd07d0abc9aae8b5893052be5b571599dce1cf70b4af7982ed419aa28a0",
+  "transactionTraces": []
 }
 ```
 
