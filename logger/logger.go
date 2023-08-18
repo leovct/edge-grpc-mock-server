@@ -17,7 +17,7 @@ type LoggerConfig struct {
 
 // NewLogger creates a new Zerolog logger with the given configuration.
 func NewLogger(config LoggerConfig) zerolog.Logger {
-	zerolog.TimeFieldFormat = time.RFC822
+	zerolog.TimeFieldFormat = time.RFC3339
 	output := zerolog.ConsoleWriter{
 		Out:        os.Stdout,
 		TimeFormat: time.UnixDate,
