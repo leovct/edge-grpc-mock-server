@@ -178,6 +178,22 @@ $ cat out/1.json | jq -r .trace | base64 -d | jq
 }
 ```
 
+4. Finally, to assess the time required for the leader/worker configuration to produce a proof for a specific trace, you can monitor specific log entries:
+
+When you observe the log entry `gRPC /GetTrace request received`, it signifies that the leader has initiated a request for the block trace. This happens after the leader has requested other details such as block metadata and has decided that it should generate a proof for a block at a given height. In this process, distinct tasks are assigned to the workers, which involve the generation of diverse types of proofs like transaction, aggregation, block, or compressed block proofs.
+
+```sh
+Fri Aug 18 14:08:15 CEST 2023 INF grpc/grpc.go:209 > gRPC /GetTrace request received
+```
+
+After the proof generation phase is concluded, you'll encounter the log entry `POST request received on /save endpoint`. At this point, the leader forwards the compressed block proof to the designated HTTP server.
+
+```sh
+Fri Aug 18 15:08:15 CEST 2023 INF http/http.go:70 > POST request received on /save endpoint
+```
+
+Given these logs, we can estimate the proof took approximately one minute to generate.
+
 ## Contributing
 
 First, clone the repository.
