@@ -18,7 +18,7 @@ clean: ## Delete generated go code.
 
 .PHONY: build
 build: gen ## Build binary.
-	go build -o out/mock-server main.go
+	go build -o bin/mock-server main.go
 
 ##@ Test
 
