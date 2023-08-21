@@ -34,15 +34,20 @@ jobs:
 
       - name: Archive binaries
         run: |
+          cd bin
           mkdir -p archives
-          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-linux.tar.gz bin/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-linux
-          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-linux.tar.gz bin/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-linux
-          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-darwin.tar.gz bin/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-darwin
-          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-darwin.tar.gz bin/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-darwin
+          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-linux.tar.gz ${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-linux
+          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-linux.tar.gz ${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-linux
+          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-darwin.tar.gz ${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-amd64-darwin
+          tar -czvf archives/${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-darwin.tar.gz ${{ env.BUILD_NAME }}-${GITHUB_REF#refs/tags/}-aarch64-darwin
 
 
       - name: Publish binaries
-        uses: actions/upload-artifact@v2
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: archives
-          path: archives/
+          file: bin/archives/*.tar.gz
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
+          prerelease: true
