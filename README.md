@@ -24,18 +24,18 @@ $ go run main.go --help
 Edge gRPC mock server
 
 Usage:
-  mock [flags]
+  edge-grpc-mock-server [flags]
 
 Flags:
   -d, --debug                          Enable verbose mode
   -g, --grpc-port int                  gRPC server port (default 8546)
-  -h, --help                           help for mock
+  -h, --help                           help for edge-grpc-mock-server
   -p, --http-port int                  HTTP server port (default 8080)
   -e, --http-save-endpoint string      HTTP server save endpoint (default "/save")
-      --mock-data-block-file string    Mock data block file (default "block.json")
-  -m, --mock-data-dir string           Mock data directory containing mock status (status.json), block (block.json) and trace (trace.json) files (default "data")
-      --mock-data-status-file string   Mock data status file (default "status.json")
-      --mock-data-trace-file string    Mock data trace file (default "trace3.json")
+      --mock-data-block-file string    Mock data block file (in the mock data dir) (default "block.json")
+  -m, --mock-data-dir string           Mock data directory (default "data")
+      --mock-data-status-file string   Mock data status file (in the mock data dir) (default "status.json")
+      --mock-data-trace-file string    Mock data trace file (in the mock data dir) (default "trace3.json")
   -o, --output-dir string              Proofs output directory (default "out")
   -r, --random                         Generate random trace data instead of relying on mocks (default false)
 ```
@@ -320,4 +320,3 @@ You can then run the server and experiment with it.
 Use `go run main.go --help` to list all the different flags available.
 
 Unit tests have not been implemented yet but you can run some HTTP/gRPC requests using [curl](https://curl.se/) and [grpcurl](https://github.com/fullstorydev/grpcurl) to test the behavior of the mock server. We provided a handy script called `scripts/test.sh` that you can execute using `make test` for this purpose.
-
