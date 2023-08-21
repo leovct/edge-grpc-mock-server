@@ -86,7 +86,7 @@ jobs:
 
   test:
     name: test
-    needs: [lint, up-to-date]
+    needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -110,5 +110,11 @@ jobs:
 
       - name: Run tests
         run: |
-          ./mock-server --http-port 8080 --http-save-endpoint /save --grpc-port 8546 --output-dir out &
+          ./mock-server \
+            --grpc-port 8546 \
+            --http-port 8080 \
+            --http-save-endpoint /save \
+            --mock-data-dir data \
+            --output-dir out \
+            &
           make test
