@@ -23,7 +23,7 @@ const (
 	// Mock data file paths.
 	StatusFile = "status.json"
 	BlocksFile = "block.json"
-	TraceFile  = "trace.json"
+	TraceFile  = "trace3.json"
 
 	// Constant dummy block height returned by the `/GetStatus` endpoint.
 	constantBlockHeight = 100_000_000_000_000_000
@@ -248,7 +248,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 				txnBytes := []byte(trace.Transaction)
 				if err := decodedTxn.UnmarshalRLP(txnBytes); err != nil {
 					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i)
-					//return nil, err
+					return nil, err
 				} else {
 					data, err := json.MarshalIndent(decodedTxn, "", "  ")
 					if err != nil {
