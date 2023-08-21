@@ -46,7 +46,7 @@ Flags:
 
 ```sh
 $ go run main.go \
-  --debug true \
+  --debug \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
