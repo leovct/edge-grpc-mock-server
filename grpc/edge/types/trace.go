@@ -1,8 +1,49 @@
 package types
 
 import (
+	"encoding/hex"
 	"math/big"
+	"strings"
 )
+
+type ArgBytes []byte
+
+func (b ArgBytes) MarshalText() ([]byte, error) {
+	return encodeToHex(b), nil
+}
+
+func (b *ArgBytes) UnmarshalText(input []byte) error {
+	hh, err := decodeToHex(input)
+	if err != nil {
+		return nil
+	}
+
+	aux := make([]byte, len(hh))
+	copy(aux[:], hh[:])
+	*b = aux
+
+	return nil
+}
+
+func decodeToHex(b []byte) ([]byte, error) {
+	str := string(b)
+	str = strings.TrimPrefix(str, "0x")
+
+	if len(str)%2 != 0 {
+		str = "0" + str
+	}
+
+	return hex.DecodeString(str)
+}
+
+func encodeToHex(b []byte) []byte {
+	str := hex.EncodeToString(b)
+	if len(str)%2 != 0 {
+		str = "0" + str
+	}
+
+	return []byte("0x" + str)
+}
 
 type Trace struct {
 	// AccountTrie is the partial trie for the account merkle trie touched during the block
@@ -20,7 +61,7 @@ type Trace struct {
 
 type TxnTrace struct {
 	// Transaction is the RLP encoding of the transaction
-	Transaction []byte `json:"txn"`
+	Transaction ArgBytes `json:"txn"`
 
 	// Delta is the list of updates per account during this transaction
 	Delta map[Address]*JournalEntry `json:"delta"`
