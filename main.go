@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"zero-provers/server/grpc"
 	"zero-provers/server/http"
@@ -37,6 +38,14 @@ func main() {
 		Use:   "mock",
 		Short: "Edge gRPC mock server",
 		Run: func(cmd *cobra.Command, args []string) {
+			// Determine log level based on debug flag.
+			if config.debug {
+				config.logLevel = zerolog.DebugLevel
+			} else {
+				config.logLevel = zerolog.InfoLevel
+			}
+			fmt.Printf("Log level set to %s\n", config.logLevel)
+
 			// Start the gRPC server.
 			go func() {
 				mock := grpc.Mock{
@@ -67,11 +76,5 @@ func main() {
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
-	}
-
-	// Set log level.
-	config.logLevel = zerolog.InfoLevel
-	if config.debug {
-		config.logLevel = zerolog.DebugLevel
 	}
 }

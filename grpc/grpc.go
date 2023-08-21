@@ -80,7 +80,7 @@ func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockD
 
 	// Load mock data if provided.
 	if !setRandomMode {
-		log.Info().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
+		log.Debug().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
 		mockStatusData, mockBlockData, mockTraceData, err = loadMockData(mockData)
 		if err != nil {
 			log.Error().Err(err).Msg("Unable to load mock data")
@@ -102,7 +102,7 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 	// Load status mock data.
 	var mockStatus pb.StatusResponse
 	statusMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.StatusFile)
-	log.Info().Msgf("Fetching mock status file from %s", statusMockFilePath)
+	log.Debug().Msgf("Fetching mock status file from %s", statusMockFilePath)
 	if _, err := os.Stat(statusMockFilePath); err == nil {
 		data, err := os.ReadFile(statusMockFilePath)
 		if err != nil {
@@ -114,13 +114,13 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 			fmt.Println("Error unmarshaling mock status JSON:", err)
 			return nil, nil, nil, err
 		}
-		log.Info().Msg("Mock status data loaded")
+		log.Debug().Msg("Mock status data loaded")
 	}
 
 	// Load block mock data.
 	var mockBlock pb.BlockResponse
 	blocksMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.BlockFile)
-	log.Info().Msgf("Fetching mock block file from %s", blocksMockFilePath)
+	log.Debug().Msgf("Fetching mock block file from %s", blocksMockFilePath)
 	if _, err := os.Stat(blocksMockFilePath); err == nil {
 		data, err := os.ReadFile(blocksMockFilePath)
 		if err != nil {
@@ -132,13 +132,13 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 			fmt.Println("Error unmarshaling mock blocks JSON:", err)
 			return nil, nil, nil, err
 		}
-		log.Info().Msg("Mock blocks data loaded")
+		log.Debug().Msg("Mock blocks data loaded")
 	}
 
 	// Load trace mock data.
 	var mockTrace pb.TraceResponse
 	tracesMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.TraceFile)
-	log.Info().Msgf("Fetching mock trace file from %s", tracesMockFilePath)
+	log.Debug().Msgf("Fetching mock trace file from %s", tracesMockFilePath)
 	if _, err := os.Stat(tracesMockFilePath); err == nil {
 		data, err := os.ReadFile(tracesMockFilePath)
 		if err != nil {
@@ -150,7 +150,7 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 			fmt.Println("Error unmarshaling mock traces JSON:", err)
 			return nil, nil, nil, err
 		}
-		log.Info().Msg("Mock traces data loaded")
+		log.Debug().Msg("Mock traces data loaded")
 	}
 	return &mockStatus, &mockBlock, &mockTrace, nil
 }
@@ -162,14 +162,14 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.StatusResponse, e
 
 	// Return mock data if provided.
 	if mockStatusData != nil {
-		log.Info().Msgf("Mock StatusResponse number: %v", mockStatusData.Current.Number)
+		log.Debug().Msgf("Mock StatusResponse number: %v", mockStatusData.Current.Number)
 		return mockStatusData, nil
 	}
 
 	// Else, return dummy data.
 	height := int64(constantBlockHeight + counter)
 	counter += counterStep
-	log.Info().Msgf("StatusResponse number: %v", height)
+	log.Debug().Msgf("StatusResponse number: %v", height)
 	return &pb.StatusResponse{
 		Current: &pb.StatusResponse_Block{
 			Number: height,
@@ -186,13 +186,13 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 	if mockBlockData != nil {
 		// Return mock data if provided.
 		rawData = mockBlockData.Data
-		log.Info().Msgf("Mock BlockResponse encoded data: %v", mockBlockData.Data)
+		log.Debug().Msgf("Mock BlockResponse encoded data: %v", mockBlockData.Data)
 	} else {
 		// Else, return dummy data.
 		height := constantBlockHeight + counter
 		block := edge.GenerateDummyEdgeBlock(uint64(height), uint64(10))
 		rawData = block.MarshalRLP()
-		log.Info().Msgf("BlockResponse encoded data: %v", rawData)
+		log.Debug().Msgf("BlockResponse encoded data: %v", rawData)
 	}
 
 	// TODO: remove after debug session
@@ -206,8 +206,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 			log.Error().Err(err).Msg("Unable to format JSON struct")
 			//return nil, err
 		} else {
-			log.Info().Msg("BlockResponse decoded data")
-			fmt.Println(string(data))
+			log.Debug().Msgf("BlockResponse decoded data: %v", string(data))
 		}
 	}
 
@@ -222,7 +221,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 	var rawTrace []byte
 	if mockTraceData != nil {
 		// Return mock data if provided.
-		log.Info().Msgf("Mock TraceResponse encoded data: %v", mockTraceData.Trace)
+		log.Debug().Msgf("Mock TraceResponse encoded data: %v", mockTraceData.Trace)
 		rawTrace = mockTraceData.Trace
 	} else {
 		// Else, return dummy data.
@@ -233,7 +232,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 			fmt.Println("BlockTrace encoding failed:", err)
 			return nil, err
 		}
-		log.Info().Msgf("TraceResponse encoded trace: %v", rawTrace)
+		log.Debug().Msgf("TraceResponse encoded trace: %v", rawTrace)
 	}
 
 	// TODO: remove after debug session
@@ -247,12 +246,11 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 			log.Error().Err(err).Msg("Unable to format JSON struct")
 			//return nil, err
 		} else {
-			log.Info().Msg("TraceResponce decoded trace")
-			fmt.Println(string(data))
+			log.Debug().Msgf("TraceResponce decoded trace: %v", string(data))
 
 			traces := decodedTrace.TxnTraces
 			if len(traces) > 0 {
-				log.Info().Msg("Decoding TraceResponce transactionTraces txn fields (RLP encoded)...")
+				log.Debug().Msg("Decoding TraceResponce transactionTraces txn fields (RLP encoded)...")
 			}
 			for i, trace := range traces {
 				decodedTxn := edgetypes.Transaction{}
@@ -266,8 +264,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 						log.Error().Err(err).Msg("Unable to format JSON struct")
 						//return nil, err
 					} else {
-						log.Info().Msgf("Transaction #%d decoded", i+1)
-						fmt.Println(string(data))
+						log.Debug().Msgf("Transaction #%d decoded: %v", i+1, string(data))
 					}
 				}
 			}

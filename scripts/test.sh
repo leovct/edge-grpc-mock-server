@@ -10,5 +10,5 @@ grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/BlockByNumber
 grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/GetTrace
 
 echo "Sending HTTP requests..."
-curl -X POST -H "Content-Type: application/json" -d '{"name": "salamander", "type": "fire"}' http://127.0.0.1:8080/save
+curl -s -X POST -H "Content-Type: application/json" -d '{"name": "salamander", "type": "fire"}' http://127.0.0.1:8080/save
 cat out/1.json
