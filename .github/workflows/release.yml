@@ -42,7 +42,10 @@ jobs:
 
 
       - name: Publish binaries
-        uses: actions/upload-artifact@v2
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: archives
-          path: archives/
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: archives/*.tar.gz
+          tag: ${GITHUB_REF}
+          overwrite: true
+          file_glob: true
