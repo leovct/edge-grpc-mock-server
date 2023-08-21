@@ -202,12 +202,12 @@ Mon Aug 21 12:43:35 CEST 2023 INF http/http.go:94 > Proof saved to disk
 Here is how it looks on the leader side after a few minutes.
 
 ```sh
-Got a got completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..1 } }, p_type: Txn }
+Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..1 } }, p_type: Txn }
 debug2: channel 0: window 999415 sent adjust 49161
-Got a got completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 1..2 } }, p_type: Txn }
-Got a got completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: Agg }
-Got a got completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: Block }
-Got a got completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: CompressedBlock }
+Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 1..2 } }, p_type: Txn }
+Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: Agg }
+Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: Block }
+Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: CompressedBlock }
 ```
 
 You can check the content of the proofs folder. Note that the number of proofs may vary depending on how long you let the mock server run.
