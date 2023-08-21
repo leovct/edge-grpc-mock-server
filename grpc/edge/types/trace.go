@@ -73,7 +73,7 @@ type JournalEntry struct {
 	Addr Address `json:"address"`
 
 	// Balance tracks changes in the account Balance
-	Balance *big.Int `json:"balance,omitempty"`
+	Balance *big.Int `json:"-"`
 
 	// Nonce tracks changes in the account Nonce
 	Nonce *uint64 `json:"nonce,omitempty"`
@@ -81,12 +81,21 @@ type JournalEntry struct {
 	// Storage track changes in the storage
 	Storage map[Hash]Hash `json:"storage,omitempty"`
 
+	// StorageRead is the list of storage slots read
+	StorageRead map[Hash]struct{} `json:"storage_read,omitempty"`
+
 	// Code tracks the initialization of the contract Code
 	Code []byte `json:"code,omitempty"`
+
+	// CodeRead tracks whether the contract Code was read
+	CodeRead []byte `json:"code_read,omitempty"`
 
 	// Suicide tracks whether the contract has been self destructed
 	Suicide *bool `json:"suicide,omitempty"`
 
 	// Touched tracks whether the account has been touched/created
 	Touched *bool `json:"touched,omitempty"`
+
+	// Read signals whether the account was read
+	Read *bool `json:"read,omitempty"`
 }
