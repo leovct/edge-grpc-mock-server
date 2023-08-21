@@ -19,7 +19,10 @@ type Config struct {
 	// Directory in which proofs are stored.
 	proofsOutputDir string
 	// Directory in which mock data is provided.
-	mockDataDir string
+	mockDataDir        string
+	mockDataBlockFile  string
+	mockDataStatusFile string
+	mockDataTraceFile  string
 	// Generate random trace data instead of relying on mocks.
 	setRandomMode bool
 	// Set to true if debug mode is enabled.
@@ -36,7 +39,13 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			// Start the gRPC server.
 			go func() {
-				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, config.setRandomMode, config.mockDataDir))
+				mock := grpc.Mock{
+					Dir:        config.mockDataDir,
+					StatusFile: config.mockDataStatusFile,
+					BlockFile:  config.mockDataBlockFile,
+					TraceFile:  config.mockDataTraceFile,
+				}
+				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, config.setRandomMode, mock))
 			}()
 
 			// Start the HTTP server.
@@ -50,6 +59,9 @@ func main() {
 	rootCmd.PersistentFlags().StringVarP(&config.hTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
 	rootCmd.PersistentFlags().StringVarP(&config.proofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
 	rootCmd.PersistentFlags().StringVarP(&config.mockDataDir, "mock-data-dir", "m", "data", "Mock data directory containing mock status (status.json), block (block.json) and trace (trace.json) files")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataStatusFile, "mock-data-status-file", "status.json", "Mock data status file")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file")
 	rootCmd.PersistentFlags().BoolVarP(&config.setRandomMode, "random", "r", false, "Generate random trace data instead of relying on mocks (default false)")
 	rootCmd.PersistentFlags().BoolVarP(&config.debug, "debug", "d", false, "Enable verbose mode")
 
