@@ -80,7 +80,7 @@ func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockD
 
 	// Load mock data if provided.
 	if !setRandomMode {
-		log.Info().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
+		log.Debug().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
 		mockStatusData, mockBlockData, mockTraceData, err = loadMockData(mockData)
 		if err != nil {
 			log.Error().Err(err).Msg("Unable to load mock data")
@@ -102,7 +102,7 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 	// Load status mock data.
 	var mockStatus pb.StatusResponse
 	statusMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.StatusFile)
-	log.Info().Msgf("Fetching mock status file from %s", statusMockFilePath)
+	log.Debug().Msgf("Fetching mock status file from %s", statusMockFilePath)
 	if _, err := os.Stat(statusMockFilePath); err == nil {
 		data, err := os.ReadFile(statusMockFilePath)
 		if err != nil {
@@ -114,13 +114,13 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 			fmt.Println("Error unmarshaling mock status JSON:", err)
 			return nil, nil, nil, err
 		}
-		log.Info().Msg("Mock status data loaded")
+		log.Debug().Msg("Mock status data loaded")
 	}
 
 	// Load block mock data.
 	var mockBlock pb.BlockResponse
 	blocksMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.BlockFile)
-	log.Info().Msgf("Fetching mock block file from %s", blocksMockFilePath)
+	log.Debug().Msgf("Fetching mock block file from %s", blocksMockFilePath)
 	if _, err := os.Stat(blocksMockFilePath); err == nil {
 		data, err := os.ReadFile(blocksMockFilePath)
 		if err != nil {
@@ -132,13 +132,13 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 			fmt.Println("Error unmarshaling mock blocks JSON:", err)
 			return nil, nil, nil, err
 		}
-		log.Info().Msg("Mock blocks data loaded")
+		log.Debug().Msg("Mock blocks data loaded")
 	}
 
 	// Load trace mock data.
 	var mockTrace pb.TraceResponse
 	tracesMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.TraceFile)
-	log.Info().Msgf("Fetching mock trace file from %s", tracesMockFilePath)
+	log.Debug().Msgf("Fetching mock trace file from %s", tracesMockFilePath)
 	if _, err := os.Stat(tracesMockFilePath); err == nil {
 		data, err := os.ReadFile(tracesMockFilePath)
 		if err != nil {
@@ -150,7 +150,7 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 			fmt.Println("Error unmarshaling mock traces JSON:", err)
 			return nil, nil, nil, err
 		}
-		log.Info().Msg("Mock traces data loaded")
+		log.Debug().Msg("Mock traces data loaded")
 	}
 	return &mockStatus, &mockBlock, &mockTrace, nil
 }
