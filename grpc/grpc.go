@@ -181,7 +181,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 	} else {
 		// Else, return dummy data.
 		height := constantBlockHeight + counter
-		block := edge.GenerateDummyEdgeBlock(uint64(height))
+		block := edge.GenerateDummyEdgeBlock(uint64(height), uint64(10))
 		rawData = block.MarshalRLP()
 		log.Info().Msgf("BlockResponse encoded data: %v", rawData)
 	}
@@ -217,7 +217,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 		rawTrace = mockTraceData.Trace
 	} else {
 		// Else, return dummy data.
-		trace := *edge.GenerateDummyEdgeTrace()
+		trace := *edge.GenerateDummyEdgeTrace(10, 10, 10, 10)
 		var err error
 		rawTrace, err = json.Marshal(trace)
 		if err != nil {
@@ -249,7 +249,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 				decodedTxn := edgetypes.Transaction{}
 				txnBytes := []byte(trace.Transaction)
 				if err := decodedTxn.UnmarshalRLP(txnBytes); err != nil {
-					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i)
+					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i+1)
 					return nil, err
 				} else {
 					data, err := json.MarshalIndent(decodedTxn, "", "  ")
@@ -257,7 +257,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 						log.Error().Err(err).Msg("Unable to format JSON struct")
 						//return nil, err
 					} else {
-						log.Info().Msgf("Transaction #%d decoded", i)
+						log.Info().Msgf("Transaction #%d decoded", i+1)
 						fmt.Println(string(data))
 					}
 				}

@@ -8,7 +8,7 @@ import (
 )
 
 // GenerateDummyEdgeTrace generates a dummy `Trace` with random data.
-func GenerateDummyEdgeTrace() *types.Trace {
+func GenerateDummyEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntriesAmount, txnTracesAmount int) *types.Trace {
 	trace := &types.Trace{
 		AccountTrie:     make(map[string]string),
 		StorageTrie:     make(map[string]string),
@@ -17,14 +17,14 @@ func GenerateDummyEdgeTrace() *types.Trace {
 	}
 
 	// Add some dummy accountTrie entries
-	for i := 0; i < 5; i++ {
+	for i := 0; i < accountTriesAmount; i++ {
 		key := generateRandomHash()
 		value := generateRandomHash()
 		trace.AccountTrie[key.String()] = value.String()
 	}
 
 	// Add some dummy storageTrie entries
-	for i := 0; i < 5; i++ {
+	for i := 0; i < storageTriesAmount; i++ {
 		key := generateRandomHash()
 		value := generateRandomHash()
 		trace.StorageTrie[key.String()] = value.String()
@@ -55,7 +55,7 @@ func GenerateDummyEdgeTrace() *types.Trace {
 		}
 
 		// Add some dummy storage entries
-		for i := 0; i < 3; i++ {
+		for i := 0; i < storageEntriesAmount; i++ {
 			key := generateRandomHash()
 			value := generateRandomHash()
 			entry.Storage[key] = value
@@ -74,16 +74,15 @@ func GenerateDummyEdgeTrace() *types.Trace {
 		}
 	}
 
-	var i uint64
-	for i = 0; i < 3; i++ {
-		trace.TxnTraces = append(trace.TxnTraces, generateDummyTxnTrace(i))
+	for i := 0; i < txnTracesAmount; i++ {
+		trace.TxnTraces = append(trace.TxnTraces, generateDummyTxnTrace(uint64(i)))
 	}
 
 	return trace
 }
 
 // GenerateDummyEdgeBlock generates a dummy `Block` with random data.
-func GenerateDummyEdgeBlock(number uint64) *types.Block {
+func GenerateDummyEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 	// Generate a dummy EdgeBlock
 	header := &types.Header{
 		ParentHash:   generateRandomHash(),
@@ -107,12 +106,10 @@ func GenerateDummyEdgeBlock(number uint64) *types.Block {
 
 	// Generate a list of random transactions
 	var transactions []*types.Transaction
-	/*
-		var i uint64
-		for i = 0; i < 3; i++ {
-			transactions = append(transactions, generateRandomTx(i))
-		}
-	*/
+	var i uint64
+	for i = 0; i < txnTracesAmount; i++ {
+		transactions = append(transactions, generateRandomTx(i))
+	}
 
 	// Generate a list of random uncles
 	var uncles []*types.Header
