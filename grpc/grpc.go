@@ -162,14 +162,14 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.StatusResponse, e
 
 	// Return mock data if provided.
 	if mockStatusData != nil {
-		log.Info().Msgf("Mock StatusResponse number: %v", mockStatusData.Current.Number)
+		log.Debug().Msgf("Mock StatusResponse number: %v", mockStatusData.Current.Number)
 		return mockStatusData, nil
 	}
 
 	// Else, return dummy data.
 	height := int64(constantBlockHeight + counter)
 	counter += counterStep
-	log.Info().Msgf("StatusResponse number: %v", height)
+	log.Debug().Msgf("StatusResponse number: %v", height)
 	return &pb.StatusResponse{
 		Current: &pb.StatusResponse_Block{
 			Number: height,
@@ -186,13 +186,13 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 	if mockBlockData != nil {
 		// Return mock data if provided.
 		rawData = mockBlockData.Data
-		log.Info().Msgf("Mock BlockResponse encoded data: %v", mockBlockData.Data)
+		log.Debug().Msgf("Mock BlockResponse encoded data: %v", mockBlockData.Data)
 	} else {
 		// Else, return dummy data.
 		height := constantBlockHeight + counter
 		block := edge.GenerateDummyEdgeBlock(uint64(height), uint64(10))
 		rawData = block.MarshalRLP()
-		log.Info().Msgf("BlockResponse encoded data: %v", rawData)
+		log.Debug().Msgf("BlockResponse encoded data: %v", rawData)
 	}
 
 	// TODO: remove after debug session
@@ -206,8 +206,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 			log.Error().Err(err).Msg("Unable to format JSON struct")
 			//return nil, err
 		} else {
-			log.Info().Msg("BlockResponse decoded data")
-			fmt.Println(string(data))
+			log.Debug().Msgf("BlockResponse decoded data: %v", string(data))
 		}
 	}
 
@@ -222,7 +221,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 	var rawTrace []byte
 	if mockTraceData != nil {
 		// Return mock data if provided.
-		log.Info().Msgf("Mock TraceResponse encoded data: %v", mockTraceData.Trace)
+		log.Debug().Msgf("Mock TraceResponse encoded data: %v", mockTraceData.Trace)
 		rawTrace = mockTraceData.Trace
 	} else {
 		// Else, return dummy data.
@@ -233,7 +232,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 			fmt.Println("BlockTrace encoding failed:", err)
 			return nil, err
 		}
-		log.Info().Msgf("TraceResponse encoded trace: %v", rawTrace)
+		log.Debug().Msgf("TraceResponse encoded trace: %v", rawTrace)
 	}
 
 	// TODO: remove after debug session
@@ -247,12 +246,11 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 			log.Error().Err(err).Msg("Unable to format JSON struct")
 			//return nil, err
 		} else {
-			log.Info().Msg("TraceResponce decoded trace")
-			fmt.Println(string(data))
+			log.Debug().Msgf("TraceResponce decoded trace: %v", string(data))
 
 			traces := decodedTrace.TxnTraces
 			if len(traces) > 0 {
-				log.Info().Msg("Decoding TraceResponce transactionTraces txn fields (RLP encoded)...")
+				log.Debug().Msg("Decoding TraceResponce transactionTraces txn fields (RLP encoded)...")
 			}
 			for i, trace := range traces {
 				decodedTxn := edgetypes.Transaction{}
@@ -266,8 +264,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 						log.Error().Err(err).Msg("Unable to format JSON struct")
 						//return nil, err
 					} else {
-						log.Info().Msgf("Transaction #%d decoded", i+1)
-						fmt.Println(string(data))
+						log.Debug().Msgf("Transaction #%d decoded: %v", i+1, string(data))
 					}
 				}
 			}

@@ -33,6 +33,12 @@ type Config struct {
 
 func main() {
 	var config Config
+	// Set log level.
+	config.logLevel = zerolog.InfoLevel
+	if config.debug {
+		config.logLevel = zerolog.DebugLevel
+	}
+
 	var rootCmd = &cobra.Command{
 		Use:   "mock",
 		Short: "Edge gRPC mock server",
@@ -67,11 +73,5 @@ func main() {
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
-	}
-
-	// Set log level.
-	config.logLevel = zerolog.InfoLevel
-	if config.debug {
-		config.logLevel = zerolog.DebugLevel
 	}
 }
