@@ -23,7 +23,7 @@ const (
 	// Mock data file paths.
 	StatusFile = "status.json"
 	BlocksFile = "block.json"
-	TraceFile  = "trace.json"
+	TraceFile  = "trace3.json"
 
 	// Constant dummy block height returned by the `/GetStatus` endpoint.
 	constantBlockHeight = 100_000_000_000_000_000
@@ -52,7 +52,7 @@ type server struct {
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(logLevel zerolog.Level, port int, mockDataDir string) error {
+func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockDataDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
 		Level:       logLevel,
@@ -72,12 +72,14 @@ func StartgRPCServer(logLevel zerolog.Level, port int, mockDataDir string) error
 	pb.RegisterSystemServer(s, &server{})
 
 	// Load mock data if provided.
-	log.Info().Msgf("Fetching mock data from `%s` directory", mockDataDir)
-	mockDir = mockDataDir
-	mockStatusData, mockBlockData, mockTraceData, err = loadMockData()
-	if err != nil {
-		log.Error().Err(err).Msg("Unable to load mock data")
-		return err
+	if !setRandomMode {
+		log.Info().Msgf("Fetching mock data from `%s` directory", mockDataDir)
+		mockDir = mockDataDir
+		mockStatusData, mockBlockData, mockTraceData, err = loadMockData()
+		if err != nil {
+			log.Error().Err(err).Msg("Unable to load mock data")
+			return err
+		}
 	}
 
 	// Start serving incoming gRPC requests on the listener.
@@ -179,7 +181,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 	} else {
 		// Else, return dummy data.
 		height := constantBlockHeight + counter
-		block := edge.GenerateDummyEdgeBlock(uint64(height))
+		block := edge.GenerateDummyEdgeBlock(uint64(height), uint64(10))
 		rawData = block.MarshalRLP()
 		log.Info().Msgf("BlockResponse encoded data: %v", rawData)
 	}
@@ -215,7 +217,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 		rawTrace = mockTraceData.Trace
 	} else {
 		// Else, return dummy data.
-		trace := *edge.GenerateDummyEdgeTrace()
+		trace := *edge.GenerateDummyEdgeTrace(10, 10, 10, 10)
 		var err error
 		rawTrace, err = json.Marshal(trace)
 		if err != nil {
@@ -247,15 +249,15 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 				decodedTxn := edgetypes.Transaction{}
 				txnBytes := []byte(trace.Transaction)
 				if err := decodedTxn.UnmarshalRLP(txnBytes); err != nil {
-					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i)
-					//return nil, err
+					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i+1)
+					return nil, err
 				} else {
 					data, err := json.MarshalIndent(decodedTxn, "", "  ")
 					if err != nil {
 						log.Error().Err(err).Msg("Unable to format JSON struct")
 						//return nil, err
 					} else {
-						log.Info().Msgf("Transaction #%d decoded", i)
+						log.Info().Msgf("Transaction #%d decoded", i+1)
 						fmt.Println(string(data))
 					}
 				}
