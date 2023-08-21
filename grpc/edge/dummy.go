@@ -2,6 +2,7 @@ package edge
 
 import (
 	"crypto/rand"
+	"math/big"
 	"time"
 	"zero-provers/server/grpc/edge/types"
 )
@@ -15,70 +16,68 @@ func GenerateDummyEdgeTrace() *types.Trace {
 		TxnTraces:       []*types.TxnTrace{},
 	}
 
-	/*
-		// Add some dummy accountTrie entries
-		for i := 0; i < 5; i++ {
+	// Add some dummy accountTrie entries
+	for i := 0; i < 5; i++ {
+		key := generateRandomHash()
+		value := generateRandomHash()
+		trace.AccountTrie[key.String()] = value.String()
+	}
+
+	// Add some dummy storageTrie entries
+	for i := 0; i < 5; i++ {
+		key := generateRandomHash()
+		value := generateRandomHash()
+		trace.StorageTrie[key.String()] = value.String()
+	}
+
+	// Add some dummy TxnTraces
+	generateRandomBool := func() *bool {
+		b, _ := rand.Int(rand.Reader, big.NewInt(2))
+		res := b.Int64() == 1
+		return &res
+	}
+
+	generateRandomNonce := func() *uint64 {
+		n, _ := rand.Int(rand.Reader, big.NewInt(100))
+		nonce := uint64(n.Uint64())
+		return &nonce
+	}
+
+	generateDummyJournalEntry := func() *types.JournalEntry {
+		entry := &types.JournalEntry{
+			Addr:    generateRandomAddress(),
+			Balance: generateRandomBigInt(),
+			Nonce:   generateRandomNonce(),
+			Storage: make(map[types.Hash]types.Hash),
+			Code:    generateRandomBytes(64),
+			Suicide: generateRandomBool(),
+			Touched: generateRandomBool(),
+		}
+
+		// Add some dummy storage entries
+		for i := 0; i < 3; i++ {
 			key := generateRandomHash()
 			value := generateRandomHash()
-			trace.AccountTrie[key.String()] = value.String()
+			entry.Storage[key] = value
 		}
 
-		// Add some dummy storageTrie entries
-		for i := 0; i < 5; i++ {
-			key := generateRandomHash()
-			value := generateRandomHash()
-			trace.StorageTrie[key.String()] = value.String()
+		return entry
+	}
+
+	generateDummyTxnTrace := func(nonce uint64) *types.TxnTrace {
+		txn := generateRandomTx(nonce)
+		return &types.TxnTrace{
+			Transaction: txn.MarshalRLP(),
+			Delta: map[types.Address]*types.JournalEntry{
+				generateRandomAddress(): generateDummyJournalEntry(),
+			},
 		}
+	}
 
-		// Add some dummy TxnTraces
-		generateRandomBool := func() *bool {
-			b, _ := rand.Int(rand.Reader, big.NewInt(2))
-			res := b.Int64() == 1
-			return &res
-		}
-
-		generateRandomNonce := func() *uint64 {
-			n, _ := rand.Int(rand.Reader, big.NewInt(100))
-			nonce := uint64(n.Uint64())
-			return &nonce
-		}
-
-		generateDummyJournalEntry := func() *types.JournalEntry {
-			entry := &types.JournalEntry{
-				Addr:    generateRandomAddress(),
-				Balance: generateRandomBigInt(),
-				Nonce:   generateRandomNonce(),
-				Storage: make(map[types.Hash]types.Hash),
-				Code:    generateRandomBytes(64),
-				Suicide: generateRandomBool(),
-				Touched: generateRandomBool(),
-			}
-
-			// Add some dummy storage entries
-			for i := 0; i < 3; i++ {
-				key := generateRandomHash()
-				value := generateRandomHash()
-				entry.Storage[key] = value
-			}
-
-			return entry
-		}
-
-		generateDummyTxnTrace := func(nonce uint64) *types.TxnTrace {
-			txn := generateRandomTx(nonce)
-			return &types.TxnTrace{
-				Transaction: txn.MarshalRLP(),
-				Delta: map[types.Address]*types.JournalEntry{
-					generateRandomAddress(): generateDummyJournalEntry(),
-				},
-			}
-		}
-
-		var i uint64
-		for i = 0; i < 3; i++ {
-			trace.TxnTraces = append(trace.TxnTraces, generateDummyTxnTrace(i))
-		}
-	*/
+	var i uint64
+	for i = 0; i < 3; i++ {
+		trace.TxnTraces = append(trace.TxnTraces, generateDummyTxnTrace(i))
+	}
 
 	return trace
 }
@@ -146,7 +145,6 @@ func GenerateDummyEdgeBlock(number uint64) *types.Block {
 	}
 }
 
-/*
 func generateRandomTx(nonce uint64) *types.Transaction {
 	randomAddress := generateRandomAddress()
 	return &types.Transaction{
@@ -167,7 +165,6 @@ func generateRandomTx(nonce uint64) *types.Transaction {
 		ChainID:   generateRandomBigInt(),
 	}
 }
-*/
 
 func generateRandomHash() types.Hash {
 	bytes := generateRandomBytes(types.HashLength)
@@ -176,7 +173,6 @@ func generateRandomHash() types.Hash {
 	return hash
 }
 
-/*
 func generateRandomAddress() types.Address {
 	bytes := generateRandomBytes(types.AddressLength)
 	var address types.Address
@@ -188,7 +184,6 @@ func generateRandomBigInt() *big.Int {
 	n, _ := rand.Int(rand.Reader, big.NewInt(1000000))
 	return n
 }
-*/
 
 // generateRandomBytes generates a slice of random bytes with the given length.
 func generateRandomBytes(length int) []byte {

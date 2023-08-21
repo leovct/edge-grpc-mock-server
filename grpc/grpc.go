@@ -52,7 +52,7 @@ type server struct {
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(logLevel zerolog.Level, port int, mockDataDir string) error {
+func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockDataDir string) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
 		Level:       logLevel,
@@ -72,12 +72,14 @@ func StartgRPCServer(logLevel zerolog.Level, port int, mockDataDir string) error
 	pb.RegisterSystemServer(s, &server{})
 
 	// Load mock data if provided.
-	log.Info().Msgf("Fetching mock data from `%s` directory", mockDataDir)
-	mockDir = mockDataDir
-	mockStatusData, mockBlockData, mockTraceData, err = loadMockData()
-	if err != nil {
-		log.Error().Err(err).Msg("Unable to load mock data")
-		return err
+	if !setRandomMode {
+		log.Info().Msgf("Fetching mock data from `%s` directory", mockDataDir)
+		mockDir = mockDataDir
+		mockStatusData, mockBlockData, mockTraceData, err = loadMockData()
+		if err != nil {
+			log.Error().Err(err).Msg("Unable to load mock data")
+			return err
+		}
 	}
 
 	// Start serving incoming gRPC requests on the listener.
