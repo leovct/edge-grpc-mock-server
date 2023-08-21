@@ -35,7 +35,7 @@ type Config struct {
 func main() {
 	var config Config
 	var rootCmd = &cobra.Command{
-		Use:   "mock",
+		Use:   "edge-grpc-mock-server",
 		Short: "Edge gRPC mock server",
 		Run: func(cmd *cobra.Command, args []string) {
 			// Determine log level based on debug flag.
@@ -67,10 +67,10 @@ func main() {
 	rootCmd.PersistentFlags().IntVarP(&config.hTTPServerPort, "http-port", "p", 8080, "HTTP server port")
 	rootCmd.PersistentFlags().StringVarP(&config.hTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
 	rootCmd.PersistentFlags().StringVarP(&config.proofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
-	rootCmd.PersistentFlags().StringVarP(&config.mockDataDir, "mock-data-dir", "m", "data", "Mock data directory containing mock status (status.json), block (block.json) and trace (trace.json) files")
-	rootCmd.PersistentFlags().StringVar(&config.mockDataStatusFile, "mock-data-status-file", "status.json", "Mock data status file")
-	rootCmd.PersistentFlags().StringVar(&config.mockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file")
-	rootCmd.PersistentFlags().StringVar(&config.mockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file")
+	rootCmd.PersistentFlags().StringVarP(&config.mockDataDir, "mock-data-dir", "m", "data", "Mock data directory")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataStatusFile, "mock-data-status-file", "status.json", "Mock data status file (in the mock data dir)")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file (in the mock data dir)")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file (in the mock data dir)")
 	rootCmd.PersistentFlags().BoolVarP(&config.setRandomMode, "random", "r", false, "Generate random trace data instead of relying on mocks (default false)")
 	rootCmd.PersistentFlags().BoolVarP(&config.debug, "debug", "d", false, "Enable verbose mode")
 
