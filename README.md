@@ -44,6 +44,8 @@ Flags:
 
 1. Start the mock server.
 
+By default, the mock server will return mock data for status, block and trace. Use `go run main.go --help` to see the files loaded by default and check the `data/` folder to inspect the content of the mocks.
+
 ```sh
 $ go run main.go \
   --debug \
