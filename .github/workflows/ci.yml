@@ -88,15 +88,6 @@ jobs:
     name: test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        test:
-          - name: mock data
-            custom_args: "--mock-data-dir data"
-          - name: random
-            custom_args: "--random"
-
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -117,7 +108,20 @@ jobs:
           sudo chmod +x /usr/local/bin/grpcurl
           grpcurl --version
 
-      - name: Run tests
+      - name: Run tests against a mock-server that returns mock data
+        run: |
+          ./mock-server \
+            --debug \
+            --grpc-port 8546 \
+            --http-port 8080 \
+            --http-save-endpoint /save \
+            --output-dir out \
+            --mock-data-dir data \
+            &
+
+          make test
+
+      - name: Run tests againt a mock-server that returns random data
         run: |
           echo "Starting ${{ matrix.test.name }} mock-server test"
           ./mock-server \
@@ -126,7 +130,7 @@ jobs:
             --http-port 8080 \
             --http-save-endpoint /save \
             --output-dir out \
-            {{ matrix.test.custom_args }} \
+            --random \
             &
 
           make test
