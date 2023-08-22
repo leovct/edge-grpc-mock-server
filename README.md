@@ -4,6 +4,12 @@
 
 - [Introduction](#introduction)
 - [Usage](#usage)
+  - [1. Start the mock server](#1-start-the-mock-server)
+  - [2. Start a zero worker](#2-start-a-zero-worker)
+  - [3. Start the zero leader](#3-start-the-zero-leader)
+  - [4. Interactions between the zero leader and the mock server](#4-interactions-between-the-zero-leader-and-the-mock-server)
+  - [5. Benchmark proof generation time for a given trace](#5-benchmark-proof-generation-time-for-a-given-trace)
+  - [6. Update trace mock data](#6-update-trace-mock-data)
 - [Use Case](#use-case)
 - [Contributing](#contributing)
 
@@ -42,7 +48,7 @@ Flags:
 
 ## Use Case
 
-1. Start the mock server.
+### 1. Start the mock server
 
 By default, the mock server will return mock data for status, block and trace. Use `go run main.go --help` to see the files loaded by default and check the `data/` folder to inspect the content of the mocks.
 
@@ -66,7 +72,7 @@ Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:142 > Mock traces data loaded
 Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:84 > gRPC server is starting on port 8546
 ```
 
-2. Start a zero worker.
+### 2. Start a zero worker
 
 ```sh
 zero_prover_worker \
@@ -77,7 +83,7 @@ zero_prover_worker \
   http://127.0.0.1:9001
 ```
 
-3. Start the zero leader.
+### 3. Start the zero leader
 
 ```sh
 $ zero_prover_leader \
@@ -94,7 +100,9 @@ Starting proof for height 206672...
 BlockProofInitProofPayload { block_metadata: BlockMetadata { block_beneficiary: 0x91d85d44647a4b074be799a67a53471c4d5e303e, block_timestamp: 1690559940, block_number: 1, block_difficulty: 1, block_gaslimit: 30000000, block_chain_id: 2001, block_base_fee: 878822934 }, skip_previous_block_proof: true, num_txns_in_block: 0 }
 ```
 
-4. Soon, you will see that the leader sends gRPC requests to the mock server.
+### 4. Interactions between the zero leader and the mock server
+
+Soon, you will see that the leader sends gRPC requests to the mock server.
 
 ```sh
 ...
@@ -102,7 +110,7 @@ Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:161 > gRPC /GetStatus request rec
 Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:165 > Mock StatusResponse number: 206672
 ...
 Mon Aug 21 12:41:49 CEST 2023 INF grpc/grpc.go:183 > gRPC /BlockByNumber request received
-Mon Aug 21 12:41:49 CEST 2023 DBG grpc/grpc.go:189 > Mock BlockResponse encoded data: [249 2 211 249 2 206 160 249 194 9 216 192 190 43 207 165 141 200 215 120 190 45 105 16 88 122 69 38 143 63 193 131 21 160 13 206 131 108 37 160 29 204 77 232 222 199 93 122 171 133 181 103 182 204 212 26 211 18 69 27 148 138 116 19 240 161 66 253 64 212 147 71 148 145 216 93 68 100 122 75 7 75 231 153 166 122 83 71 28 77 94 48 62 160 8 208 221 208 125 10 188 154 174 139 88 147 5 43 229 181 113 89 157 206 28 247 11 74 247 152 46 212 25 170 40 160 160 86 232 31 23 27 204 85 166 255 131 69 230 146 192 248 110 91 72 224 27 153 108 173 192 1 98 47 181 227 99 180 33 160 86 232 31 23 27 204 85 166 255 131 69 230 146 192 248 110 91 72 224 27 153 108 173 192 1 98 47 181 227 99 180 33 185 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 132 1 201 195 128 128 132 100 195 229 196 184 211 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 248 177 195 192 192 128 192 248 67 184 64 38 81 4 150 224 152 123 162 86 243 120 184 195 60 48 210 14 59 233 137 120 169 146 151 221 98 64 136 147 176 162 54 6 109 16 215 28 173 224 153 89 191 83 103 211 96 196 93 1 64 163 129 85 120 240 74 85 8 200 33 187 12 123 122 13 248 101 128 1 160 132 175 2 234 136 144 62 209 170 215 232 170 13 81 70 48 32 212 109 179 43 48 145 78 250 121 61 250 186 74 65 246 160 132 175 2 234 136 144 62 209 170 215 232 170 13 81 70 48 32 212 109 179 43 48 145 78 250 121 61 250 186 74 65 246 160 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 160 173 206 110 82 48 171 224 18 52 42 68 228 233 182 208 89 151 214 240 21 56 122 224 229 155 233 36 175 199 236 112 193 136 0 0 0 0 0 0 0 0 132 52 97 198 22 192 192]
+Mon Aug 21 12:41:49 CEST 2023 DBG grpc/grpc.go:189 > Mock BlockResponse encoded data: [249 2 211 249 ... 97 198 22 192 192]
 Mon Aug 21 12:41:49 CEST 2023 DBG grpc/grpc.go:209 > BlockResponse decoded data: {
   "Header": {
     "ParentHash": "0xf9c209d8c0be2bcfa58dc8d778be2d6910587a45268f3fc18315a00dce836c25",
@@ -279,7 +287,9 @@ $ cat out/1.json | jq -r .trace | base64 -d | jq
 }
 ```
 
-4. Finally, to assess the time required for the leader/worker configuration to produce a proof for a specific trace, you can monitor specific log entries:
+### 5. Benchmark proof generation time for a given trace
+
+To assess the time required for the leader/worker configuration to produce a proof for a specific trace, you can monitor specific log entries.
 
 When you observe the log entry `gRPC /GetTrace request received`, it signifies that the leader has initiated a request for the block trace. This happens after the leader has requested other details such as block metadata and has decided that it should generate a proof for a block at a given height. In this process, distinct tasks are assigned to the workers, which involve the generation of diverse types of proofs like transaction, aggregation, block, or compressed block proofs.
 
@@ -294,6 +304,30 @@ Fri Aug 18 15:08:15 CEST 2023 INF http/http.go:70 > POST request received on /sa
 ```
 
 Given these logs, we can estimate the proof took approximately one minute to generate.
+
+### 6. Update trace mock data
+
+You can also update the mock trace data that the server returns without restarting the server.
+
+```sh
+# The server starts with the default mock trace `data/trace3.json`.
+$ grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/GetTrace | jq
+{
+  "trace": "ewog...Cn0K"
+}
+
+# Update the mock trace returned by the server.
+$ grpcurl -plaintext -d "{\"trace\": $(cat data/trace1.json | jq .trace)}" 127.0.0.1:8546 v1.System/UpdateTrace | jq
+{
+  "success": true
+}
+
+# The server now returns `data/trace1.json`.
+$ grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/GetTrace | jq
+{
+  "trace": "eyJhY2NvdW50VHJpZSI6bnVsbCwic3RvcmFnZVRyaWUiOm51bGwsInBhcmVudFN0YXRlUm9vdCI6IjB4MDhkMGRkZDA3ZDBhYmM5YWFlOGI1ODkzMDUyYmU1YjU3MTU5OWRjZTFjZjcwYjRhZjc5ODJlZDQxOWFhMjhhMCIsInRyYW5zYWN0aW9uVHJhY2VzIjpbXX0="
+}
+```
 
 ## Contributing
 
