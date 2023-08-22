@@ -20,15 +20,8 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const (
-	// Mock data file paths.
-	StatusFile = "status.json"
-	BlocksFile = "block.json"
-	TraceFile  = "trace3.json"
-
-	// Constant dummy block height returned by the `/GetStatus` endpoint.
-	constantBlockHeight = 100_000_000_000_000_000
-)
+// Constant dummy block height returned by the `/GetStatus` endpoint.
+const constantBlockHeight = 100_000_000_000_000_000
 
 var (
 	// log is the package-level variable used for logging messages and errors.
@@ -99,67 +92,6 @@ func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockD
 	return nil
 }
 
-// Load mock data if provided by the user.
-func loadMockData(mockData Mock) (*pb.ChainStatus, *pb.BlockData, *pb.Trace, error) {
-	// Load status mock data.
-	var mockStatus pb.ChainStatus
-	statusMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.StatusFile)
-	log.Debug().Msgf("Fetching mock status file from %s", statusMockFilePath)
-	if _, err := os.Stat(statusMockFilePath); err == nil {
-		data, err := os.ReadFile(statusMockFilePath)
-		if err != nil {
-			fmt.Println("Error reading mock status file:", err)
-			return nil, nil, nil, err
-		}
-
-		if err := json.Unmarshal(data, &mockStatus); err != nil {
-			fmt.Println("Error unmarshaling mock status JSON:", err)
-			return nil, nil, nil, err
-		}
-		log.Debug().Msg("Mock status data loaded")
-	}
-
-	// Load block mock data.
-	var mockBlock pb.BlockData
-	blocksMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.BlockFile)
-	log.Debug().Msgf("Fetching mock block file from %s", blocksMockFilePath)
-	if _, err := os.Stat(blocksMockFilePath); err == nil {
-		data, err := os.ReadFile(blocksMockFilePath)
-		if err != nil {
-			fmt.Println("Error reading mock blocks file:", err)
-			return nil, nil, nil, err
-		}
-
-		if err := json.Unmarshal(data, &mockBlock); err != nil {
-			fmt.Println("Error unmarshaling mock blocks JSON:", err)
-			return nil, nil, nil, err
-		}
-		log.Debug().Msg("Mock blocks data loaded")
-	}
-
-	// Load trace mock data.
-	traceMutex.Lock()
-	defer traceMutex.Unlock()
-
-	var mockTrace pb.Trace
-	tracesMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.TraceFile)
-	log.Debug().Msgf("Fetching mock trace file from %s", tracesMockFilePath)
-	if _, err := os.Stat(tracesMockFilePath); err == nil {
-		data, err := os.ReadFile(tracesMockFilePath)
-		if err != nil {
-			fmt.Println("Error reading mock traces file:", err)
-			return nil, nil, nil, err
-		}
-
-		if err := json.Unmarshal(data, &mockTrace); err != nil {
-			fmt.Println("Error unmarshaling mock traces JSON:", err)
-			return nil, nil, nil, err
-		}
-		log.Debug().Msg("Mock traces data loaded")
-	}
-	return &mockStatus, &mockBlock, &mockTrace, nil
-}
-
 // GetStatus is the implementation of the `GetStatus` RPC method.
 // It returns a constant `ServerStatus` response.
 func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, error) {
@@ -193,26 +125,14 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 		rawData = mockBlockData.Data
 		log.Debug().Msgf("Mock BlockResponse encoded data: %v", mockBlockData.Data)
 	} else {
-		// Else, return dummy data.
+		// Else, return random data.
 		height := constantBlockHeight + counter
-		block := edge.GenerateDummyEdgeBlock(uint64(height), uint64(10))
+		block := edge.GenerateRandomEdgeBlock(uint64(height), uint64(10))
 		rawData = block.MarshalRLP()
 		log.Debug().Msgf("BlockResponse encoded data: %v", rawData)
 	}
-
-	// TODO: remove after debug session
-	decodedBlock := edgetypes.Block{}
-	if err := decodedBlock.UnmarshalRLP(rawData); err != nil {
-		log.Error().Err(err).Msg("BlockResponse decoding failed")
-		//return nil, err
-	} else {
-		data, err := json.MarshalIndent(decodedBlock, "", "  ")
-		if err != nil {
-			log.Error().Err(err).Msg("Unable to format JSON struct")
-			//return nil, err
-		} else {
-			log.Debug().Msgf("BlockResponse decoded data: %v", string(data))
-		}
+	if err := parseAndPrintRawBlockData(rawData); err != nil {
+		return nil, err
 	}
 
 	return &pb.BlockData{
@@ -232,8 +152,8 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 		log.Debug().Msgf("Mock TraceResponse encoded data: %v", mockTraceData.Trace)
 		rawTrace = mockTraceData.Trace
 	} else {
-		// Else, return dummy data.
-		trace := *edge.GenerateDummyEdgeTrace(10, 10, 10, 10)
+		// Else, return random data.
+		trace := *edge.GenerateRandomEdgeTrace(10, 10, 10, 10)
 		var err error
 		rawTrace, err = json.Marshal(trace)
 		if err != nil {
@@ -259,8 +179,6 @@ func (s *server) UpdateTrace(ctx context.Context, req *pb.Trace) (*pb.OperationS
 
 	// Extract the new trace data from the request.
 	newRawTrace := []byte(req.Trace)
-	fmt.Println(req.Trace)
-	fmt.Println(newRawTrace)
 	if err := parseAndPrintRawTrace(newRawTrace); err != nil {
 		return nil, err
 	}
@@ -273,6 +191,24 @@ func (s *server) UpdateTrace(ctx context.Context, req *pb.Trace) (*pb.OperationS
 	return &pb.OperationStatus{
 		Success: true,
 	}, nil
+}
+
+// Parse a raw block data and display its content.
+func parseAndPrintRawBlockData(rawBlockData []byte) error {
+	decodedBlock := edgetypes.Block{}
+	if err := decodedBlock.UnmarshalRLP(rawBlockData); err != nil {
+		log.Error().Err(err).Msg("BlockData decoding failed")
+		return err
+	} else {
+		data, err := json.MarshalIndent(decodedBlock, "", "  ")
+		if err != nil {
+			log.Error().Err(err).Msg("Unable to format JSON struct")
+			return err
+		} else {
+			log.Debug().Msgf("BlockResponse decoded data: %v", string(data))
+		}
+	}
+	return nil
 }
 
 // Parse a raw trace and display its content.
@@ -314,5 +250,50 @@ func parseAndPrintRawTrace(rawTrace []byte) error {
 			}
 		}
 	}
+	return nil
+}
+
+// Load mock data if provided by the user.
+func loadMockData(mockData Mock) (*pb.ChainStatus, *pb.BlockData, *pb.Trace, error) {
+	// Status mock data.
+	statusMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.StatusFile)
+	var mockStatus pb.ChainStatus
+	if err := loadDataFromFile(statusMockFilePath, &mockStatus); err != nil {
+		return nil, nil, nil, err
+	}
+
+	// Block mock data.
+	blocksMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.BlockFile)
+	var mockBlock pb.BlockData
+	if err := loadDataFromFile(blocksMockFilePath, &mockBlock); err != nil {
+		return nil, nil, nil, err
+	}
+
+	// Load trace mock data.
+	traceMutex.Lock()
+	defer traceMutex.Unlock()
+
+	tracesMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.TraceFile)
+	var mockTrace pb.Trace
+	if err := loadDataFromFile(tracesMockFilePath, &mockTrace); err != nil {
+		return nil, nil, nil, err
+	}
+
+	return &mockStatus, &mockBlock, &mockTrace, nil
+}
+
+// Load data from file.
+func loadDataFromFile(filePath string, target interface{}) error {
+	log.Debug().Msgf("Fetching mock data from %s", filePath)
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("error reading mock file: %w", err)
+	}
+
+	if err := json.Unmarshal(data, target); err != nil {
+		return fmt.Errorf("error unmarshaling mock JSON: %w", err)
+	}
+
+	log.Debug().Msgf("Mock data loaded from %s", filePath)
 	return nil
 }

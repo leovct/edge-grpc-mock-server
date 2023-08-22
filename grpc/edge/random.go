@@ -7,8 +7,8 @@ import (
 	"zero-provers/server/grpc/edge/types"
 )
 
-// GenerateDummyEdgeTrace generates a dummy `Trace` with random data.
-func GenerateDummyEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntriesAmount, txnTracesAmount int) *types.Trace {
+// GenerateRandomEdgeTrace generates a random `Trace` with random data.
+func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntriesAmount, txnTracesAmount int) *types.Trace {
 	trace := &types.Trace{
 		AccountTrie:     make(map[string]string),
 		StorageTrie:     make(map[string]string),
@@ -16,21 +16,21 @@ func GenerateDummyEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntri
 		TxnTraces:       []*types.TxnTrace{},
 	}
 
-	// Add some dummy accountTrie entries
+	// Add some random accountTrie entries
 	for i := 0; i < accountTriesAmount; i++ {
 		key := generateRandomHash()
 		value := generateRandomHash()
 		trace.AccountTrie[key.String()] = value.String()
 	}
 
-	// Add some dummy storageTrie entries
+	// Add some random storageTrie entries
 	for i := 0; i < storageTriesAmount; i++ {
 		key := generateRandomHash()
 		value := generateRandomHash()
 		trace.StorageTrie[key.String()] = value.String()
 	}
 
-	// Add some dummy TxnTraces
+	// Add some random TxnTraces
 	generateRandomBool := func() *bool {
 		b, _ := rand.Int(rand.Reader, big.NewInt(2))
 		res := b.Int64() == 1
@@ -43,7 +43,7 @@ func GenerateDummyEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntri
 		return &nonce
 	}
 
-	generateDummyJournalEntry := func() *types.JournalEntry {
+	generateRandomJournalEntry := func() *types.JournalEntry {
 		entry := &types.JournalEntry{
 			Addr:    generateRandomAddress(),
 			Balance: generateRandomBigInt(),
@@ -54,7 +54,7 @@ func GenerateDummyEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntri
 			Touched: generateRandomBool(),
 		}
 
-		// Add some dummy storage entries
+		// Add some random storage entries
 		for i := 0; i < storageEntriesAmount; i++ {
 			key := generateRandomHash()
 			value := generateRandomHash()
@@ -64,26 +64,26 @@ func GenerateDummyEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntri
 		return entry
 	}
 
-	generateDummyTxnTrace := func(nonce uint64) *types.TxnTrace {
+	generateRandomTxnTrace := func(nonce uint64) *types.TxnTrace {
 		txn := generateRandomTx(nonce)
 		return &types.TxnTrace{
 			Transaction: txn.MarshalRLP(),
 			Delta: map[types.Address]*types.JournalEntry{
-				generateRandomAddress(): generateDummyJournalEntry(),
+				generateRandomAddress(): generateRandomJournalEntry(),
 			},
 		}
 	}
 
 	for i := 0; i < txnTracesAmount; i++ {
-		trace.TxnTraces = append(trace.TxnTraces, generateDummyTxnTrace(uint64(i)))
+		trace.TxnTraces = append(trace.TxnTraces, generateRandomTxnTrace(uint64(i)))
 	}
 
 	return trace
 }
 
-// GenerateDummyEdgeBlock generates a dummy `Block` with random data.
-func GenerateDummyEdgeBlock(number, txnTracesAmount uint64) *types.Block {
-	// Generate a dummy EdgeBlock
+// GenerateRandomEdgeBlock generates a random `Block` with random data.
+func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
+	// Generate a random EdgeBlock
 	header := &types.Header{
 		ParentHash:   generateRandomHash(),
 		Sha3Uncles:   generateRandomHash(),

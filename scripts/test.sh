@@ -19,4 +19,4 @@ grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/GetTrace | jq -r
 
 echo "Sending HTTP requests..."
 curl -s -X POST -H "Content-Type: application/json" -d '{"name": "salamander", "type": "fire"}' http://127.0.0.1:8080/save
-cat out/1.json
+cat out/1.json | jq
