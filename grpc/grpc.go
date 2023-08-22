@@ -125,9 +125,9 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 		rawData = mockBlockData.Data
 		log.Debug().Msgf("Mock BlockResponse encoded data: %v", mockBlockData.Data)
 	} else {
-		// Else, return dummy data.
+		// Else, return random data.
 		height := constantBlockHeight + counter
-		block := edge.GenerateDummyEdgeBlock(uint64(height), uint64(10))
+		block := edge.GenerateRandomEdgeBlock(uint64(height), uint64(10))
 		rawData = block.MarshalRLP()
 		log.Debug().Msgf("BlockResponse encoded data: %v", rawData)
 	}
@@ -152,8 +152,8 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 		log.Debug().Msgf("Mock TraceResponse encoded data: %v", mockTraceData.Trace)
 		rawTrace = mockTraceData.Trace
 	} else {
-		// Else, return dummy data.
-		trace := *edge.GenerateDummyEdgeTrace(10, 10, 10, 10)
+		// Else, return random data.
+		trace := *edge.GenerateRandomEdgeTrace(10, 10, 10, 10)
 		var err error
 		rawTrace, err = json.Marshal(trace)
 		if err != nil {
