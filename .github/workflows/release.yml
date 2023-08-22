@@ -45,9 +45,10 @@ jobs:
       - name: Publish binaries
         uses: svenstaro/upload-release-action@v2
         with:
-          file: bin/archives/*.tar.gz
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
           overwrite: true
           file_glob: true
+          file: bin/archives/*.tar.gz
+          release_name: ${{ github.ref }}
           prerelease: true
