@@ -20,15 +20,8 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-const (
-	// Mock data file paths.
-	StatusFile = "status.json"
-	BlocksFile = "block.json"
-	TraceFile  = "trace3.json"
-
-	// Constant dummy block height returned by the `/GetStatus` endpoint.
-	constantBlockHeight = 100_000_000_000_000_000
-)
+// Constant dummy block height returned by the `/GetStatus` endpoint.
+const constantBlockHeight = 100_000_000_000_000_000
 
 var (
 	// log is the package-level variable used for logging messages and errors.
