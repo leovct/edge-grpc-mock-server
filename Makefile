@@ -14,6 +14,10 @@ gen: ## Compile protocol buffers and generate go code.
 clean: ## Delete generated go code.
 	rm -rf grpc/pb/*.go
 
+.PHONY: list
+list: ## List gRPC services (make sure gRPC server is listening on port 8546).
+	grpcurl -plaintext 127.0.0.1:8546 list v1.System
+
 ##@ Build
 
 .PHONY: build
