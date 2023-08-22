@@ -21,20 +21,19 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Response message for the GetStatus RPC method.
-type StatusResponse struct {
+type ChainStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Network int64                 `protobuf:"varint,1,opt,name=network,proto3" json:"network,omitempty"`
-	Genesis string                `protobuf:"bytes,2,opt,name=genesis,proto3" json:"genesis,omitempty"`
-	Current *StatusResponse_Block `protobuf:"bytes,3,opt,name=current,proto3" json:"current,omitempty"`
-	P2PAddr string                `protobuf:"bytes,4,opt,name=p2pAddr,proto3" json:"p2pAddr,omitempty"`
+	Network int64              `protobuf:"varint,1,opt,name=network,proto3" json:"network,omitempty"`
+	Genesis string             `protobuf:"bytes,2,opt,name=genesis,proto3" json:"genesis,omitempty"`
+	Current *ChainStatus_Block `protobuf:"bytes,3,opt,name=current,proto3" json:"current,omitempty"`
+	P2PAddr string             `protobuf:"bytes,4,opt,name=p2pAddr,proto3" json:"p2pAddr,omitempty"`
 }
 
-func (x *StatusResponse) Reset() {
-	*x = StatusResponse{}
+func (x *ChainStatus) Reset() {
+	*x = ChainStatus{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpc_pb_server_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -42,13 +41,13 @@ func (x *StatusResponse) Reset() {
 	}
 }
 
-func (x *StatusResponse) String() string {
+func (x *ChainStatus) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StatusResponse) ProtoMessage() {}
+func (*ChainStatus) ProtoMessage() {}
 
-func (x *StatusResponse) ProtoReflect() protoreflect.Message {
+func (x *ChainStatus) ProtoReflect() protoreflect.Message {
 	mi := &file_grpc_pb_server_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -60,51 +59,50 @@ func (x *StatusResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StatusResponse.ProtoReflect.Descriptor instead.
-func (*StatusResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ChainStatus.ProtoReflect.Descriptor instead.
+func (*ChainStatus) Descriptor() ([]byte, []int) {
 	return file_grpc_pb_server_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *StatusResponse) GetNetwork() int64 {
+func (x *ChainStatus) GetNetwork() int64 {
 	if x != nil {
 		return x.Network
 	}
 	return 0
 }
 
-func (x *StatusResponse) GetGenesis() string {
+func (x *ChainStatus) GetGenesis() string {
 	if x != nil {
 		return x.Genesis
 	}
 	return ""
 }
 
-func (x *StatusResponse) GetCurrent() *StatusResponse_Block {
+func (x *ChainStatus) GetCurrent() *ChainStatus_Block {
 	if x != nil {
 		return x.Current
 	}
 	return nil
 }
 
-func (x *StatusResponse) GetP2PAddr() string {
+func (x *ChainStatus) GetP2PAddr() string {
 	if x != nil {
 		return x.P2PAddr
 	}
 	return ""
 }
 
-// Request message using a block number.
-type BlockNumberRequest struct {
+type OperationStatus struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The block number for which the data is requested.
-	Number uint64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	// The status of the operation.
+	Success bool `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 }
 
-func (x *BlockNumberRequest) Reset() {
-	*x = BlockNumberRequest{}
+func (x *OperationStatus) Reset() {
+	*x = OperationStatus{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpc_pb_server_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -112,13 +110,13 @@ func (x *BlockNumberRequest) Reset() {
 	}
 }
 
-func (x *BlockNumberRequest) String() string {
+func (x *OperationStatus) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BlockNumberRequest) ProtoMessage() {}
+func (*OperationStatus) ProtoMessage() {}
 
-func (x *BlockNumberRequest) ProtoReflect() protoreflect.Message {
+func (x *OperationStatus) ProtoReflect() protoreflect.Message {
 	mi := &file_grpc_pb_server_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -130,30 +128,29 @@ func (x *BlockNumberRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BlockNumberRequest.ProtoReflect.Descriptor instead.
-func (*BlockNumberRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use OperationStatus.ProtoReflect.Descriptor instead.
+func (*OperationStatus) Descriptor() ([]byte, []int) {
 	return file_grpc_pb_server_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *BlockNumberRequest) GetNumber() uint64 {
+func (x *OperationStatus) GetSuccess() bool {
 	if x != nil {
-		return x.Number
+		return x.Success
 	}
-	return 0
+	return false
 }
 
-// Response message for the GetTrace RPC method.
-type TraceResponse struct {
+type BlockNumber struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The trace of the block represented as a byte array.
-	Trace []byte `protobuf:"bytes,1,opt,name=trace,proto3" json:"trace,omitempty"`
+	// The block number for which the data is requested.
+	Number uint64 `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
 }
 
-func (x *TraceResponse) Reset() {
-	*x = TraceResponse{}
+func (x *BlockNumber) Reset() {
+	*x = BlockNumber{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpc_pb_server_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -161,13 +158,13 @@ func (x *TraceResponse) Reset() {
 	}
 }
 
-func (x *TraceResponse) String() string {
+func (x *BlockNumber) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TraceResponse) ProtoMessage() {}
+func (*BlockNumber) ProtoMessage() {}
 
-func (x *TraceResponse) ProtoReflect() protoreflect.Message {
+func (x *BlockNumber) ProtoReflect() protoreflect.Message {
 	mi := &file_grpc_pb_server_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -179,20 +176,19 @@ func (x *TraceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TraceResponse.ProtoReflect.Descriptor instead.
-func (*TraceResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use BlockNumber.ProtoReflect.Descriptor instead.
+func (*BlockNumber) Descriptor() ([]byte, []int) {
 	return file_grpc_pb_server_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *TraceResponse) GetTrace() []byte {
+func (x *BlockNumber) GetNumber() uint64 {
 	if x != nil {
-		return x.Trace
+		return x.Number
 	}
-	return nil
+	return 0
 }
 
-// Response message for the BlockByNumber RPC method.
-type BlockResponse struct {
+type BlockData struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -201,8 +197,8 @@ type BlockResponse struct {
 	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
-func (x *BlockResponse) Reset() {
-	*x = BlockResponse{}
+func (x *BlockData) Reset() {
+	*x = BlockData{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpc_pb_server_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -210,13 +206,13 @@ func (x *BlockResponse) Reset() {
 	}
 }
 
-func (x *BlockResponse) String() string {
+func (x *BlockData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*BlockResponse) ProtoMessage() {}
+func (*BlockData) ProtoMessage() {}
 
-func (x *BlockResponse) ProtoReflect() protoreflect.Message {
+func (x *BlockData) ProtoReflect() protoreflect.Message {
 	mi := &file_grpc_pb_server_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -228,31 +224,29 @@ func (x *BlockResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use BlockResponse.ProtoReflect.Descriptor instead.
-func (*BlockResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use BlockData.ProtoReflect.Descriptor instead.
+func (*BlockData) Descriptor() ([]byte, []int) {
 	return file_grpc_pb_server_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *BlockResponse) GetData() []byte {
+func (x *BlockData) GetData() []byte {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-type StatusResponse_Block struct {
+type Trace struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// The block number for which the data is requested.
-	// Note: This is the only field of the StatusResponse message that's used by the prover at the moment.
-	Number int64  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
-	Hash   string `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+	// The trace of the block represented as a byte array.
+	Trace []byte `protobuf:"bytes,1,opt,name=trace,proto3" json:"trace,omitempty"`
 }
 
-func (x *StatusResponse_Block) Reset() {
-	*x = StatusResponse_Block{}
+func (x *Trace) Reset() {
+	*x = Trace{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_grpc_pb_server_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -260,13 +254,13 @@ func (x *StatusResponse_Block) Reset() {
 	}
 }
 
-func (x *StatusResponse_Block) String() string {
+func (x *Trace) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*StatusResponse_Block) ProtoMessage() {}
+func (*Trace) ProtoMessage() {}
 
-func (x *StatusResponse_Block) ProtoReflect() protoreflect.Message {
+func (x *Trace) ProtoReflect() protoreflect.Message {
 	mi := &file_grpc_pb_server_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -278,19 +272,69 @@ func (x *StatusResponse_Block) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use StatusResponse_Block.ProtoReflect.Descriptor instead.
-func (*StatusResponse_Block) Descriptor() ([]byte, []int) {
+// Deprecated: Use Trace.ProtoReflect.Descriptor instead.
+func (*Trace) Descriptor() ([]byte, []int) {
+	return file_grpc_pb_server_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Trace) GetTrace() []byte {
+	if x != nil {
+		return x.Trace
+	}
+	return nil
+}
+
+type ChainStatus_Block struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// The block number for which the data is requested.
+	// Note: This is the only field of the StatusResponse message that's used by the prover at the moment.
+	Number int64  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	Hash   string `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
+}
+
+func (x *ChainStatus_Block) Reset() {
+	*x = ChainStatus_Block{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_grpc_pb_server_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChainStatus_Block) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChainStatus_Block) ProtoMessage() {}
+
+func (x *ChainStatus_Block) ProtoReflect() protoreflect.Message {
+	mi := &file_grpc_pb_server_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChainStatus_Block.ProtoReflect.Descriptor instead.
+func (*ChainStatus_Block) Descriptor() ([]byte, []int) {
 	return file_grpc_pb_server_proto_rawDescGZIP(), []int{0, 0}
 }
 
-func (x *StatusResponse_Block) GetNumber() int64 {
+func (x *ChainStatus_Block) GetNumber() int64 {
 	if x != nil {
 		return x.Number
 	}
 	return 0
 }
 
-func (x *StatusResponse_Block) GetHash() string {
+func (x *ChainStatus_Block) GetHash() string {
 	if x != nil {
 		return x.Hash
 	}
@@ -303,40 +347,42 @@ var file_grpc_pb_server_proto_rawDesc = []byte{
 	0x0a, 0x14, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x70, 0x62, 0x2f, 0x73, 0x65, 0x72, 0x76, 0x65, 0x72,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x02, 0x76, 0x31, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74,
-	0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xc7, 0x01, 0x0a, 0x0e, 0x53, 0x74, 0x61, 0x74,
-	0x75, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6e, 0x65,
-	0x74, 0x77, 0x6f, 0x72, 0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x07, 0x6e, 0x65, 0x74,
-	0x77, 0x6f, 0x72, 0x6b, 0x12, 0x18, 0x0a, 0x07, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x12, 0x32,
-	0x0a, 0x07, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
-	0x18, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
-	0x6e, 0x73, 0x65, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x07, 0x63, 0x75, 0x72, 0x72, 0x65,
-	0x6e, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x70, 0x32, 0x70, 0x41, 0x64, 0x64, 0x72, 0x18, 0x04, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x07, 0x70, 0x32, 0x70, 0x41, 0x64, 0x64, 0x72, 0x1a, 0x33, 0x0a, 0x05,
-	0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12, 0x16, 0x0a, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x12, 0x0a,
-	0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x61, 0x73,
-	0x68, 0x22, 0x2c, 0x0a, 0x12, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65,
+	0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xc1, 0x01, 0x0a, 0x0b, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f,
+	0x72, 0x6b, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x07, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72,
+	0x6b, 0x12, 0x18, 0x0a, 0x07, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x07, 0x67, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x12, 0x2f, 0x0a, 0x07, 0x63,
+	0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x76,
+	0x31, 0x2e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x2e, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x52, 0x07, 0x63, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x12, 0x18, 0x0a, 0x07,
+	0x70, 0x32, 0x70, 0x41, 0x64, 0x64, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x70,
+	0x32, 0x70, 0x41, 0x64, 0x64, 0x72, 0x1a, 0x33, 0x0a, 0x05, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x12,
+	0x16, 0x0a, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x22, 0x2b, 0x0a, 0x0f, 0x4f,
+	0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18,
+	0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x25, 0x0a, 0x0b, 0x42, 0x6c, 0x6f, 0x63,
+	0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x16, 0x0a, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65,
 	0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x22,
-	0x25, 0x0a, 0x0d, 0x54, 0x72, 0x61, 0x63, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x14, 0x0a, 0x05, 0x74, 0x72, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52,
-	0x05, 0x74, 0x72, 0x61, 0x63, 0x65, 0x22, 0x23, 0x0a, 0x0d, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0xb4, 0x01, 0x0a, 0x06,
-	0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x12, 0x37, 0x0a, 0x09, 0x47, 0x65, 0x74, 0x53, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x12, 0x2e, 0x76, 0x31,
-	0x2e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x35, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x54, 0x72, 0x61, 0x63, 0x65, 0x12, 0x16, 0x2e, 0x76, 0x31,
-	0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x76, 0x31, 0x2e, 0x54, 0x72, 0x61, 0x63, 0x65, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3a, 0x0a, 0x0d, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x42,
-	0x79, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x16, 0x2e, 0x76, 0x31, 0x2e, 0x42, 0x6c, 0x6f,
-	0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x11, 0x2e, 0x76, 0x31, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x42, 0x09, 0x5a, 0x07, 0x67, 0x72, 0x70, 0x63, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x1f, 0x0a, 0x09, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x44, 0x61, 0x74, 0x61, 0x12, 0x12, 0x0a, 0x04,
+	0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61,
+	0x22, 0x1d, 0x0a, 0x05, 0x54, 0x72, 0x61, 0x63, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x72, 0x61,
+	0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x74, 0x72, 0x61, 0x63, 0x65, 0x32,
+	0xc6, 0x01, 0x0a, 0x06, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x12, 0x34, 0x0a, 0x09, 0x47, 0x65,
+	0x74, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a,
+	0x0f, 0x2e, 0x76, 0x31, 0x2e, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x12, 0x26, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x54, 0x72, 0x61, 0x63, 0x65, 0x12, 0x0f, 0x2e, 0x76,
+	0x31, 0x2e, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x1a, 0x09, 0x2e,
+	0x76, 0x31, 0x2e, 0x54, 0x72, 0x61, 0x63, 0x65, 0x12, 0x2d, 0x0a, 0x0b, 0x55, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x54, 0x72, 0x61, 0x63, 0x65, 0x12, 0x09, 0x2e, 0x76, 0x31, 0x2e, 0x54, 0x72, 0x61,
+	0x63, 0x65, 0x1a, 0x13, 0x2e, 0x76, 0x31, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x2f, 0x0a, 0x0d, 0x42, 0x6c, 0x6f, 0x63, 0x6b,
+	0x42, 0x79, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x0f, 0x2e, 0x76, 0x31, 0x2e, 0x42, 0x6c,
+	0x6f, 0x63, 0x6b, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x1a, 0x0d, 0x2e, 0x76, 0x31, 0x2e, 0x42,
+	0x6c, 0x6f, 0x63, 0x6b, 0x44, 0x61, 0x74, 0x61, 0x42, 0x09, 0x5a, 0x07, 0x67, 0x72, 0x70, 0x63,
+	0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -351,25 +397,28 @@ func file_grpc_pb_server_proto_rawDescGZIP() []byte {
 	return file_grpc_pb_server_proto_rawDescData
 }
 
-var file_grpc_pb_server_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_grpc_pb_server_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_grpc_pb_server_proto_goTypes = []interface{}{
-	(*StatusResponse)(nil),       // 0: v1.StatusResponse
-	(*BlockNumberRequest)(nil),   // 1: v1.BlockNumberRequest
-	(*TraceResponse)(nil),        // 2: v1.TraceResponse
-	(*BlockResponse)(nil),        // 3: v1.BlockResponse
-	(*StatusResponse_Block)(nil), // 4: v1.StatusResponse.Block
-	(*emptypb.Empty)(nil),        // 5: google.protobuf.Empty
+	(*ChainStatus)(nil),       // 0: v1.ChainStatus
+	(*OperationStatus)(nil),   // 1: v1.OperationStatus
+	(*BlockNumber)(nil),       // 2: v1.BlockNumber
+	(*BlockData)(nil),         // 3: v1.BlockData
+	(*Trace)(nil),             // 4: v1.Trace
+	(*ChainStatus_Block)(nil), // 5: v1.ChainStatus.Block
+	(*emptypb.Empty)(nil),     // 6: google.protobuf.Empty
 }
 var file_grpc_pb_server_proto_depIdxs = []int32{
-	4, // 0: v1.StatusResponse.current:type_name -> v1.StatusResponse.Block
-	5, // 1: v1.System.GetStatus:input_type -> google.protobuf.Empty
-	1, // 2: v1.System.GetTrace:input_type -> v1.BlockNumberRequest
-	1, // 3: v1.System.BlockByNumber:input_type -> v1.BlockNumberRequest
-	0, // 4: v1.System.GetStatus:output_type -> v1.StatusResponse
-	2, // 5: v1.System.GetTrace:output_type -> v1.TraceResponse
-	3, // 6: v1.System.BlockByNumber:output_type -> v1.BlockResponse
-	4, // [4:7] is the sub-list for method output_type
-	1, // [1:4] is the sub-list for method input_type
+	5, // 0: v1.ChainStatus.current:type_name -> v1.ChainStatus.Block
+	6, // 1: v1.System.GetStatus:input_type -> google.protobuf.Empty
+	2, // 2: v1.System.GetTrace:input_type -> v1.BlockNumber
+	4, // 3: v1.System.UpdateTrace:input_type -> v1.Trace
+	2, // 4: v1.System.BlockByNumber:input_type -> v1.BlockNumber
+	0, // 5: v1.System.GetStatus:output_type -> v1.ChainStatus
+	4, // 6: v1.System.GetTrace:output_type -> v1.Trace
+	1, // 7: v1.System.UpdateTrace:output_type -> v1.OperationStatus
+	3, // 8: v1.System.BlockByNumber:output_type -> v1.BlockData
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -382,7 +431,7 @@ func file_grpc_pb_server_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_grpc_pb_server_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StatusResponse); i {
+			switch v := v.(*ChainStatus); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -394,7 +443,7 @@ func file_grpc_pb_server_proto_init() {
 			}
 		}
 		file_grpc_pb_server_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BlockNumberRequest); i {
+			switch v := v.(*OperationStatus); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -406,7 +455,7 @@ func file_grpc_pb_server_proto_init() {
 			}
 		}
 		file_grpc_pb_server_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TraceResponse); i {
+			switch v := v.(*BlockNumber); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -418,7 +467,7 @@ func file_grpc_pb_server_proto_init() {
 			}
 		}
 		file_grpc_pb_server_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BlockResponse); i {
+			switch v := v.(*BlockData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -430,7 +479,19 @@ func file_grpc_pb_server_proto_init() {
 			}
 		}
 		file_grpc_pb_server_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*StatusResponse_Block); i {
+			switch v := v.(*Trace); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_grpc_pb_server_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ChainStatus_Block); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -448,7 +509,7 @@ func file_grpc_pb_server_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_grpc_pb_server_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

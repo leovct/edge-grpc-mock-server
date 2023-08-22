@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"sync"
 	"zero-provers/server/grpc/edge"
 	edgetypes "zero-provers/server/grpc/edge/types"
 	pb "zero-provers/server/grpc/pb"
@@ -38,9 +39,10 @@ var (
 	counterStep int = 50
 
 	// Mock data provided by the user.
-	mockStatusData *pb.StatusResponse
-	mockBlockData  *pb.BlockResponse
-	mockTraceData  *pb.TraceResponse
+	mockStatusData *pb.ChainStatus
+	mockBlockData  *pb.BlockData
+	mockTraceData  *pb.Trace
+	traceMutex     sync.Mutex
 )
 
 // server is an internal implementation of the gRPC server.
@@ -98,9 +100,9 @@ func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockD
 }
 
 // Load mock data if provided by the user.
-func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.TraceResponse, error) {
+func loadMockData(mockData Mock) (*pb.ChainStatus, *pb.BlockData, *pb.Trace, error) {
 	// Load status mock data.
-	var mockStatus pb.StatusResponse
+	var mockStatus pb.ChainStatus
 	statusMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.StatusFile)
 	log.Debug().Msgf("Fetching mock status file from %s", statusMockFilePath)
 	if _, err := os.Stat(statusMockFilePath); err == nil {
@@ -118,7 +120,7 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 	}
 
 	// Load block mock data.
-	var mockBlock pb.BlockResponse
+	var mockBlock pb.BlockData
 	blocksMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.BlockFile)
 	log.Debug().Msgf("Fetching mock block file from %s", blocksMockFilePath)
 	if _, err := os.Stat(blocksMockFilePath); err == nil {
@@ -136,7 +138,10 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 	}
 
 	// Load trace mock data.
-	var mockTrace pb.TraceResponse
+	traceMutex.Lock()
+	defer traceMutex.Unlock()
+
+	var mockTrace pb.Trace
 	tracesMockFilePath := fmt.Sprintf("%s/%s", mockData.Dir, mockData.TraceFile)
 	log.Debug().Msgf("Fetching mock trace file from %s", tracesMockFilePath)
 	if _, err := os.Stat(tracesMockFilePath); err == nil {
@@ -157,7 +162,7 @@ func loadMockData(mockData Mock) (*pb.StatusResponse, *pb.BlockResponse, *pb.Tra
 
 // GetStatus is the implementation of the `GetStatus` RPC method.
 // It returns a constant `ServerStatus` response.
-func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.StatusResponse, error) {
+func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, error) {
 	log.Info().Msg("gRPC /GetStatus request received")
 
 	// Return mock data if provided.
@@ -170,8 +175,8 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.StatusResponse, e
 	height := int64(constantBlockHeight + counter)
 	counter += counterStep
 	log.Debug().Msgf("StatusResponse number: %v", height)
-	return &pb.StatusResponse{
-		Current: &pb.StatusResponse_Block{
+	return &pb.ChainStatus{
+		Current: &pb.ChainStatus_Block{
 			Number: height,
 		},
 	}, nil
@@ -179,7 +184,7 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.StatusResponse, e
 
 // BlockByNumber is the implementation of the `BlockByNumber` RPC method.
 // It returns a constant `BlockResponse` containing a single byte.
-func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.BlockResponse, error) {
+func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData, error) {
 	log.Info().Msg("gRPC /BlockByNumber request received")
 
 	var rawData []byte
@@ -210,13 +215,16 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumberRequest) (*pb.Blo
 		}
 	}
 
-	return &pb.BlockResponse{
+	return &pb.BlockData{
 		Data: rawData,
 	}, nil
 }
 
-func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceResponse, error) {
+func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 	log.Info().Msg("gRPC /GetTrace request received")
+
+	traceMutex.Lock()
+	defer traceMutex.Unlock()
 
 	var rawTrace []byte
 	if mockTraceData != nil {
@@ -234,20 +242,56 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 		}
 		log.Debug().Msgf("TraceResponse encoded trace: %v", rawTrace)
 	}
+	if err := parseAndPrintRawTrace(rawTrace); err != nil {
+		return nil, err
+	}
 
-	// TODO: remove after debug session
+	return &pb.Trace{
+		Trace: rawTrace,
+	}, nil
+}
+
+func (s *server) UpdateTrace(ctx context.Context, req *pb.Trace) (*pb.OperationStatus, error) {
+	log.Info().Msg("gRPC /UpdateTrace request received")
+
+	traceMutex.Lock()
+	defer traceMutex.Unlock()
+
+	// Extract the new trace data from the request.
+	newRawTrace := []byte(req.Trace)
+	fmt.Println(req.Trace)
+	fmt.Println(newRawTrace)
+	if err := parseAndPrintRawTrace(newRawTrace); err != nil {
+		return nil, err
+	}
+
+	// Update trace data.
+	mockTraceData = &pb.Trace{
+		Trace: newRawTrace,
+	}
+	log.Debug().Msg("Trace data updated successfully")
+	return &pb.OperationStatus{
+		Success: true,
+	}, nil
+}
+
+// Parse a raw trace and display its content.
+func parseAndPrintRawTrace(rawTrace []byte) error {
+	// Decode the raw trace.
 	var decodedTrace *edgetypes.Trace
 	if err := json.Unmarshal(rawTrace, &decodedTrace); err != nil {
-		log.Error().Err(err).Msg("BlockTrace decoding failed")
-		//return nil, err
+		log.Error().Err(err).Msg("Raw trace decoding failed")
+		return err
 	} else {
+		// Marshal the decoded trace to JSON.
 		data, err := json.MarshalIndent(decodedTrace, "", "  ")
 		if err != nil {
 			log.Error().Err(err).Msg("Unable to format JSON struct")
-			//return nil, err
+			return err
 		} else {
 			log.Debug().Msgf("TraceResponce decoded trace: %v", string(data))
 
+			// Decode each transaction of the trace.
 			traces := decodedTrace.TxnTraces
 			if len(traces) > 0 {
 				log.Debug().Msg("Decoding TraceResponce transactionTraces txn fields (RLP encoded)...")
@@ -257,12 +301,12 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 				txnBytes := []byte(trace.Transaction)
 				if err := decodedTxn.UnmarshalRLP(txnBytes); err != nil {
 					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i+1)
-					return nil, err
+					return err
 				} else {
 					data, err := json.MarshalIndent(decodedTxn, "", "  ")
 					if err != nil {
 						log.Error().Err(err).Msg("Unable to format JSON struct")
-						//return nil, err
+						return err
 					} else {
 						log.Debug().Msgf("Transaction #%d decoded: %v", i+1, string(data))
 					}
@@ -270,8 +314,5 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumberRequest) (*pb.TraceRes
 			}
 		}
 	}
-
-	return &pb.TraceResponse{
-		Trace: rawTrace,
-	}, nil
+	return nil
 }

@@ -12,17 +12,21 @@ import "google/protobuf/empty.proto";
 // https://github.com/0xPolygon/polygon-edge/blob/19d140a43d1da027a664ae7d2a44cfc35d415f8d/server/proto/system.proto#L27
 service System {
   // GetInfo returns info about the client.
-  rpc GetStatus(google.protobuf.Empty) returns (StatusResponse);
+  rpc GetStatus(google.protobuf.Empty) returns (ChainStatus);
 
   // GetTrace returns the trace for a given block height.
-  rpc GetTrace(BlockNumberRequest) returns (TraceResponse);
+  rpc GetTrace(BlockNumber) returns (Trace);
+
+  // UpdateTrace updates the trace return by the server.
+  rpc UpdateTrace(Trace) returns (OperationStatus);
 
   // BlockByNumber returns blockchain data for a given block number.
-  rpc BlockByNumber(BlockNumberRequest) returns (BlockResponse);
+  rpc BlockByNumber(BlockNumber) returns (BlockData);
 }
 
-// Response message for the GetStatus RPC method.
-message StatusResponse {
+// Status
+
+message ChainStatus {
   int64 network = 1;
   string genesis = 2;
   Block current = 3;
@@ -36,20 +40,26 @@ message StatusResponse {
   }
 }
 
-// Request message using a block number.
-message BlockNumberRequest {
+message OperationStatus {
+  // The status of the operation.
+  bool success = 1;
+}
+
+// Block
+
+message BlockNumber {
   // The block number for which the data is requested.
   uint64 number = 1;
 }
 
-// Response message for the GetTrace RPC method.
-message TraceResponse {
-  // The trace of the block represented as a byte array.
-  bytes trace = 1;
-}
-
-// Response message for the BlockByNumber RPC method.
-message BlockResponse {
+message BlockData {
   // The data of the block represented as a byte array.
   bytes data = 1;
+}
+
+// Trace
+
+message Trace {
+  // The trace of the block represented as a byte array.
+  bytes trace = 1;
 }
