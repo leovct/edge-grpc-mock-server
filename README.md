@@ -19,7 +19,7 @@ Simple mock of an [edge](https://github.com/0xPolygon/polygon-edge) gRPC server 
 
 It consists of two servers:
 
-1. A gRPC server that mocks the functioning of an Edge node. It only implements a subset of all the [methods](https://github.com/0xPolygon/polygon-edge/blob/zero-trace/server/proto/system.proto) such as `GetStatus`, `GetTrace` and `BlockByNumber`. By default, the data is mocked (see `data/`) but it can also be randomly generated using the `random` flag.
+1. A gRPC server that mocks the functioning of an Edge node. It only implements a subset of all the [methods](https://github.com/0xPolygon/polygon-edge/blob/zero-trace/server/proto/system.proto) such as `GetStatus`, `GetTrace` and `BlockByNumber`. You can get the list of available methods using `make list`. By default, the data is mocked (see `data/`) but it can also be randomly generated using the `random` flag.
 
 2. An HTTP server that either displays HTTP POST request data or saves it to the filesystem.
 
