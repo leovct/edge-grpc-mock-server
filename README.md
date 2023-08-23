@@ -4,13 +4,13 @@
 
 - [Introduction](#introduction)
 - [Usage](#usage)
+- [Use Case](#use-case)
   - [1. Start the mock server](#1-start-the-mock-server)
   - [2. Start a zero worker](#2-start-a-zero-worker)
   - [3. Start the zero leader](#3-start-the-zero-leader)
   - [4. Interactions between the zero leader and the mock server](#4-interactions-between-the-zero-leader-and-the-mock-server)
   - [5. Benchmark proof generation time for a given trace](#5-benchmark-proof-generation-time-for-a-given-trace)
   - [6. Update trace mock data](#6-update-trace-mock-data)
-- [Use Case](#use-case)
 - [Contributing](#contributing)
 
 ## Introduction
