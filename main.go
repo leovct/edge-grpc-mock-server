@@ -22,10 +22,9 @@ type Config struct {
 	// Directory in which proofs are stored.
 	ProofsOutputDir string
 	// Directory in which mock data is provided.
-	MockDataDir        string
-	MockDataBlockFile  string
-	MockDataStatusFile string
-	MockDataTraceFile  string
+	MockDataDir       string
+	MockDataBlockFile string
+	MockDataTraceFile string
 
 	// Mode of the mock server, either static or dynamic.
 	// - static: the server always return the same mock block data.
@@ -70,10 +69,9 @@ func main() {
 					Port:     config.GRPCServerPort,
 					Mode:     modes.Mode(config.Mode),
 					MockData: grpc.Mock{
-						Dir:        config.MockDataDir,
-						StatusFile: config.MockDataStatusFile,
-						BlockFile:  config.MockDataBlockFile,
-						TraceFile:  config.MockDataTraceFile,
+						Dir:       config.MockDataDir,
+						BlockFile: config.MockDataBlockFile,
+						TraceFile: config.MockDataTraceFile,
 					},
 				}))
 			}()
@@ -95,7 +93,6 @@ func main() {
 
 	rootCmd.PersistentFlags().StringVarP(&config.ProofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
 	rootCmd.PersistentFlags().StringVar(&config.MockDataDir, "mock-data-dir", "data", "Mock data directory")
-	rootCmd.PersistentFlags().StringVar(&config.MockDataStatusFile, "mock-data-status-file", "status.json", "Mock data status file (in the mock data dir)")
 	rootCmd.PersistentFlags().StringVar(&config.MockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file (in the mock data dir)")
 	rootCmd.PersistentFlags().StringVar(&config.MockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file (in the mock data dir)")
 

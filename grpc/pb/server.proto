@@ -17,9 +17,6 @@ service System {
   // GetTrace returns the trace for a given block height.
   rpc GetTrace(BlockNumber) returns (Trace);
 
-  // UpdateTrace updates the trace return by the server.
-  rpc UpdateTrace(Trace) returns (OperationStatus);
-
   // BlockByNumber returns blockchain data for a given block number.
   rpc BlockByNumber(BlockNumber) returns (BlockData);
 }
@@ -38,11 +35,6 @@ message ChainStatus {
     int64 number = 1;
     string hash = 2;
   }
-}
-
-message OperationStatus {
-  // The status of the operation.
-  bool success = 1;
 }
 
 // Block
