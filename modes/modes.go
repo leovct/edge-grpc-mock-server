@@ -1,4 +1,4 @@
-package constants
+package modes
 
 type Mode string
 

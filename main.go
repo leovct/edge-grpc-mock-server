@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
-	"zero-provers/server/constants"
 	"zero-provers/server/grpc"
 	"zero-provers/server/http"
+	"zero-provers/server/modes"
 
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
@@ -53,12 +53,12 @@ func main() {
 			}
 
 			// Check the mode.
-			switch constants.Mode(config.mode) {
-			case constants.StaticMode, constants.DynamicMode, constants.RandomMode:
+			switch modes.Mode(config.mode) {
+			case modes.StaticMode, modes.DynamicMode, modes.RandomMode:
 				// Valid modes, no action needed.
 			default:
 				fmt.Printf("Mode '%s' is not supported... Please either use '%s', '%s' or '%s'.",
-					config.mode, constants.StaticMode, constants.DynamicMode, constants.RandomMode)
+					config.mode, modes.StaticMode, modes.DynamicMode, modes.RandomMode)
 				return
 			}
 			fmt.Println(config.mode)
@@ -71,7 +71,7 @@ func main() {
 					BlockFile:  config.mockDataBlockFile,
 					TraceFile:  config.mockDataTraceFile,
 				}
-				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, constants.Mode(config.mode), mock))
+				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, modes.Mode(config.mode), mock))
 			}()
 
 			// Start the HTTP server.
@@ -90,7 +90,7 @@ func main() {
 	rootCmd.PersistentFlags().StringVar(&config.mockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file (in the mock data dir)")
 	rootCmd.PersistentFlags().StringVar(&config.mockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file (in the mock data dir)")
 
-	rootCmd.PersistentFlags().StringVarP(&config.mode, "mode", "m", string(constants.StaticMode),
+	rootCmd.PersistentFlags().StringVarP(&config.mode, "mode", "m", string(modes.StaticMode),
 		`Mode of the mock server.
 - static: the server always return the same mock block data.
 - dynamic: the server returns new mock block data every {n} requests.
