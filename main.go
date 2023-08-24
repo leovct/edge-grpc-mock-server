@@ -88,7 +88,7 @@ func main() {
 		},
 	}
 
-	// Define flags for configuration
+	// Define flags for configuration.
 	rootCmd.PersistentFlags().IntVarP(&config.GRPCServerPort, "grpc-port", "g", 8546, "gRPC server port")
 	rootCmd.PersistentFlags().IntVarP(&config.HTTPServerPort, "http-port", "p", 8080, "HTTP server port")
 	rootCmd.PersistentFlags().StringVarP(&config.HTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")

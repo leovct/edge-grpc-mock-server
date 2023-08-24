@@ -12,16 +12,16 @@ import (
 )
 
 var (
-	// log is the package-level variable used for logging messages and errors.
+	// Log is the package-level variable used for logging messages and errors.
 	log zerolog.Logger
 
-	// saveEndpoint is the URL path for the save endpoint.
+	// SaveEndpoint is the URL path for the save endpoint.
 	saveEndpoint string
 
-	// proofsDir is the repository in which proofs are saved to the disk.
+	// ProofsDir is the repository in which proofs are saved to the disk.
 	proofsDir string
 
-	// count the number of proofs saved on disk.
+	// Count the number of proofs saved on disk.
 	proofCount = 1
 )
 

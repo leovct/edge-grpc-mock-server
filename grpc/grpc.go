@@ -25,7 +25,7 @@ import (
 const constantBlockHeight = 100_000_000_000_000_000
 
 var (
-	// log is the package-level variable used for logging messages and errors.
+	// Log is the package-level variable used for logging messages and errors.
 	log zerolog.Logger
 
 	// Increase the block height on every GetStatus request made.

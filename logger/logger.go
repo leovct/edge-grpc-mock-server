@@ -1,4 +1,4 @@
-// logger/logger.go
+// Logger/logger.go.
 
 package logger
 
