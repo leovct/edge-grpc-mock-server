@@ -12,7 +12,7 @@ type Block struct {
 	Uncles       []*Header
 
 	// Cache
-	//size atomic.Pointer[uint64]
+	//size atomic.Pointer[uint64].
 }
 
 func (b *Block) MarshalRLP() []byte {
@@ -91,13 +91,13 @@ func (b *Block) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 		return fmt.Errorf("incorrect number of elements to decode block, expected 3 but found %d", len(elems))
 	}
 
-	// header
+	// Header.
 	b.Header = &Header{}
 	if err = b.Header.UnmarshalRLPFrom(p, elems[0]); err != nil {
 		return err
 	}
 
-	// transactions
+	// Transactions.
 	txns, err := elems[1].GetElems()
 	if err != nil {
 		return err
@@ -112,7 +112,7 @@ func (b *Block) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 		b.Transactions = append(b.Transactions, bTxn)
 	}
 
-	// uncles
+	// Uncles.
 	uncles, err := elems[2].GetElems()
 	if err != nil {
 		return err

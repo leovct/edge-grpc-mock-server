@@ -31,7 +31,7 @@ type Transaction struct {
 	ChainID *big.Int
 
 	// Cache
-	//size atomic.Pointer[uint64]
+	//size atomic.Pointer[uint64].
 }
 
 type TxType byte
@@ -65,7 +65,7 @@ func (t *Transaction) MarshalRLPWith(arena *fastrlp.Arena) *fastrlp.Value {
 
 	vv.Set(arena.NewUint(t.Gas))
 
-	// Address may be empty
+	// Address may be empty.
 	if t.To != nil {
 		vv.Set(arena.NewCopyBytes(t.To.Bytes()))
 	} else {
@@ -83,7 +83,7 @@ func (t *Transaction) MarshalRLPWith(arena *fastrlp.Arena) *fastrlp.Value {
 		vv.Set(arena.NewArray())
 	}
 
-	// signature values
+	// Signature values.
 	vv.Set(arena.NewBigInt(t.V))
 	vv.Set(arena.NewBigInt(t.R))
 	vv.Set(arena.NewBigInt(t.S))
@@ -99,7 +99,7 @@ func (t *Transaction) UnmarshalRLP(input []byte) error {
 	return UnmarshalRlp(t.UnmarshalRLPFrom, input)
 }
 
-// UnmarshalRLPFrom unmarshals a Transaction in RLP format
+// UnmarshalRLPFrom unmarshals a Transaction in RLP format.
 func (t *Transaction) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 	elems, err := v.GetElems()
 	if err != nil {
@@ -112,50 +112,50 @@ func (t *Transaction) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) erro
 
 	p.Hash(t.Hash[:0], v)
 
-	// nonce
+	// Nonce.
 	if t.Nonce, err = elems[0].GetUint64(); err != nil {
 		return err
 	}
-	// gasPrice
+	// GasPrice.
 	t.GasPrice = new(big.Int)
 	if err = elems[1].GetBigInt(t.GasPrice); err != nil {
 		return err
 	}
-	// gas
+	// Gas.
 	if t.Gas, err = elems[2].GetUint64(); err != nil {
 		return err
 	}
-	// to
+	// To.
 	if vv, _ := v.Get(3).Bytes(); len(vv) == 20 {
-		// address
+		// Address.
 		addr := BytesToAddress(vv)
 		t.To = &addr
 	} else {
-		// reset To
+		// Reset To.
 		t.To = nil
 	}
-	// value
+	// Value.
 	t.Value = new(big.Int)
 	if err = elems[4].GetBigInt(t.Value); err != nil {
 		return err
 	}
-	// input
+	// Input.
 	if t.Input, err = elems[5].GetBytes(t.Input[:0]); err != nil {
 		return err
 	}
 
-	// V
+	// V.
 	t.V = new(big.Int)
 	if err = elems[6].GetBigInt(t.V); err != nil {
 		return err
 	}
 
-	// R
+	// R.
 	t.R = new(big.Int)
 	if err = elems[7].GetBigInt(t.R); err != nil {
 		return err
 	}
-	// S
+	// S.
 	t.S = new(big.Int)
 	if err = elems[8].GetBigInt(t.S); err != nil {
 		return err

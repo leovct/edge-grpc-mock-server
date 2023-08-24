@@ -84,10 +84,11 @@ jobs:
             exit 1
           fi
 
-  mock-data-test:
-    name: mock-data-test
+  static-mode-test:
+    name: static-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -108,23 +109,26 @@ jobs:
           sudo chmod +x /usr/local/bin/grpcurl
           grpcurl --version
 
-      - name: Run tests against a mock-server that returns mock data
+      - name: Run tests against a mock-server that returns static mock data
         run: |
           ./mock-server \
-            --debug \
             --grpc-port 8546 \
             --http-port 8080 \
             --http-save-endpoint /save \
+            --mock-data-block-file data/blocks/block1.json \
+            --mock-data-trace-file data/traces/encoded/trace3.json \
+            --mode static \
             --output-dir out \
-            --mock-data-dir data \
+            --verbosity 0 \
             &
 
           make test
 
-  random-data-test:
-    name: random-data-test
+  random-mode-test:
+    name: random-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -147,14 +151,14 @@ jobs:
 
       - name: Run tests againt a mock-server that returns random data
         run: |
-          echo "Starting ${{ matrix.test.name }} mock-server test"
           ./mock-server \
-            --debug \
             --grpc-port 8546 \
             --http-port 8080 \
             --http-save-endpoint /save \
+            --mode random \
+            --update-block-number-threshold 30 \
             --output-dir out \
-            --random \
+            --verbosity 0 \
             &
 
           make test

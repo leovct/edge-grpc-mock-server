@@ -16,21 +16,21 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 		TxnTraces:       []*types.TxnTrace{},
 	}
 
-	// Add some random accountTrie entries
+	// Add some random accountTrie entries.
 	for i := 0; i < accountTriesAmount; i++ {
 		key := generateRandomHash()
 		value := generateRandomHash()
 		trace.AccountTrie[key.String()] = value.String()
 	}
 
-	// Add some random storageTrie entries
+	// Add some random storageTrie entries.
 	for i := 0; i < storageTriesAmount; i++ {
 		key := generateRandomHash()
 		value := generateRandomHash()
 		trace.StorageTrie[key.String()] = value.String()
 	}
 
-	// Add some random TxnTraces
+	// Add some random TxnTraces.
 	generateRandomBool := func() *bool {
 		b, _ := rand.Int(rand.Reader, big.NewInt(2))
 		res := b.Int64() == 1
@@ -54,7 +54,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 			Touched: generateRandomBool(),
 		}
 
-		// Add some random storage entries
+		// Add some random storage entries.
 		for i := 0; i < storageEntriesAmount; i++ {
 			key := generateRandomHash()
 			value := generateRandomHash()
@@ -83,7 +83,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 
 // GenerateRandomEdgeBlock generates a random `Block` with random data.
 func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
-	// Generate a random EdgeBlock
+	// Generate a random EdgeBlock.
 	header := &types.Header{
 		ParentHash:   generateRandomHash(),
 		Sha3Uncles:   generateRandomHash(),
@@ -104,14 +104,14 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 		BaseFee:      5,
 	}
 
-	// Generate a list of random transactions
+	// Generate a list of random transactions.
 	var transactions []*types.Transaction
 	var i uint64
 	for i = 0; i < txnTracesAmount; i++ {
 		transactions = append(transactions, generateRandomTx(i))
 	}
 
-	// Generate a list of random uncles
+	// Generate a list of random uncles.
 	var uncles []*types.Header
 	for i := 0; i < 2; i++ {
 		uncles = append(uncles, &types.Header{

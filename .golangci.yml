@@ -1,0 +1,15 @@
+run:
+  tests: true
+
+linters:
+  enable:
+    - godot
+
+linters-settings:
+  godot:
+    # Check all comments.
+    scope: all
+    # Check that each sentence ends with a period.
+    period: true
+    # Check that each sentence starts with a capital letter.
+    capital: true

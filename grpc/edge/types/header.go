@@ -48,7 +48,7 @@ func (h *Header) ComputeHash() *Header {
 }
 
 func defHeaderHash(h *Header) (hash Hash) {
-	// default header hashing
+	// Default header hashing.
 	ar := marshalArenaPool.Get()
 	hasher := keccak.DefaultKeccakPool.Get()
 
@@ -101,63 +101,63 @@ func (h *Header) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 		return fmt.Errorf("incorrect number of elements to decode header, expected 15 but found %d", len(elems))
 	}
 
-	// parentHash
+	// ParentHash.
 	if err = elems[0].GetHash(h.ParentHash[:]); err != nil {
 		return err
 	}
-	// sha3uncles
+	// Sha3uncles.
 	if err = elems[1].GetHash(h.Sha3Uncles[:]); err != nil {
 		return err
 	}
-	// miner
+	// Miner.
 	if h.Miner, err = elems[2].GetBytes(h.Miner[:]); err != nil {
 		return err
 	}
-	// stateroot
+	// Stateroot.
 	if err = elems[3].GetHash(h.StateRoot[:]); err != nil {
 		return err
 	}
-	// txroot
+	// Txroot.
 	if err = elems[4].GetHash(h.TxRoot[:]); err != nil {
 		return err
 	}
-	// receiptroot
+	// Receiptroot.
 	if err = elems[5].GetHash(h.ReceiptsRoot[:]); err != nil {
 		return err
 	}
-	// logsBloom
+	// LogsBloom.
 	if _, err = elems[6].GetBytes(h.LogsBloom[:0], 256); err != nil {
 		return err
 	}
-	// difficulty
+	// Difficulty.
 	if h.Difficulty, err = elems[7].GetUint64(); err != nil {
 		return err
 	}
-	// number
+	// Number.
 	if h.Number, err = elems[8].GetUint64(); err != nil {
 		return err
 	}
-	// gasLimit
+	// GasLimit.
 	if h.GasLimit, err = elems[9].GetUint64(); err != nil {
 		return err
 	}
-	// gasused
+	// Gasused.
 	if h.GasUsed, err = elems[10].GetUint64(); err != nil {
 		return err
 	}
-	// timestamp
+	// Timestamp.
 	if h.Timestamp, err = elems[11].GetUint64(); err != nil {
 		return err
 	}
-	// extraData
+	// ExtraData.
 	if h.ExtraData, err = elems[12].GetBytes(h.ExtraData[:0]); err != nil {
 		return err
 	}
-	// mixHash
+	// MixHash.
 	if err = elems[13].GetHash(h.MixHash[:0]); err != nil {
 		return err
 	}
-	// nonce
+	// Nonce.
 	nonce, err := elems[14].GetUint64()
 	if err != nil {
 		return err
@@ -165,7 +165,7 @@ func (h *Header) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 
 	h.SetNonce(nonce)
 
-	// compute the hash after the decoding
+	// Compute the hash after the decoding.
 	h.ComputeHash()
 
 	return err

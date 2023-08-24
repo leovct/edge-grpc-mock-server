@@ -27,8 +27,6 @@ type SystemClient interface {
 	GetStatus(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ChainStatus, error)
 	// GetTrace returns the trace for a given block height.
 	GetTrace(ctx context.Context, in *BlockNumber, opts ...grpc.CallOption) (*Trace, error)
-	// UpdateTrace updates the trace return by the server.
-	UpdateTrace(ctx context.Context, in *Trace, opts ...grpc.CallOption) (*OperationStatus, error)
 	// BlockByNumber returns blockchain data for a given block number.
 	BlockByNumber(ctx context.Context, in *BlockNumber, opts ...grpc.CallOption) (*BlockData, error)
 }
@@ -59,15 +57,6 @@ func (c *systemClient) GetTrace(ctx context.Context, in *BlockNumber, opts ...gr
 	return out, nil
 }
 
-func (c *systemClient) UpdateTrace(ctx context.Context, in *Trace, opts ...grpc.CallOption) (*OperationStatus, error) {
-	out := new(OperationStatus)
-	err := c.cc.Invoke(ctx, "/v1.System/UpdateTrace", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *systemClient) BlockByNumber(ctx context.Context, in *BlockNumber, opts ...grpc.CallOption) (*BlockData, error) {
 	out := new(BlockData)
 	err := c.cc.Invoke(ctx, "/v1.System/BlockByNumber", in, out, opts...)
@@ -85,8 +74,6 @@ type SystemServer interface {
 	GetStatus(context.Context, *emptypb.Empty) (*ChainStatus, error)
 	// GetTrace returns the trace for a given block height.
 	GetTrace(context.Context, *BlockNumber) (*Trace, error)
-	// UpdateTrace updates the trace return by the server.
-	UpdateTrace(context.Context, *Trace) (*OperationStatus, error)
 	// BlockByNumber returns blockchain data for a given block number.
 	BlockByNumber(context.Context, *BlockNumber) (*BlockData, error)
 	mustEmbedUnimplementedSystemServer()
@@ -101,9 +88,6 @@ func (UnimplementedSystemServer) GetStatus(context.Context, *emptypb.Empty) (*Ch
 }
 func (UnimplementedSystemServer) GetTrace(context.Context, *BlockNumber) (*Trace, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTrace not implemented")
-}
-func (UnimplementedSystemServer) UpdateTrace(context.Context, *Trace) (*OperationStatus, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTrace not implemented")
 }
 func (UnimplementedSystemServer) BlockByNumber(context.Context, *BlockNumber) (*BlockData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockByNumber not implemented")
@@ -157,24 +141,6 @@ func _System_GetTrace_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _System_UpdateTrace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Trace)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SystemServer).UpdateTrace(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/v1.System/UpdateTrace",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SystemServer).UpdateTrace(ctx, req.(*Trace))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _System_BlockByNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlockNumber)
 	if err := dec(in); err != nil {
@@ -207,10 +173,6 @@ var System_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTrace",
 			Handler:    _System_GetTrace_Handler,
-		},
-		{
-			MethodName: "UpdateTrace",
-			Handler:    _System_UpdateTrace_Handler,
 		},
 		{
 			MethodName: "BlockByNumber",
