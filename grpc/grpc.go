@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"zero-provers/server/grpc/edge"
 	edgetypes "zero-provers/server/grpc/edge/types"
 	pb "zero-provers/server/grpc/pb"
@@ -34,9 +35,15 @@ var (
 	// Mock data.
 	mockData MockData
 
-	// Increase the block height on every GetStatus request made.
-	counter     int
-	counterStep int = 50
+	// Keep track of the number of `status` requests made to the mock server. The zero-prover constantly
+	// sends those requests, in order to be aware of new blocks and to start proving as soon as possible.
+	requestCounter int
+
+	// Number of requests after which the server returns new data, block and trace (used in `dynamic` mode).
+	updateDataThreshold int
+
+	// Number of requests after which the server increments the block number (used in `random` mode).
+	updateBlockNumberThreshold int
 )
 
 type ServerConfig struct {
@@ -97,23 +104,40 @@ func StartgRPCServer(config ServerConfig) error {
 // GetStatus is the implementation of the `GetStatus` RPC method.
 func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, error) {
 	log.Info().Msg("gRPC /GetStatus request received")
+	requestCounter++
 
+	// Load block number from file or increment block number based on the request counter.
 	var height int64
 	switch mode {
 	case modes.StaticMode:
 		// Parse the block mock file and return the header number.
-		var mockBlock pb.BlockData
-		if err := loadDataFromFile(mockData.BlockFile, &mockBlock); err != nil {
-			return nil, err
-		}
-		block, err := parseAndPrintRawBlockData(mockBlock.Data)
+		var err error
+		height, err = getBlockNumberFromBlockFile(mockData.BlockFile)
 		if err != nil {
 			return nil, err
 		}
-		height = int64(block.Header.Number)
-	case modes.RandomMode, modes.DynamicMode:
-		height = int64(constantBlockHeight + counter)
-		counter += counterStep
+
+	case modes.DynamicMode:
+		// List the block mock files under the block mock directory.
+		files, err := filepath.Glob(filepath.Join(mockData.BlockDir, "*.json"))
+		if err != nil {
+			return nil, err
+		}
+
+		// Parse the block mock file at the current index and return the header number.
+		fileIndex := requestCounter % updateDataThreshold
+		file := files[fileIndex]
+		fmt.Printf("\n[debug]\nfile_index:%d\nfile:%s\n[debug])", fileIndex, file) // TODO: remove.
+		height, err = getBlockNumberFromBlockFile(file)
+		if err != nil {
+			return nil, err
+		}
+
+	case modes.RandomMode:
+		// Increment the constant block number based on request counter.
+		height = int64(constantBlockHeight + requestCounter%updateBlockNumberThreshold)
+		fmt.Printf("\n[debug]\nnew_height:%d\n[debug]", height) // TODO: remove.
+
 	default:
 		return nil, errWrongMode
 	}
@@ -131,27 +155,51 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData, error) {
 	log.Info().Msg("gRPC /BlockByNumber request received")
 
+	// Load block data from file or generate random data.
 	var rawData []byte
 	switch mode {
 	case modes.StaticMode:
-		// Parse the block mock data file and return the raw data.
+		// Parse the block mock file and return the raw data.
 		var mockBlock pb.BlockData
 		if err := loadDataFromFile(mockData.BlockFile, &mockBlock); err != nil {
 			return nil, err
 		}
 		rawData = mockBlock.Data
-	case modes.RandomMode, modes.DynamicMode:
-		height := constantBlockHeight + counter
-		block := edge.GenerateRandomEdgeBlock(uint64(height), uint64(10))
+
+	case modes.DynamicMode:
+		// List the block mock files under the block mock directory.
+		files, err := filepath.Glob(filepath.Join(mockData.BlockDir, "*.json"))
+		if err != nil {
+			return nil, err
+		}
+
+		// Parse the block mock file at the current index and return the raw data.
+		fileIndex := requestCounter % updateDataThreshold
+		file := files[fileIndex]
+		fmt.Printf("\n[debug]\nfile_index:%d\nfile:%s\n[debug])", fileIndex, file) // TODO: remove.
+		var mockBlock pb.BlockData
+		if err := loadDataFromFile(file, &mockBlock); err != nil {
+			return nil, err
+		}
+		rawData = mockBlock.Data
+
+	case modes.RandomMode:
+		// Return a random block data.
+		height := uint64(constantBlockHeight + requestCounter%updateBlockNumberThreshold)
+		fmt.Printf("\n[debug]\nnew_height:%d\n[debug]", height) // TODO: remove.
+		txnTracesAmount := uint64(10)
+		block := edge.GenerateRandomEdgeBlock(height, txnTracesAmount)
 		rawData = block.MarshalRLP()
+
 	default:
 		return nil, errWrongMode
 	}
 
+	// Parse the data.
 	if _, err := parseAndPrintRawBlockData(rawData); err != nil {
 		return nil, err
 	}
-	log.Debug().Msgf("BlockResponse encoded data: %v", rawData)
+	log.Trace().Msgf("BlockResponse encoded data: %v", rawData)
 
 	return &pb.BlockData{
 		Data: rawData,
@@ -161,6 +209,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 	log.Info().Msg("gRPC /GetTrace request received")
 
+	// Load trace data from file or generate random data.
 	var rawTrace []byte
 	switch mode {
 	case modes.StaticMode:
@@ -170,7 +219,25 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 			return nil, err
 		}
 		rawTrace = mockTrace.Trace
-	case modes.RandomMode, modes.DynamicMode:
+
+	case modes.DynamicMode:
+		// List the block trace files under the trace mock directory.
+		files, err := filepath.Glob(filepath.Join(mockData.TraceDir, "*.json"))
+		if err != nil {
+			return nil, err
+		}
+
+		// Parse the trace mock file at the current index and return the raw trace.
+		fileIndex := requestCounter % updateDataThreshold
+		file := files[fileIndex]
+		fmt.Printf("\n[debug]\nfile_index:%d\nfile:%s\n[debug])", fileIndex, file) // TODO: remove.
+		var mockTrace pb.Trace
+		if err := loadDataFromFile(file, &mockTrace); err != nil {
+			return nil, err
+		}
+		rawTrace = mockTrace.Trace
+
+	case modes.RandomMode:
 		trace := *edge.GenerateRandomEdgeTrace(10, 10, 10, 10)
 		var err error
 		rawTrace, err = json.Marshal(trace)
@@ -178,14 +245,16 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 			fmt.Println("BlockTrace encoding failed:", err)
 			return nil, err
 		}
+
 	default:
 		return nil, errWrongMode
 	}
 
+	// Parse the raw trace.
 	if err := parseAndPrintRawTrace(rawTrace); err != nil {
 		return nil, err
 	}
-	log.Debug().Msgf("TraceResponse encoded trace: %v", rawTrace)
+	log.Trace().Msgf("TraceResponse encoded trace: %v", rawTrace)
 
 	return &pb.Trace{
 		Trace: rawTrace,
@@ -204,7 +273,7 @@ func parseAndPrintRawBlockData(rawBlockData []byte) (edgetypes.Block, error) {
 			log.Error().Err(err).Msg("Unable to format JSON struct")
 			return edgetypes.Block{}, err
 		} else {
-			log.Debug().Msgf("BlockResponse decoded data: %v", string(data))
+			log.Trace().Msgf("BlockResponse decoded data: %v", string(data))
 		}
 	}
 	return decodedBlock, nil
@@ -224,7 +293,7 @@ func parseAndPrintRawTrace(rawTrace []byte) error {
 			log.Error().Err(err).Msg("Unable to format JSON struct")
 			return err
 		} else {
-			log.Debug().Msgf("TraceResponce decoded trace: %v", string(data))
+			log.Trace().Msgf("TraceResponce decoded trace: %v", string(data))
 
 			// Decode each transaction of the trace.
 			traces := decodedTrace.TxnTraces
@@ -243,7 +312,7 @@ func parseAndPrintRawTrace(rawTrace []byte) error {
 						log.Error().Err(err).Msg("Unable to format JSON struct")
 						return err
 					} else {
-						log.Debug().Msgf("Transaction #%d decoded: %v", i+1, string(data))
+						log.Trace().Msgf("Transaction #%d decoded: %v", i+1, string(data))
 					}
 				}
 			}
@@ -266,4 +335,17 @@ func loadDataFromFile(filePath string, target interface{}) error {
 
 	log.Debug().Msgf("Mock data loaded from %s", filePath)
 	return nil
+}
+
+// Load block number from block file.
+func getBlockNumberFromBlockFile(filePath string) (int64, error) {
+	var rawBlock pb.BlockData
+	if err := loadDataFromFile(filePath, &rawBlock); err != nil {
+		return 0, err
+	}
+	block, err := parseAndPrintRawBlockData(rawBlock.Data)
+	if err != nil {
+		return 0, err
+	}
+	return int64(block.Header.Number), nil
 }

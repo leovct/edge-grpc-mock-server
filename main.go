@@ -36,10 +36,8 @@ type Config struct {
 	// - random: the server returns random block data every requests.
 	Mode string
 
-	// Set to true if debug mode is enabled.
-	Debug bool
 	// Verbosity of the logs.
-	LogLevel zerolog.Level
+	Verbosity int8
 }
 
 func main() {
@@ -48,12 +46,7 @@ func main() {
 		Use:   "edge-grpc-mock-server",
 		Short: "Edge gRPC mock server",
 		Run: func(cmd *cobra.Command, args []string) {
-			// Determine log level based on debug flag.
-			if config.Debug {
-				config.LogLevel = zerolog.DebugLevel
-			} else {
-				config.LogLevel = zerolog.InfoLevel
-			}
+			logLevel := zerolog.Level(config.Verbosity)
 
 			// Check the mode.
 			switch modes.Mode(config.Mode) {
@@ -69,7 +62,7 @@ func main() {
 			// Start the gRPC server.
 			go func() {
 				log.Fatal(grpc.StartgRPCServer(grpc.ServerConfig{
-					LogLevel: config.LogLevel,
+					LogLevel: logLevel,
 					Port:     config.GRPCServerPort,
 					Mode:     modes.Mode(config.Mode),
 					MockData: grpc.MockData{
@@ -83,7 +76,7 @@ func main() {
 
 			// Start the HTTP server.
 			log.Fatal(http.StartHTTPServer(http.ServerConfig{
-				LogLevel:        config.LogLevel,
+				LogLevel:        logLevel,
 				Port:            config.HTTPServerPort,
 				SaveEndpoint:    config.HTTPServerSaveEndpoint,
 				ProofsOutputDir: config.ProofsOutputDir,
@@ -106,15 +99,17 @@ func main() {
 
 	// Mock data files loaded in static mode.
 	rootCmd.PersistentFlags().StringVar(&config.MockBlockFile, "mock-data-block-file", "data/blocks/block.json", "Mock data block file path")
-	rootCmd.PersistentFlags().StringVar(&config.MockTraceFile, "mock-data-trace-file", "data/traces/trace3.json", "Mock data trace file path")
+	rootCmd.PersistentFlags().StringVar(&config.MockTraceFile, "mock-data-trace-file", "data/traces/encoded/trace3.json", "Mock data trace file path")
 
 	// Mock data directories (and underlying files) used in dynamic mode.
 	rootCmd.PersistentFlags().StringVar(&config.MockBlockDir, "mock-data-block-dir", "data/blocks", "Mock data block directory")
-	rootCmd.PersistentFlags().StringVar(&config.MockTraceDir, "mock-data-trace-dir", "data/traces", "Mock data trace directory")
+	rootCmd.PersistentFlags().StringVar(&config.MockTraceDir, "mock-data-trace-dir", "data/traces/encoded", "Mock data trace directory")
 
 	// Other parameters.
 	rootCmd.PersistentFlags().StringVarP(&config.ProofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
-	rootCmd.PersistentFlags().BoolVarP(&config.Debug, "debug", "d", false, "Enable verbose mode")
+	rootCmd.PersistentFlags().Int8VarP(&config.Verbosity, "verbosity", "v", int8(zerolog.InfoLevel),
+		fmt.Sprintf("Verbosity level from %d (%s) to %d (%s)",
+			int8(zerolog.PanicLevel), zerolog.PanicLevel, int8(zerolog.TraceLevel), zerolog.TraceLevel))
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal(err)
