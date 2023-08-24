@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"zero-provers/server/constants"
 	"zero-provers/server/grpc"
 	"zero-provers/server/http"
 
@@ -17,6 +18,7 @@ type Config struct {
 	hTTPServerPort int
 	// URL path of the HTTP server save endpoint.
 	hTTPServerSaveEndpoint string
+
 	// Directory in which proofs are stored.
 	proofsOutputDir string
 	// Directory in which mock data is provided.
@@ -24,8 +26,13 @@ type Config struct {
 	mockDataBlockFile  string
 	mockDataStatusFile string
 	mockDataTraceFile  string
-	// Generate random trace data instead of relying on mocks.
-	setRandomMode bool
+
+	// Mode of the mock server, either static or dynamic.
+	// - static: the server always return the same mock block data.
+	// - dynamic: the server returns new mock block data every x requests.
+	// - random: the server returns random block data every requests.
+	mode string
+
 	// Set to true if debug mode is enabled.
 	debug bool
 	// Verbosity of the logs.
@@ -44,7 +51,17 @@ func main() {
 			} else {
 				config.logLevel = zerolog.InfoLevel
 			}
-			fmt.Printf("Log level set to %s\n", config.logLevel)
+
+			// Check the mode.
+			switch constants.Mode(config.mode) {
+			case constants.StaticMode, constants.DynamicMode, constants.RandomMode:
+				// Valid modes, no action needed.
+			default:
+				fmt.Printf("Mode '%s' is not supported... Please either use '%s', '%s' or '%s'.",
+					config.mode, constants.StaticMode, constants.DynamicMode, constants.RandomMode)
+				return
+			}
+			fmt.Println(config.mode)
 
 			// Start the gRPC server.
 			go func() {
@@ -54,7 +71,7 @@ func main() {
 					BlockFile:  config.mockDataBlockFile,
 					TraceFile:  config.mockDataTraceFile,
 				}
-				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, config.setRandomMode, mock))
+				log.Fatal(grpc.StartgRPCServer(config.logLevel, config.gRPCServerPort, constants.Mode(config.mode), mock))
 			}()
 
 			// Start the HTTP server.
@@ -66,12 +83,20 @@ func main() {
 	rootCmd.PersistentFlags().IntVarP(&config.gRPCServerPort, "grpc-port", "g", 8546, "gRPC server port")
 	rootCmd.PersistentFlags().IntVarP(&config.hTTPServerPort, "http-port", "p", 8080, "HTTP server port")
 	rootCmd.PersistentFlags().StringVarP(&config.hTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
+
 	rootCmd.PersistentFlags().StringVarP(&config.proofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
-	rootCmd.PersistentFlags().StringVarP(&config.mockDataDir, "mock-data-dir", "m", "data", "Mock data directory")
+	rootCmd.PersistentFlags().StringVar(&config.mockDataDir, "mock-data-dir", "data", "Mock data directory")
 	rootCmd.PersistentFlags().StringVar(&config.mockDataStatusFile, "mock-data-status-file", "status.json", "Mock data status file (in the mock data dir)")
 	rootCmd.PersistentFlags().StringVar(&config.mockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file (in the mock data dir)")
 	rootCmd.PersistentFlags().StringVar(&config.mockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file (in the mock data dir)")
-	rootCmd.PersistentFlags().BoolVarP(&config.setRandomMode, "random", "r", false, "Generate random trace data instead of relying on mocks (default false)")
+
+	rootCmd.PersistentFlags().StringVarP(&config.mode, "mode", "m", string(constants.StaticMode),
+		`Mode of the mock server.
+- static: the server always return the same mock block data.
+- dynamic: the server returns new mock block data every {n} requests.
+- random: the server returns random block data every requests.
+`)
+
 	rootCmd.PersistentFlags().BoolVarP(&config.debug, "debug", "d", false, "Enable verbose mode")
 
 	if err := rootCmd.Execute(); err != nil {

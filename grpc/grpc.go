@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"sync"
+	"zero-provers/server/constants"
 	"zero-provers/server/grpc/edge"
 	edgetypes "zero-provers/server/grpc/edge/types"
 	pb "zero-provers/server/grpc/pb"
@@ -54,7 +55,7 @@ type Mock struct {
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockData Mock) error {
+func StartgRPCServer(logLevel zerolog.Level, port int, mode constants.Mode, mockData Mock) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
 		Level:       logLevel,
@@ -74,7 +75,7 @@ func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockD
 	pb.RegisterSystemServer(s, &server{})
 
 	// If the random mode is not set, load mock data.
-	if !setRandomMode {
+	if mode != constants.RandomMode {
 		log.Debug().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
 		mockStatusData, mockBlockData, mockTraceData, err = loadMockData(mockData)
 		if err != nil {
