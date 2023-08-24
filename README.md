@@ -340,7 +340,9 @@ go run main.go \
 
 ### 1. Start the mock server
 
-By default, the mock server will always return the same mock data for status, block and trace. Use `go run main.go --help` to see the files loaded by default and check the `data/` folder to inspect the content of the mocks. You can also switch to another mod like `dynamic` or `random`.
+We use the `dynamic` mode of the mock server to be able to return dynamic block and trace mock data. You can use `go run main.go --help` to see the other options and the default values.
+
+Here, the mock data will be updated every 30 `/GetStatus` request received by the mock server. At the beginning, the mock server will return the first block and trace mock files of the directories. Then, after each `n` update data threshold, it will return the files at index `n`. Once the server has iterated over all the files, it will simply return the last block and trace mock files.
 
 ```sh
 $ go run main.go \
