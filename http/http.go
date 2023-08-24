@@ -25,21 +25,28 @@ var (
 	proofCount = 1
 )
 
+type ServerConfig struct {
+	LogLevel        zerolog.Level
+	Port            int
+	SaveEndpoint    string
+	ProofsOutputDir string
+}
+
 // StartHTTPServer starts an HTTP server on the specified port and sets up the necessary endpoints.
 // The server listens for incoming requests and handles them accordingly.
 // The `/save` endpoint allows clients to save data to a file in the specified output directory.
-func StartHTTPServer(logLevel zerolog.Level, port int, _saveEndpoint string, outputDir string) error {
+func StartHTTPServer(config ServerConfig) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
-		Level:       logLevel,
+		Level:       config.LogLevel,
 		CallerField: "http",
 	}
 	log = logger.NewLogger(lc)
 
 	// Create the proofs directory if it doesn't exist.
-	if _, err := os.Stat(outputDir); err != nil {
+	if _, err := os.Stat(config.ProofsOutputDir); err != nil {
 		if os.IsNotExist(err) {
-			if err = os.Mkdir(outputDir, 0755); err != nil {
+			if err = os.Mkdir(config.ProofsOutputDir, 0755); err != nil {
 				log.Error().Err(err).Msg("Unable to create the proofs directory")
 				return err
 			}
@@ -48,14 +55,14 @@ func StartHTTPServer(logLevel zerolog.Level, port int, _saveEndpoint string, out
 			return err
 		}
 	}
-	proofsDir = outputDir
+	proofsDir = config.ProofsOutputDir
 
 	// Start the HTTP server.
-	saveEndpoint = _saveEndpoint
+	saveEndpoint = config.SaveEndpoint
 	http.HandleFunc(saveEndpoint, saveHandler)
 	log.Info().Msgf("HTTP server save endpoint: %s ready", saveEndpoint)
-	log.Info().Msgf("HTTP server is starting on port %d", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
+	log.Info().Msgf("HTTP server is starting on port %d", config.Port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil); err != nil {
 		log.Error().Err(err).Msg("Unable to start the HTTP server")
 		return err
 	}

@@ -39,9 +39,11 @@ var (
 	traceMutex     sync.Mutex
 )
 
-// server is an internal implementation of the gRPC server.
-type server struct {
-	pb.UnimplementedSystemServer
+type ServerConfig struct {
+	LogLevel zerolog.Level
+	Port     int
+	Mode     modes.Mode
+	MockData Mock
 }
 
 // Mock data config.
@@ -52,19 +54,24 @@ type Mock struct {
 	TraceFile  string
 }
 
+// server is an internal implementation of the gRPC server.
+type server struct {
+	pb.UnimplementedSystemServer
+}
+
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(logLevel zerolog.Level, port int, mode modes.Mode, mockData Mock) error {
+func StartgRPCServer(config ServerConfig) error {
 	// Set up the logger.
 	lc := logger.LoggerConfig{
-		Level:       logLevel,
+		Level:       config.LogLevel,
 		CallerField: "grpc-server",
 	}
 	log = logger.NewLogger(lc)
 
 	// Create a listener on the specified port.
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err != nil {
 		return err
 	}
@@ -75,9 +82,9 @@ func StartgRPCServer(logLevel zerolog.Level, port int, mode modes.Mode, mockData
 	pb.RegisterSystemServer(s, &server{})
 
 	// If the random mode is not set, load mock data.
-	if mode != modes.RandomMode {
-		log.Debug().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
-		mockStatusData, mockBlockData, mockTraceData, err = loadMockData(mockData)
+	if config.Mode != modes.RandomMode {
+		log.Debug().Msgf("Fetching mock data from `%s` directory", config.MockData.Dir)
+		mockStatusData, mockBlockData, mockTraceData, err = loadMockData(config.MockData)
 		if err != nil {
 			log.Error().Err(err).Msg("Unable to load mock data")
 			return err
@@ -85,7 +92,7 @@ func StartgRPCServer(logLevel zerolog.Level, port int, mode modes.Mode, mockData
 	}
 
 	// Start serving incoming gRPC requests on the listener.
-	log.Info().Msgf("gRPC server is starting on port %d", port)
+	log.Info().Msgf("gRPC server is starting on port %d", config.Port)
 	if err := s.Serve(listener); err != nil {
 		log.Error().Err(err).Msg("Unable to start gRPC server")
 		return err
