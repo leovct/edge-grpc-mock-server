@@ -4,13 +4,16 @@
 
 - [Introduction](#introduction)
 - [Usage](#usage)
+  - [Static mode (default)](#static-mode-default)
+  - [Dynamic mode](#dynamic-mode)
+  - [Random mode](#random-mode)
+- [Use Case](#use-case)
   - [1. Start the mock server](#1-start-the-mock-server)
   - [2. Start a zero worker](#2-start-a-zero-worker)
   - [3. Start the zero leader](#3-start-the-zero-leader)
   - [4. Interactions between the zero leader and the mock server](#4-interactions-between-the-zero-leader-and-the-mock-server)
   - [5. Benchmark proof generation time for a given trace](#5-benchmark-proof-generation-time-for-a-given-trace)
   - [6. Update trace mock data](#6-update-trace-mock-data)
-- [Use Case](#use-case)
 - [Contributing](#contributing)
 
 ## Introduction
@@ -33,44 +36,328 @@ Usage:
   edge-grpc-mock-server [flags]
 
 Flags:
-  -d, --debug                          Enable verbose mode
-  -g, --grpc-port int                  gRPC server port (default 8546)
-  -h, --help                           help for edge-grpc-mock-server
-  -p, --http-port int                  HTTP server port (default 8080)
-  -e, --http-save-endpoint string      HTTP server save endpoint (default "/save")
-      --mock-data-block-file string    Mock data block file (in the mock data dir) (default "block.json")
-  -m, --mock-data-dir string           Mock data directory (default "data")
-      --mock-data-status-file string   Mock data status file (in the mock data dir) (default "status.json")
-      --mock-data-trace-file string    Mock data trace file (in the mock data dir) (default "trace3.json")
-  -o, --output-dir string              Proofs output directory (default "out")
-  -r, --random                         Generate random trace data instead of relying on mocks (default false)
+  -g, --grpc-port int                       gRPC server port (default 8546)
+  -h, --help                                help for edge-grpc-mock-server
+  -p, --http-port int                       HTTP server port (default 8080)
+  -e, --http-save-endpoint string           HTTP server save endpoint (default "/save")
+      --mock-data-block-dir string          The mock data block directory (used in dynamic mode) (default "data/blocks")
+      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/blocks/block.json")
+      --mock-data-trace-dir string          The mock data trace directory (used in dynamic mode) (default "data/traces/encoded")
+      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/traces/encoded/trace3.json")
+  -m, --mode string                         Mode of the mock server.
+                                            - static: the server always return the same mock block data.
+                                            - dynamic: the server returns new mock block data every {n} requests.
+                                            - random: the server returns random block data every requests.
+                                             (default "static")
+  -o, --output-dir string                   The proofs output directory (default "out")
+      --update-block-number-threshold int   The number of requests after which the server increments the block number (used in random mode) (default 30)
+      --update-data-threshold int           The number of requests after which the server returns new data, block and trace (used in dynamic mode). (default 30)
+  -v, --verbosity int8                      Verbosity level from 5 (panic) to -1 (trace) (default 1)
+```
+
+### Static mode (default)
+
+In the `static` mode, the server will always return the same mock block data (`data/blocks/block1` and `data/traces/encoded/trace3.json`).
+
+```sh
+go run main.go \
+  --grpc-port 8546 \
+  --http-port 8080 \
+  --http-save-endpoint /save \
+  --mock-data-block-file data/blocks/block1.json \
+  --mock-data-trace-file data/traces/encoded/trace3.json \
+  --mode static \
+  --output-dir out \
+  --verbosity 0
+```
+
+<details>
+  <summary>Show code output</summary>
+
+  ```sh
+  Thu Aug 24 19:04:24 CEST 2023 INF http/http.go:63 > HTTP server save endpoint: /save ready
+  Thu Aug 24 19:04:24 CEST 2023 INF http/http.go:64 > HTTP server is starting on port 8080
+  Thu Aug 24 19:04:24 CEST 2023 INF grpc/grpc.go:87 > gRPC server is starting on port 8546
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 1
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 2
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 3
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace3.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace3.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:289 > Decoding 1 transaction trace(s)...
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 4
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 5
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 6
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace3.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace3.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:289 > Decoding 1 transaction trace(s)...
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 7
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 8
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 9
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:04:25 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace3.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace3.json
+  Thu Aug 24 19:04:25 CEST 2023 DBG grpc/grpc.go:289 > Decoding 1 transaction trace(s)...
+  ...
+  ```
+</details>
+
+### Dynamic mode
+
+In the `dynamic` mode, the server returns mock data but after some requests, it updates the data it returns.
+
+For example, here the `--update-data-threshold` flag is set to 5 which means that the mock data will be updated each time the server receives 5 `/GetStatus` requests. Those requests are made by the zero-prover leader to check for new blocks.
+
+The command also takes some directory flags as input, `--mock-data-block-dir` and `--mock-data-trace-dir`. In these folders, you should place all your block and trace mock files. The server will list alphabetically the files in these directories and will return the first files of the list. Each time the update data threshold is crossed, it will increment the file index and return new block and trace files until there are no new files. Then, it will simply return the last block and trace files.
+
+```sh
+go run main.go \
+  --grpc-port 8546 \
+  --http-port 8080 \
+  --http-save-endpoint /save \
+  --mock-data-block-dir data/blocks \
+  --mock-data-trace-dir data/traces/encoded \
+  --mode dynamic \
+  --update-data-threshold 5 \
+  --output-dir out \
+  --verbosity 0
+```
+
+<details>
+  <summary>Show code output</summary>
+
+  ```sh
+  Thu Aug 24 19:03:25 CEST 2023 INF http/http.go:63 > HTTP server save endpoint: /save ready
+  Thu Aug 24 19:03:25 CEST 2023 INF http/http.go:64 > HTTP server is starting on port 8080
+  Thu Aug 24 19:03:25 CEST 2023 INF grpc/grpc.go:87 > gRPC server is starting on port 8546
+  Thu Aug 24 19:03:27 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 1
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:27 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 2
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:27 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 3
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:27 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:03:27 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace1.json
+  Thu Aug 24 19:03:27 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace1.json
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 4
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 5
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block1.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block1.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 6
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:289 > Decoding 3 transaction trace(s)...
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 7
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 8
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 9
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:289 > Decoding 3 transaction trace(s)...
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 10
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block2.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 11
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 12
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:289 > Decoding 1 transaction trace(s)...
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 13
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 14
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 15
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:289 > Decoding 1 transaction trace(s)...
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 16
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 17
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 18
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:147 > gRPC /BlockByNumber request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:28 CEST 2023 INF grpc/grpc.go:199 > gRPC /GetTrace request received
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/traces/encoded/trace3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/traces/encoded/trace3.json
+  Thu Aug 24 19:03:28 CEST 2023 DBG grpc/grpc.go:289 > Decoding 1 transaction trace(s)...
+  Thu Aug 24 19:03:29 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 19
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  Thu Aug 24 19:03:29 CEST 2023 INF grpc/grpc.go:97 > gRPC /GetStatus request received
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:100 > Request counter: 20
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:325 > Fetching mock data from data/blocks/block3.json
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:335 > Mock data loaded from data/blocks/block3.json
+  Thu Aug 24 19:03:29 CEST 2023 DBG grpc/grpc.go:136 > StatusResponse number: 1
+  ...
+  ```
+</details>
+
+### Random mode
+
+In the `random` mode, the server will generate random block and traces.
+
+```sh
+go run main.go \
+  --grpc-port 8546 \
+  --http-port 8080 \
+  --http-save-endpoint /save \
+  --mode random \
+  --update-block-number-threshold 30 \
+  --output-dir out \
+  --verbosity 0
 ```
 
 ## Use Case
 
 ### 1. Start the mock server
 
-By default, the mock server will return mock data for status, block and trace. Use `go run main.go --help` to see the files loaded by default and check the `data/` folder to inspect the content of the mocks.
+By default, the mock server will always return the same mock data for status, block and trace. Use `go run main.go --help` to see the files loaded by default and check the `data/` folder to inspect the content of the mocks. You can also switch to another mod like `dynamic` or `random`.
 
 ```sh
 $ go run main.go \
-  --debug \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-dir data \
-  --output-dir out
-Mon Aug 21 12:40:48 CEST 2023 INF http/http.go:56 > HTTP server save endpoint: /save ready
-Mon Aug 21 12:40:48 CEST 2023 INF http/http.go:57 > HTTP server is starting on port 8080
-Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:75 > Fetching mock data from `data` directory
-Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:105 > Fetching mock status file from data/status.json
-Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:108 > Mock status data loaded
-Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:105 > Fetching mock block file from data/block.json
-Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:125 > Mock blocks data loaded
-Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:105 > Fetching mock trace file from data/trace3.json
-Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:142 > Mock traces data loaded
-Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:84 > gRPC server is starting on port 8546
+  --mock-data-block-dir data/blocks \
+  --mock-data-trace-dir data/traces/encoded \
+  --mode dynamic \
+  --update-data-threshold 30 \
+  --output-dir out \
+  --verbosity 0
+Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:63 > HTTP server save endpoint: /save ready
+Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:64 > HTTP server is starting on port 8080
+Thu Aug 24 18:53:26 CEST 2023 INF grpc/grpc.go:87 > gRPC server is starting on port 8546
 ```
+
 
 ### 2. Start a zero worker
 
