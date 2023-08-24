@@ -88,6 +88,7 @@ jobs:
     name: static-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -127,6 +128,7 @@ jobs:
     name: dynamic-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -167,6 +169,7 @@ jobs:
     name: random-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
