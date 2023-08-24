@@ -314,7 +314,6 @@ func parseAndPrintRawTrace(rawTrace []byte) error {
 // the index of the last file.
 func computeIndex(requestCounter, updateThreshold int, numberOfFiles int) int {
 	index := (requestCounter - 1) / updateThreshold
-	fmt.Println(index, requestCounter, updateThreshold)
 	if index > numberOfFiles-1 {
 		return numberOfFiles - 1
 	}
