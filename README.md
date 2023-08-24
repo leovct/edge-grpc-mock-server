@@ -13,7 +13,6 @@
   - [3. Start the zero leader](#3-start-the-zero-leader)
   - [4. Interactions between the zero leader and the mock server](#4-interactions-between-the-zero-leader-and-the-mock-server)
   - [5. Benchmark proof generation time for a given trace](#5-benchmark-proof-generation-time-for-a-given-trace)
-  - [6. Update trace mock data](#6-update-trace-mock-data)
 - [Contributing](#contributing)
 
 ## Introduction
@@ -594,30 +593,6 @@ Fri Aug 18 15:08:15 CEST 2023 INF http/http.go:70 > POST request received on /sa
 ```
 
 Given these logs, we can estimate the proof took approximately one minute to generate.
-
-### 6. Update trace mock data
-
-You can also update the mock trace data that the server returns without restarting the server.
-
-```sh
-# The server starts with the default mock trace `data/trace3.json`.
-$ grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/GetTrace | jq
-{
-  "trace": "ewog...Cn0K"
-}
-
-# Update the mock trace returned by the server.
-$ grpcurl -plaintext -d "{\"trace\": $(cat data/trace1.json | jq .trace)}" 127.0.0.1:8546 v1.System/UpdateTrace | jq
-{
-  "success": true
-}
-
-# The server now returns `data/trace1.json`.
-$ grpcurl -plaintext  -d '{"number": 1}' 127.0.0.1:8546 v1.System/GetTrace | jq
-{
-  "trace": "eyJhY2NvdW50VHJpZSI6bnVsbCwic3RvcmFnZVRyaWUiOm51bGwsInBhcmVudFN0YXRlUm9vdCI6IjB4MDhkMGRkZDA3ZDBhYmM5YWFlOGI1ODkzMDUyYmU1YjU3MTU5OWRjZTFjZjcwYjRhZjc5ODJlZDQxOWFhMjhhMCIsInRyYW5zYWN0aW9uVHJhY2VzIjpbXX0="
-}
-```
 
 ## Contributing
 
