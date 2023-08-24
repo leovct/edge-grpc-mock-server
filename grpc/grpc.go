@@ -25,32 +25,25 @@ import (
 const constantBlockHeight = 100_000_000_000_000_000
 
 var (
+	config ServerConfig
+
 	// Log is the package-level variable used for logging messages and errors.
 	log zerolog.Logger
 
-	// Mode.
-	mode         modes.Mode
 	errWrongMode = fmt.Errorf("wrong mode")
-
-	// Mock data.
-	mockData MockData
 
 	// Keep track of the number of `status` requests made to the mock server. The zero-prover constantly
 	// sends those requests, in order to be aware of new blocks and to start proving as soon as possible.
 	requestCounter int
-
-	// Number of requests after which the server returns new data, block and trace (used in `dynamic` mode).
-	updateDataThreshold int
-
-	// Number of requests after which the server increments the block number (used in `random` mode).
-	updateBlockNumberThreshold int
 )
 
 type ServerConfig struct {
-	LogLevel zerolog.Level
-	Port     int
-	Mode     modes.Mode
-	MockData MockData
+	LogLevel                   zerolog.Level
+	Port                       int
+	Mode                       modes.Mode
+	UpdateDataThreshold        int
+	UpdateBlockNumberThreshold int
+	MockData                   MockData
 }
 
 // Mock data config.
@@ -69,17 +62,15 @@ type server struct {
 // StartgRPCServer starts a gRPC server on the specified port.
 // It listens for incoming TCP connections and handles gRPC requests using the internal server
 // implementation. The server continues to run until it is manually stopped or an error occurs.
-func StartgRPCServer(config ServerConfig) error {
+func StartgRPCServer(_config ServerConfig) error {
+	config = _config
+
 	// Set up the logger.
 	lc := logger.LoggerConfig{
 		Level:       config.LogLevel,
 		CallerField: "grpc-server",
 	}
 	log = logger.NewLogger(lc)
-
-	// Set up other parameters.
-	mode = config.Mode
-	mockData = config.MockData
 
 	// Create a listener on the specified port.
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
@@ -104,30 +95,31 @@ func StartgRPCServer(config ServerConfig) error {
 // GetStatus is the implementation of the `GetStatus` RPC method.
 func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, error) {
 	log.Info().Msg("gRPC /GetStatus request received")
+
 	requestCounter++
+	log.Debug().Msgf("Request counter: %d", requestCounter)
 
 	// Load block number from file or increment block number based on the request counter.
 	var height int64
-	switch mode {
+	switch config.Mode {
 	case modes.StaticMode:
 		// Parse the block mock file and return the header number.
 		var err error
-		height, err = getBlockNumberFromBlockFile(mockData.BlockFile)
+		height, err = getBlockNumberFromBlockFile(config.MockData.BlockFile)
 		if err != nil {
 			return nil, err
 		}
 
 	case modes.DynamicMode:
 		// List the block mock files under the block mock directory.
-		files, err := filepath.Glob(filepath.Join(mockData.BlockDir, "*.json"))
+		files, err := filepath.Glob(filepath.Join(config.MockData.BlockDir, "*.json"))
 		if err != nil {
 			return nil, err
 		}
 
 		// Parse the block mock file at the current index and return the header number.
-		fileIndex := requestCounter % updateDataThreshold
+		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
 		file := files[fileIndex]
-		fmt.Printf("\n[debug]\nfile_index:%d\nfile:%s\n[debug])", fileIndex, file) // TODO: remove.
 		height, err = getBlockNumberFromBlockFile(file)
 		if err != nil {
 			return nil, err
@@ -135,8 +127,7 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 
 	case modes.RandomMode:
 		// Increment the constant block number based on request counter.
-		height = int64(constantBlockHeight + requestCounter%updateBlockNumberThreshold)
-		fmt.Printf("\n[debug]\nnew_height:%d\n[debug]", height) // TODO: remove.
+		height = int64(constantBlockHeight + requestCounter%config.UpdateBlockNumberThreshold)
 
 	default:
 		return nil, errWrongMode
@@ -157,26 +148,25 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 
 	// Load block data from file or generate random data.
 	var rawData []byte
-	switch mode {
+	switch config.Mode {
 	case modes.StaticMode:
 		// Parse the block mock file and return the raw data.
 		var mockBlock pb.BlockData
-		if err := loadDataFromFile(mockData.BlockFile, &mockBlock); err != nil {
+		if err := loadDataFromFile(config.MockData.BlockFile, &mockBlock); err != nil {
 			return nil, err
 		}
 		rawData = mockBlock.Data
 
 	case modes.DynamicMode:
 		// List the block mock files under the block mock directory.
-		files, err := filepath.Glob(filepath.Join(mockData.BlockDir, "*.json"))
+		files, err := filepath.Glob(filepath.Join(config.MockData.BlockDir, "*.json"))
 		if err != nil {
 			return nil, err
 		}
 
 		// Parse the block mock file at the current index and return the raw data.
-		fileIndex := requestCounter % updateDataThreshold
+		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
 		file := files[fileIndex]
-		fmt.Printf("\n[debug]\nfile_index:%d\nfile:%s\n[debug])", fileIndex, file) // TODO: remove.
 		var mockBlock pb.BlockData
 		if err := loadDataFromFile(file, &mockBlock); err != nil {
 			return nil, err
@@ -185,8 +175,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 
 	case modes.RandomMode:
 		// Return a random block data.
-		height := uint64(constantBlockHeight + requestCounter%updateBlockNumberThreshold)
-		fmt.Printf("\n[debug]\nnew_height:%d\n[debug]", height) // TODO: remove.
+		height := uint64(constantBlockHeight + requestCounter%config.UpdateBlockNumberThreshold)
 		txnTracesAmount := uint64(10)
 		block := edge.GenerateRandomEdgeBlock(height, txnTracesAmount)
 		rawData = block.MarshalRLP()
@@ -211,26 +200,25 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 
 	// Load trace data from file or generate random data.
 	var rawTrace []byte
-	switch mode {
+	switch config.Mode {
 	case modes.StaticMode:
 		// Parse the trace mock data file and return the raw trace.
 		var mockTrace pb.Trace
-		if err := loadDataFromFile(mockData.TraceFile, &mockTrace); err != nil {
+		if err := loadDataFromFile(config.MockData.TraceFile, &mockTrace); err != nil {
 			return nil, err
 		}
 		rawTrace = mockTrace.Trace
 
 	case modes.DynamicMode:
 		// List the block trace files under the trace mock directory.
-		files, err := filepath.Glob(filepath.Join(mockData.TraceDir, "*.json"))
+		files, err := filepath.Glob(filepath.Join(config.MockData.TraceDir, "*.json"))
 		if err != nil {
 			return nil, err
 		}
 
 		// Parse the trace mock file at the current index and return the raw trace.
-		fileIndex := requestCounter % updateDataThreshold
+		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
 		file := files[fileIndex]
-		fmt.Printf("\n[debug]\nfile_index:%d\nfile:%s\n[debug])", fileIndex, file) // TODO: remove.
 		var mockTrace pb.Trace
 		if err := loadDataFromFile(file, &mockTrace); err != nil {
 			return nil, err
@@ -242,7 +230,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 		var err error
 		rawTrace, err = json.Marshal(trace)
 		if err != nil {
-			fmt.Println("BlockTrace encoding failed:", err)
+			log.Error().Err(err).Msg("BlockTrace encoding failed")
 			return nil, err
 		}
 
@@ -319,6 +307,18 @@ func parseAndPrintRawTrace(rawTrace []byte) error {
 		}
 	}
 	return nil
+}
+
+// Compute the file index in the case of dynamic mode.
+// Iterate over all the indexes and if the index is greater than the number of files, return
+// the index of the last file.
+func computeIndex(requestCounter, updateThreshold int, numberOfFiles int) int {
+	index := (requestCounter - 1) / updateThreshold
+	fmt.Println(index, requestCounter, updateThreshold)
+	if index > numberOfFiles-1 {
+		return numberOfFiles - 1
+	}
+	return index
 }
 
 // Load data from file.
