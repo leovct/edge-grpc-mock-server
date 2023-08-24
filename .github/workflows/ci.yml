@@ -108,7 +108,7 @@ jobs:
           sudo chmod +x /usr/local/bin/grpcurl
           grpcurl --version
 
-      - name: Run tests against a mock-server that returns mock data
+      - name: Run tests against a mock-server that returns static mock data
         run: |
           ./mock-server \
             --grpc-port 8546 \
@@ -147,7 +147,7 @@ jobs:
           sudo chmod +x /usr/local/bin/grpcurl
           grpcurl --version
 
-      - name: Run tests against a mock-server that returns mock data
+      - name: Run tests against a mock-server that returns dynamic mock data
         run: |
           ./mock-server \
             --grpc-port 8546 \
