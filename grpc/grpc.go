@@ -298,7 +298,7 @@ func parseAndPrintRawTrace(rawTrace []byte) error {
 			// Decode each transaction of the trace.
 			traces := decodedTrace.TxnTraces
 			if len(traces) > 0 {
-				log.Debug().Msg("Decoding TraceResponce transactionTraces txn fields (RLP encoded)...")
+				log.Debug().Msgf("Decoding %d transaction trace(s)...", len(traces))
 			}
 			for i, trace := range traces {
 				decodedTxn := edgetypes.Transaction{}
