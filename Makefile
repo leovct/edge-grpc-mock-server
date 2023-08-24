@@ -24,7 +24,7 @@ build: gen ## Build binary.
 
 .PHONY: test
 test: ## Send a few gRPC/HTTP requests to the mock server.
-	sh scripts/test.sh
+	./scripts/test.sh
 
 .PHONY: clean
 clean: ## Clean the proof directory.

@@ -161,7 +161,7 @@ jobs:
             --verbosity 0 \
             &
 
-          sh scripts/loop.sh 20
+          ./scripts/loop.sh 20
 
   random-mode-test:
     name: random-mode-test
