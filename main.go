@@ -21,10 +21,14 @@ type Config struct {
 
 	// Directory in which proofs are stored.
 	ProofsOutputDir string
+
 	// Directory in which mock data is provided.
-	MockDataDir       string
-	MockDataBlockFile string
-	MockDataTraceFile string
+	MockBlockDir string
+	MockTraceDir string
+
+	// Mock data file paths.
+	MockBlockFile string
+	MockTraceFile string
 
 	// Mode of the mock server, either static or dynamic.
 	// - static: the server always return the same mock block data.
@@ -68,10 +72,11 @@ func main() {
 					LogLevel: config.LogLevel,
 					Port:     config.GRPCServerPort,
 					Mode:     modes.Mode(config.Mode),
-					MockData: grpc.Mock{
-						Dir:       config.MockDataDir,
-						BlockFile: config.MockDataBlockFile,
-						TraceFile: config.MockDataTraceFile,
+					MockData: grpc.MockData{
+						BlockDir:  config.MockBlockDir,
+						TraceDir:  config.MockTraceDir,
+						BlockFile: config.MockBlockFile,
+						TraceFile: config.MockTraceFile,
 					},
 				}))
 			}()
@@ -86,16 +91,12 @@ func main() {
 		},
 	}
 
-	// Define flags for configuration.
+	// Server configuration.
 	rootCmd.PersistentFlags().IntVarP(&config.GRPCServerPort, "grpc-port", "g", 8546, "gRPC server port")
 	rootCmd.PersistentFlags().IntVarP(&config.HTTPServerPort, "http-port", "p", 8080, "HTTP server port")
 	rootCmd.PersistentFlags().StringVarP(&config.HTTPServerSaveEndpoint, "http-save-endpoint", "e", "/save", "HTTP server save endpoint")
 
-	rootCmd.PersistentFlags().StringVarP(&config.ProofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
-	rootCmd.PersistentFlags().StringVar(&config.MockDataDir, "mock-data-dir", "data", "Mock data directory")
-	rootCmd.PersistentFlags().StringVar(&config.MockDataBlockFile, "mock-data-block-file", "block.json", "Mock data block file (in the mock data dir)")
-	rootCmd.PersistentFlags().StringVar(&config.MockDataTraceFile, "mock-data-trace-file", "trace3.json", "Mock data trace file (in the mock data dir)")
-
+	// Server mode.
 	rootCmd.PersistentFlags().StringVarP(&config.Mode, "mode", "m", string(modes.StaticMode),
 		`Mode of the mock server.
 - static: the server always return the same mock block data.
@@ -103,6 +104,16 @@ func main() {
 - random: the server returns random block data every requests.
 `)
 
+	// Mock data files loaded in static mode.
+	rootCmd.PersistentFlags().StringVar(&config.MockBlockFile, "mock-data-block-file", "data/blocks/block.json", "Mock data block file path")
+	rootCmd.PersistentFlags().StringVar(&config.MockTraceFile, "mock-data-trace-file", "data/traces/trace3.json", "Mock data trace file path")
+
+	// Mock data directories (and underlying files) used in dynamic mode.
+	rootCmd.PersistentFlags().StringVar(&config.MockBlockDir, "mock-data-block-dir", "data/blocks", "Mock data block directory")
+	rootCmd.PersistentFlags().StringVar(&config.MockTraceDir, "mock-data-trace-dir", "data/traces", "Mock data trace directory")
+
+	// Other parameters.
+	rootCmd.PersistentFlags().StringVarP(&config.ProofsOutputDir, "output-dir", "o", "out", "Proofs output directory")
 	rootCmd.PersistentFlags().BoolVarP(&config.Debug, "debug", "d", false, "Enable verbose mode")
 
 	if err := rootCmd.Execute(); err != nil {

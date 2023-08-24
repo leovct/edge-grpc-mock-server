@@ -32,8 +32,7 @@ var (
 	errWrongMode = fmt.Errorf("wrong mode")
 
 	// Mock data.
-	blockMockFilePath  string
-	tracesMockFilePath string
+	mockData MockData
 
 	// Increase the block height on every GetStatus request made.
 	counter     int
@@ -44,12 +43,13 @@ type ServerConfig struct {
 	LogLevel zerolog.Level
 	Port     int
 	Mode     modes.Mode
-	MockData Mock
+	MockData MockData
 }
 
 // Mock data config.
-type Mock struct {
-	Dir       string
+type MockData struct {
+	BlockDir  string
+	TraceDir  string
 	BlockFile string
 	TraceFile string
 }
@@ -72,8 +72,7 @@ func StartgRPCServer(config ServerConfig) error {
 
 	// Set up other parameters.
 	mode = config.Mode
-	blockMockFilePath = fmt.Sprintf("%s/%s", config.MockData.Dir, config.MockData.BlockFile)
-	tracesMockFilePath = fmt.Sprintf("%s/%s", config.MockData.Dir, config.MockData.TraceFile)
+	mockData = config.MockData
 
 	// Create a listener on the specified port.
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
@@ -102,9 +101,9 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 	var height int64
 	switch mode {
 	case modes.StaticMode:
-		// Parse the block mock data file and return the header number.
+		// Parse the block mock file and return the header number.
 		var mockBlock pb.BlockData
-		if err := loadDataFromFile(blockMockFilePath, &mockBlock); err != nil {
+		if err := loadDataFromFile(mockData.BlockFile, &mockBlock); err != nil {
 			return nil, err
 		}
 		block, err := parseAndPrintRawBlockData(mockBlock.Data)
@@ -137,7 +136,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 	case modes.StaticMode:
 		// Parse the block mock data file and return the raw data.
 		var mockBlock pb.BlockData
-		if err := loadDataFromFile(blockMockFilePath, &mockBlock); err != nil {
+		if err := loadDataFromFile(mockData.BlockFile, &mockBlock); err != nil {
 			return nil, err
 		}
 		rawData = mockBlock.Data
@@ -167,7 +166,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 	case modes.StaticMode:
 		// Parse the trace mock data file and return the raw trace.
 		var mockTrace pb.Trace
-		if err := loadDataFromFile(tracesMockFilePath, &mockTrace); err != nil {
+		if err := loadDataFromFile(mockData.TraceFile, &mockTrace); err != nil {
 			return nil, err
 		}
 		rawTrace = mockTrace.Trace
