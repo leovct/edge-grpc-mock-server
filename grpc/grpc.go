@@ -73,7 +73,7 @@ func StartgRPCServer(logLevel zerolog.Level, port int, setRandomMode bool, mockD
 	reflection.Register(s)
 	pb.RegisterSystemServer(s, &server{})
 
-	// Load mock data if provided.
+	// If the random mode is not set, load mock data.
 	if !setRandomMode {
 		log.Debug().Msgf("Fetching mock data from `%s` directory", mockData.Dir)
 		mockStatusData, mockBlockData, mockTraceData, err = loadMockData(mockData)
