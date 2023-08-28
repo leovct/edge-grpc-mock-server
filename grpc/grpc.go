@@ -147,15 +147,15 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 	log.Info().Msg("gRPC /BlockByNumber request received")
 
 	// Load block data from file or generate random data.
-	var rawData []byte
+	var block *edgetypes.BlockGrpc
 	switch config.Mode {
 	case modes.StaticMode:
-		// Parse the block mock file and return the raw data.
-		var mockBlock pb.BlockData
-		if err := loadDataFromFile(config.MockData.BlockFile, &mockBlock); err != nil {
+		// Parse the block mock file in the edge RPC format and convert it to the GRPC format.
+		var mockBlockRPC edgetypes.BlockRPC
+		if err := loadDataFromFile(config.MockData.BlockFile, &mockBlockRPC); err != nil {
 			return nil, err
 		}
-		rawData = mockBlock.Data
+		block = mockBlockRPC.ToBlockGrpc()
 
 	case modes.DynamicMode:
 		// List the block mock files under the block mock directory.
@@ -164,34 +164,30 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 			return nil, err
 		}
 
-		// Parse the block mock file at the current index and return the raw data.
+		// Parse the block mock file at the current index and convert it to the GRPC format.
 		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
 		file := files[fileIndex]
-		var mockBlock pb.BlockData
-		if err := loadDataFromFile(file, &mockBlock); err != nil {
+		var mockBlockRPC edgetypes.BlockRPC
+		if err := loadDataFromFile(file, &mockBlockRPC); err != nil {
 			return nil, err
 		}
-		rawData = mockBlock.Data
+		block = mockBlockRPC.ToBlockGrpc()
 
 	case modes.RandomMode:
 		// Return a random block data.
 		height := uint64(constantBlockHeight + requestCounter%config.UpdateBlockNumberThreshold)
 		txnTracesAmount := uint64(10)
-		block := edge.GenerateRandomEdgeBlock(height, txnTracesAmount)
-		rawData = block.MarshalRLP()
+		block = edge.GenerateRandomEdgeBlock(height, txnTracesAmount)
 
 	default:
 		return nil, errWrongMode
 	}
+	log.Debug().Msgf("Decoded block: %+v", &block)
 
-	// Parse the data.
-	if _, err := parseAndPrintRawBlockData(rawData); err != nil {
-		return nil, err
-	}
-	log.Trace().Msgf("BlockResponse encoded data: %v", rawData)
-
+	// Encode the block using RLP.
+	encodedBlock := block.MarshalRLP()
 	return &pb.BlockData{
-		Data: rawData,
+		Data: encodedBlock,
 	}, nil
 }
 
@@ -199,15 +195,13 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 	log.Info().Msg("gRPC /GetTrace request received")
 
 	// Load trace data from file or generate random data.
-	var rawTrace []byte
+	var trace edgetypes.Trace
 	switch config.Mode {
 	case modes.StaticMode:
-		// Parse the trace mock data file and return the raw trace.
-		var mockTrace pb.Trace
-		if err := loadDataFromFile(config.MockData.TraceFile, &mockTrace); err != nil {
+		// Parse the decoded trace mock file.
+		if err := loadDataFromFile(config.MockData.TraceFile, &trace); err != nil {
 			return nil, err
 		}
-		rawTrace = mockTrace.Trace
 
 	case modes.DynamicMode:
 		// List the block trace files under the trace mock directory.
@@ -216,97 +210,30 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 			return nil, err
 		}
 
-		// Parse the trace mock file at the current index and return the raw trace.
+		// Parse the decoded trace mock file at the current index.
 		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
 		file := files[fileIndex]
-		var mockTrace pb.Trace
-		if err := loadDataFromFile(file, &mockTrace); err != nil {
+		if err := loadDataFromFile(file, &trace); err != nil {
 			return nil, err
 		}
-		rawTrace = mockTrace.Trace
 
 	case modes.RandomMode:
-		trace := *edge.GenerateRandomEdgeTrace(10, 10, 10, 10)
-		var err error
-		rawTrace, err = json.Marshal(trace)
-		if err != nil {
-			log.Error().Err(err).Msg("BlockTrace encoding failed")
-			return nil, err
-		}
+		trace = *edge.GenerateRandomEdgeTrace(10, 10, 10, 10)
 
 	default:
 		return nil, errWrongMode
 	}
+	log.Trace().Msgf("Decoded trace: %+v", trace)
 
-	// Parse the raw trace.
-	if err := parseAndPrintRawTrace(rawTrace); err != nil {
+	// Encode the trace using base64.
+	encodedTrace, err := json.Marshal(trace)
+	if err != nil {
+		log.Error().Err(err).Msg("Trace encoding failed")
 		return nil, err
 	}
-	log.Trace().Msgf("TraceResponse encoded trace: %v", rawTrace)
-
 	return &pb.Trace{
-		Trace: rawTrace,
+		Trace: encodedTrace,
 	}, nil
-}
-
-// Parse a raw block data and display its content.
-func parseAndPrintRawBlockData(rawBlockData []byte) (edgetypes.Block, error) {
-	decodedBlock := edgetypes.Block{}
-	if err := decodedBlock.UnmarshalRLP(rawBlockData); err != nil {
-		log.Error().Err(err).Msg("BlockData decoding failed")
-		return edgetypes.Block{}, err
-	} else {
-		data, err := json.MarshalIndent(decodedBlock, "", "  ")
-		if err != nil {
-			log.Error().Err(err).Msg("Unable to format JSON struct")
-			return edgetypes.Block{}, err
-		} else {
-			log.Trace().Msgf("BlockResponse decoded data: %v", string(data))
-		}
-	}
-	return decodedBlock, nil
-}
-
-// Parse a raw trace and display its content.
-func parseAndPrintRawTrace(rawTrace []byte) error {
-	// Decode the raw trace.
-	var decodedTrace *edgetypes.Trace
-	if err := json.Unmarshal(rawTrace, &decodedTrace); err != nil {
-		log.Error().Err(err).Msg("Raw trace decoding failed")
-		return err
-	} else {
-		// Marshal the decoded trace to JSON.
-		data, err := json.MarshalIndent(decodedTrace, "", "  ")
-		if err != nil {
-			log.Error().Err(err).Msg("Unable to format JSON struct")
-			return err
-		} else {
-			log.Trace().Msgf("TraceResponce decoded trace: %v", string(data))
-
-			// Decode each transaction of the trace.
-			traces := decodedTrace.TxnTraces
-			if len(traces) > 0 {
-				log.Debug().Msgf("Decoding %d transaction trace(s)...", len(traces))
-			}
-			for i, trace := range traces {
-				decodedTxn := edgetypes.Transaction{}
-				txnBytes := []byte(trace.Transaction)
-				if err := decodedTxn.UnmarshalRLP(txnBytes); err != nil {
-					log.Error().Err(err).Msgf("Transaction #%d decoding failed", i+1)
-					return err
-				} else {
-					data, err := json.MarshalIndent(decodedTxn, "", "  ")
-					if err != nil {
-						log.Error().Err(err).Msg("Unable to format JSON struct")
-						return err
-					} else {
-						log.Trace().Msgf("Transaction #%d decoded: %v", i+1, string(data))
-					}
-				}
-			}
-		}
-	}
-	return nil
 }
 
 // Compute the file index in the case of dynamic mode.
@@ -338,13 +265,9 @@ func loadDataFromFile(filePath string, target interface{}) error {
 
 // Load block number from block file.
 func getBlockNumberFromBlockFile(filePath string) (int64, error) {
-	var rawBlock pb.BlockData
-	if err := loadDataFromFile(filePath, &rawBlock); err != nil {
+	var mockBlockRPC edgetypes.BlockRPC
+	if err := loadDataFromFile(config.MockData.BlockFile, &mockBlockRPC); err != nil {
 		return 0, err
 	}
-	block, err := parseAndPrintRawBlockData(rawBlock.Data)
-	if err != nil {
-		return 0, err
-	}
-	return int64(block.Header.Number), nil
+	return int64(mockBlockRPC.Number), nil
 }

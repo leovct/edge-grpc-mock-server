@@ -82,7 +82,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 }
 
 // GenerateRandomEdgeBlock generates a random `Block` with random data.
-func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
+func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.BlockGrpc {
 	// Generate a random EdgeBlock.
 	header := &types.Header{
 		ParentHash:   generateRandomHash(),
@@ -135,7 +135,7 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 		})
 	}
 
-	return &types.Block{
+	return &types.BlockGrpc{
 		Header:       header,
 		Transactions: transactions,
 		Uncles:       uncles,

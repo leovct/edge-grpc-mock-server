@@ -14,24 +14,19 @@ const (
 )
 
 type Transaction struct {
+	Hash      Hash
 	Nonce     uint64
-	GasPrice  *big.Int
-	GasTipCap *big.Int
-	GasFeeCap *big.Int
-	Gas       uint64
+	From      Address
 	To        *Address
 	Value     *big.Int
+	GasPrice  *big.Int
+	Gas       uint64
+	GasTipCap *big.Int
+	GasFeeCap *big.Int
 	Input     []byte
 	V, R, S   *big.Int
-	Hash      Hash
-	From      Address
-
-	Type TxType
-
-	ChainID *big.Int
-
-	// Cache
-	//size atomic.Pointer[uint64].
+	Type      TxType
+	ChainID   *big.Int
 }
 
 type TxType byte

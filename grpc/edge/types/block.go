@@ -6,24 +6,85 @@ import (
 	"github.com/umbracle/fastrlp"
 )
 
-type Block struct {
+// BlockRPC represents a block returned by the edge RPC.
+type BlockRPC struct {
+	ParentHash      Hash          `json:"parentHash"`
+	Sha3Uncles      Hash          `json:"sha3Uncles"`
+	Miner           []byte        `json:"miner"`
+	StateRoot       Hash          `json:"stateRoot"`
+	TxRoot          Hash          `json:"transactionsRoot"`
+	ReceiptsRoot    Hash          `json:"receiptsRoot"`
+	LogsBloom       Bloom         `json:"logsBloom"`
+	Difficulty      uint64        `json:"difficulty"`
+	TotalDifficulty uint64        `json:"totalDifficulty"`
+	Size            uint64        `json:"size"`
+	Number          uint64        `json:"number"`
+	GasLimit        uint64        `json:"gasLimit"`
+	GasUsed         uint64        `json:"gasUsed"`
+	Timestamp       uint64        `json:"timestamp"`
+	ExtraData       []byte        `json:"extraData"`
+	MixHash         Hash          `json:"mixHash"`
+	Nonce           Nonce         `json:"nonce"`
+	Hash            Hash          `json:"hash"`
+	Transactions    []Transaction `json:"transactions"`
+	Uncles          []Hash        `json:"uncles"`
+	BaseFee         uint64        `json:"baseFeePerGas,omitempty"`
+}
+
+func (b *BlockRPC) ToBlockGrpc() *BlockGrpc {
+	header := Header{
+		ParentHash:      b.ParentHash,
+		Sha3Uncles:      b.Sha3Uncles,
+		Miner:           b.Miner,
+		StateRoot:       b.StateRoot,
+		TxRoot:          b.TxRoot,
+		ReceiptsRoot:    b.ReceiptsRoot,
+		LogsBloom:       b.LogsBloom,
+		Difficulty:      b.Difficulty,
+		TotalDifficulty: b.TotalDifficulty,
+		Size:            b.Size,
+		Number:          b.Number,
+		GasLimit:        b.GasLimit,
+		GasUsed:         b.GasUsed,
+		Timestamp:       b.Timestamp,
+		ExtraData:       b.ExtraData,
+		MixHash:         b.MixHash,
+		Nonce:           b.Nonce,
+		Hash:            b.Hash,
+		BaseFee:         b.BaseFee,
+	}
+
+	transactions := make([]*Transaction, len(b.Transactions))
+	for _, tx := range b.Transactions {
+		transactions = append(transactions, &tx)
+	}
+
+	// Note: we don't parse uncles for the moment.
+	var uncles []*Header
+
+	return &BlockGrpc{
+		Header:       &header,
+		Transactions: transactions,
+		Uncles:       uncles,
+	}
+}
+
+// BlockGrpc represents a block returned by edge gRPC server.
+type BlockGrpc struct {
 	Header       *Header
 	Transactions []*Transaction
 	Uncles       []*Header
-
-	// Cache
-	//size atomic.Pointer[uint64].
 }
 
-func (b *Block) MarshalRLP() []byte {
+func (b *BlockGrpc) MarshalRLP() []byte {
 	return b.MarshalRLPTo(nil)
 }
 
-func (b *Block) MarshalRLPTo(dst []byte) []byte {
+func (b *BlockGrpc) MarshalRLPTo(dst []byte) []byte {
 	return MarshalRLPTo(b.MarshalRLPWith, dst)
 }
 
-func (b *Block) MarshalRLPWith(ar *fastrlp.Arena) *fastrlp.Value {
+func (b *BlockGrpc) MarshalRLPWith(ar *fastrlp.Arena) *fastrlp.Value {
 	vv := ar.NewArray()
 	vv.Set(b.Header.MarshalRLPWith(ar))
 
@@ -54,7 +115,7 @@ func (b *Block) MarshalRLPWith(ar *fastrlp.Arena) *fastrlp.Value {
 	return vv
 }
 
-func (b *Block) UnmarshalRLP(input []byte) error {
+func (b *BlockGrpc) UnmarshalRLP(input []byte) error {
 	return UnmarshalRlp(b.UnmarshalRLPFrom, input)
 }
 
@@ -81,7 +142,7 @@ func UnmarshalRlp(obj unmarshalRLPFunc, input []byte) error {
 	return nil
 }
 
-func (b *Block) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
+func (b *BlockGrpc) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 	elems, err := v.GetElems()
 	if err != nil {
 		return err

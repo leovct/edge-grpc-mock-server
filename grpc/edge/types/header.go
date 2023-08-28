@@ -11,22 +11,24 @@ import (
 const BloomByteLength = 256
 
 type Header struct {
-	ParentHash   Hash
-	Sha3Uncles   Hash
-	Miner        []byte
-	StateRoot    Hash
-	TxRoot       Hash
-	ReceiptsRoot Hash
-	LogsBloom    Bloom
-	Difficulty   uint64
-	Number       uint64
-	GasLimit     uint64
-	GasUsed      uint64
-	Timestamp    uint64
-	ExtraData    []byte
-	MixHash      Hash
-	Nonce        Nonce
-	Hash         Hash
+	ParentHash      Hash
+	Sha3Uncles      Hash
+	Miner           []byte
+	StateRoot       Hash
+	TxRoot          Hash
+	ReceiptsRoot    Hash
+	LogsBloom       Bloom
+	Difficulty      uint64
+	TotalDifficulty uint64
+	Size            uint64
+	Number          uint64
+	GasLimit        uint64
+	GasUsed         uint64
+	Timestamp       uint64
+	ExtraData       []byte
+	MixHash         Hash
+	Nonce           Nonce
+	Hash            Hash
 	// BaseFee was added by EIP-1559 and is ignored in legacy headers.
 	BaseFee uint64 `json:"baseFeePerGas"`
 }
