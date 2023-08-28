@@ -16,6 +16,25 @@ func (a Address) Bytes() []byte {
 	return a[:]
 }
 
+func (a Address) String() string {
+	return a.checksumEncode()
+}
+
+func (a Address) MarshalText() ([]byte, error) {
+	return []byte(a.String()), nil
+}
+
+func (a *Address) UnmarshalText(input []byte) error {
+	buf := stringToBytes(string(input))
+	if len(buf) != AddressLength {
+		return fmt.Errorf("incorrect length")
+	}
+
+	*a = BytesToAddress(buf)
+
+	return nil
+}
+
 // checksumEncode returns the checksummed address with 0x prefix, as by EIP-55
 // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md
 func (a Address) checksumEncode() string {
@@ -39,23 +58,4 @@ func (a Address) checksumEncode() string {
 	}
 
 	return "0x" + string(result)
-}
-
-func (a Address) String() string {
-	return a.checksumEncode()
-}
-
-func (a Address) MarshalText() ([]byte, error) {
-	return []byte(a.String()), nil
-}
-
-func (a *Address) UnmarshalText(input []byte) error {
-	buf := stringToBytes(string(input))
-	if len(buf) != AddressLength {
-		return fmt.Errorf("incorrect length")
-	}
-
-	*a = BytesToAddress(buf)
-
-	return nil
 }

@@ -22,12 +22,12 @@ func (h Hash) MarshalText() ([]byte, error) {
 }
 
 func (h *Hash) UnmarshalText(input []byte) error {
-	*h = BytesToHash(stringToBytes(string(input)))
+	*h = bytesToHash(stringToBytes(string(input)))
 
 	return nil
 }
 
-func BytesToHash(b []byte) Hash {
+func bytesToHash(b []byte) Hash {
 	var h Hash
 
 	size := len(b)

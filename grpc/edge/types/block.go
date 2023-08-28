@@ -6,30 +6,39 @@ import (
 	"github.com/umbracle/fastrlp"
 )
 
-// BlockRPC represents a block returned by the edge RPC.
-type BlockRPC struct {
-	ParentHash      Hash          `json:"parentHash"`
-	Sha3Uncles      Hash          `json:"sha3Uncles"`
-	Miner           []byte        `json:"miner"`
-	StateRoot       Hash          `json:"stateRoot"`
-	TxRoot          Hash          `json:"transactionsRoot"`
-	ReceiptsRoot    Hash          `json:"receiptsRoot"`
-	LogsBloom       Bloom         `json:"logsBloom"`
-	Difficulty      uint64        `json:"difficulty"`
-	TotalDifficulty uint64        `json:"totalDifficulty"`
-	Size            uint64        `json:"size"`
-	Number          uint64        `json:"number"`
-	GasLimit        uint64        `json:"gasLimit"`
-	GasUsed         uint64        `json:"gasUsed"`
-	Timestamp       uint64        `json:"timestamp"`
-	ExtraData       []byte        `json:"extraData"`
-	MixHash         Hash          `json:"mixHash"`
-	Nonce           Nonce         `json:"nonce"`
-	Hash            Hash          `json:"hash"`
-	Transactions    []Transaction `json:"transactions"`
-	Uncles          []Hash        `json:"uncles"`
-	BaseFee         uint64        `json:"baseFeePerGas,omitempty"`
-}
+type (
+	// BlockRPC represents a block returned by the edge RPC.
+	BlockRPC struct {
+		ParentHash      Hash             `json:"parentHash"`
+		Sha3Uncles      Hash             `json:"sha3Uncles"`
+		Miner           []byte           `json:"miner"`
+		StateRoot       Hash             `json:"stateRoot"`
+		TxRoot          Hash             `json:"transactionsRoot"`
+		ReceiptsRoot    Hash             `json:"receiptsRoot"`
+		LogsBloom       Bloom            `json:"logsBloom"`
+		Difficulty      uint64           `json:"difficulty"`
+		TotalDifficulty uint64           `json:"totalDifficulty"`
+		Size            uint64           `json:"size"`
+		Number          uint64           `json:"number"`
+		GasLimit        uint64           `json:"gasLimit"`
+		GasUsed         uint64           `json:"gasUsed"`
+		Timestamp       uint64           `json:"timestamp"`
+		ExtraData       []byte           `json:"extraData"`
+		MixHash         Hash             `json:"mixHash"`
+		Nonce           Nonce            `json:"nonce"`
+		Hash            Hash             `json:"hash"`
+		Transactions    []TransactionRPC `json:"transactions"`
+		Uncles          []Hash           `json:"uncles"`
+		BaseFee         uint64           `json:"baseFeePerGas,omitempty"`
+	}
+
+	// BlockGrpc represents a block returned by edge gRPC server.
+	BlockGrpc struct {
+		Header       *Header
+		Transactions []*TransactionGrpc
+		Uncles       []*Header
+	}
+)
 
 func (b *BlockRPC) ToBlockGrpc() *BlockGrpc {
 	header := Header{
@@ -54,9 +63,10 @@ func (b *BlockRPC) ToBlockGrpc() *BlockGrpc {
 		BaseFee:         b.BaseFee,
 	}
 
-	transactions := make([]*Transaction, len(b.Transactions))
-	for _, tx := range b.Transactions {
-		transactions = append(transactions, &tx)
+	transactions := make([]*TransactionGrpc, len(b.Transactions))
+	for _, txGrpc := range b.Transactions {
+		txRPC := txGrpc.toTransactionGrpc()
+		transactions = append(transactions, &txRPC)
 	}
 
 	// Note: we don't parse uncles for the moment.
@@ -67,13 +77,6 @@ func (b *BlockRPC) ToBlockGrpc() *BlockGrpc {
 		Transactions: transactions,
 		Uncles:       uncles,
 	}
-}
-
-// BlockGrpc represents a block returned by edge gRPC server.
-type BlockGrpc struct {
-	Header       *Header
-	Transactions []*Transaction
-	Uncles       []*Header
 }
 
 func (b *BlockGrpc) MarshalRLP() []byte {
@@ -119,29 +122,6 @@ func (b *BlockGrpc) UnmarshalRLP(input []byte) error {
 	return UnmarshalRlp(b.UnmarshalRLPFrom, input)
 }
 
-type unmarshalRLPFunc func(p *fastrlp.Parser, v *fastrlp.Value) error
-
-func UnmarshalRlp(obj unmarshalRLPFunc, input []byte) error {
-	pr := fastrlp.DefaultParserPool.Get()
-
-	v, err := pr.Parse(input)
-	if err != nil {
-		fastrlp.DefaultParserPool.Put(pr)
-
-		return err
-	}
-
-	if err := obj(pr, v); err != nil {
-		fastrlp.DefaultParserPool.Put(pr)
-
-		return err
-	}
-
-	fastrlp.DefaultParserPool.Put(pr)
-
-	return nil
-}
-
 func (b *BlockGrpc) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 	elems, err := v.GetElems()
 	if err != nil {
@@ -165,7 +145,7 @@ func (b *BlockGrpc) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error 
 	}
 
 	for _, txn := range txns {
-		bTxn := &Transaction{}
+		bTxn := &TransactionGrpc{}
 		if err = bTxn.UnmarshalRLPFrom(p, txn); err != nil {
 			return err
 		}

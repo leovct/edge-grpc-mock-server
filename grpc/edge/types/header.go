@@ -10,58 +10,39 @@ import (
 
 const BloomByteLength = 256
 
-type Header struct {
-	ParentHash      Hash
-	Sha3Uncles      Hash
-	Miner           []byte
-	StateRoot       Hash
-	TxRoot          Hash
-	ReceiptsRoot    Hash
-	LogsBloom       Bloom
-	Difficulty      uint64
-	TotalDifficulty uint64
-	Size            uint64
-	Number          uint64
-	GasLimit        uint64
-	GasUsed         uint64
-	Timestamp       uint64
-	ExtraData       []byte
-	MixHash         Hash
-	Nonce           Nonce
-	Hash            Hash
-	// BaseFee was added by EIP-1559 and is ignored in legacy headers.
-	BaseFee uint64 `json:"baseFeePerGas"`
-}
+var (
+	HeaderHash       = defHeaderHash
+	marshalArenaPool fastrlp.ArenaPool
+)
 
-type Bloom [BloomByteLength]byte
+type (
+	Header struct {
+		ParentHash      Hash
+		Sha3Uncles      Hash
+		Miner           []byte
+		StateRoot       Hash
+		TxRoot          Hash
+		ReceiptsRoot    Hash
+		LogsBloom       Bloom
+		Difficulty      uint64
+		TotalDifficulty uint64
+		Size            uint64
+		Number          uint64
+		GasLimit        uint64
+		GasUsed         uint64
+		Timestamp       uint64
+		ExtraData       []byte
+		MixHash         Hash
+		Nonce           Nonce
+		Hash            Hash
+		// BaseFee was added by EIP-1559 and is ignored in legacy headers.
+		BaseFee uint64 `json:"baseFeePerGas"`
+	}
 
-type Nonce [8]byte
+	Nonce [8]byte
 
-func (h *Header) SetNonce(i uint64) {
-	binary.BigEndian.PutUint64(h.Nonce[:], i)
-}
-
-var HeaderHash = defHeaderHash
-var marshalArenaPool fastrlp.ArenaPool
-
-func (h *Header) ComputeHash() *Header {
-	h.Hash = HeaderHash(h)
-	return h
-}
-
-func defHeaderHash(h *Header) (hash Hash) {
-	// Default header hashing.
-	ar := marshalArenaPool.Get()
-	hasher := keccak.DefaultKeccakPool.Get()
-
-	v := h.MarshalRLPWith(ar)
-	hasher.WriteRlp(hash[:0], v)
-
-	marshalArenaPool.Put(ar)
-	keccak.DefaultKeccakPool.Put(hasher)
-
-	return
-}
+	Bloom [BloomByteLength]byte
+)
 
 func (h *Header) MarshalRLPWith(arena *fastrlp.Arena) *fastrlp.Value {
 	vv := arena.NewArray()
@@ -165,10 +146,33 @@ func (h *Header) UnmarshalRLPFrom(p *fastrlp.Parser, v *fastrlp.Value) error {
 		return err
 	}
 
-	h.SetNonce(nonce)
+	h.setNonce(nonce)
 
 	// Compute the hash after the decoding.
-	h.ComputeHash()
+	h.computeHash()
 
 	return err
+}
+
+func (h *Header) setNonce(i uint64) {
+	binary.BigEndian.PutUint64(h.Nonce[:], i)
+}
+
+func (h *Header) computeHash() *Header {
+	h.Hash = HeaderHash(h)
+	return h
+}
+
+func defHeaderHash(h *Header) (hash Hash) {
+	// Default header hashing.
+	ar := marshalArenaPool.Get()
+	hasher := keccak.DefaultKeccakPool.Get()
+
+	v := h.MarshalRLPWith(ar)
+	hasher.WriteRlp(hash[:0], v)
+
+	marshalArenaPool.Put(ar)
+	keccak.DefaultKeccakPool.Put(hasher)
+
+	return
 }

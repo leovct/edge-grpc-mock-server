@@ -105,7 +105,7 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.BlockGrpc {
 	}
 
 	// Generate a list of random transactions.
-	var transactions []*types.Transaction
+	var transactions []*types.TransactionGrpc
 	var i uint64
 	for i = 0; i < txnTracesAmount; i++ {
 		transactions = append(transactions, generateRandomTx(i))
@@ -142,9 +142,9 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.BlockGrpc {
 	}
 }
 
-func generateRandomTx(nonce uint64) *types.Transaction {
+func generateRandomTx(nonce uint64) *types.TransactionGrpc {
 	randomAddress := generateRandomAddress()
-	return &types.Transaction{
+	return &types.TransactionGrpc{
 		Nonce:     nonce,
 		GasPrice:  generateRandomBigInt(),
 		GasTipCap: generateRandomBigInt(),
