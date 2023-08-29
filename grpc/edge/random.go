@@ -4,7 +4,8 @@ import (
 	"crypto/rand"
 	"math/big"
 	"time"
-	"zero-provers/server/grpc/edge/types"
+
+	"github.com/0xPolygon/polygon-edge/types"
 )
 
 // GenerateRandomEdgeTrace generates a random `Trace` with random data.
@@ -82,7 +83,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 }
 
 // GenerateRandomEdgeBlock generates a random `Block` with random data.
-func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.BlockGrpc {
+func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 	// Generate a random EdgeBlock.
 	header := &types.Header{
 		ParentHash:   generateRandomHash(),
@@ -105,7 +106,7 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.BlockGrpc {
 	}
 
 	// Generate a list of random transactions.
-	var transactions []*types.TransactionGrpc
+	var transactions []*types.Transaction
 	var i uint64
 	for i = 0; i < txnTracesAmount; i++ {
 		transactions = append(transactions, generateRandomTx(i))
@@ -135,16 +136,16 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.BlockGrpc {
 		})
 	}
 
-	return &types.BlockGrpc{
+	return &types.Block{
 		Header:       header,
 		Transactions: transactions,
 		Uncles:       uncles,
 	}
 }
 
-func generateRandomTx(nonce uint64) *types.TransactionGrpc {
+func generateRandomTx(nonce uint64) *types.Transaction {
 	randomAddress := generateRandomAddress()
-	return &types.TransactionGrpc{
+	return &types.Transaction{
 		Nonce:     nonce,
 		GasPrice:  generateRandomBigInt(),
 		GasTipCap: generateRandomBigInt(),

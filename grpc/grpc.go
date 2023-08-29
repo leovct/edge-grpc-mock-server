@@ -9,13 +9,13 @@ import (
 	"os"
 	"path/filepath"
 	"zero-provers/server/grpc/edge"
-	edgetypes "zero-provers/server/grpc/edge/types"
 	pb "zero-provers/server/grpc/pb"
 	"zero-provers/server/logger"
 	"zero-provers/server/modes"
 
 	empty "google.golang.org/protobuf/types/known/emptypb"
 
+	"github.com/0xPolygon/polygon-edge/types"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -147,11 +147,11 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 	log.Info().Msg("gRPC /BlockByNumber request received")
 
 	// Load block data from file or generate random data.
-	var block *edgetypes.BlockGrpc
+	var block *types.Block
 	switch config.Mode {
 	case modes.StaticMode:
 		// Parse the block mock file in the edge RPC format and convert it to the GRPC format.
-		var mockBlockRPC edgetypes.BlockRPC
+		var mockBlockRPC edge.BlockRPC
 		if err := loadDataFromFile(config.MockData.BlockFile, &mockBlockRPC); err != nil {
 			return nil, err
 		}
@@ -167,7 +167,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 		// Parse the block mock file at the current index and convert it to the GRPC format.
 		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
 		file := files[fileIndex]
-		var mockBlockRPC edgetypes.BlockRPC
+		var mockBlockRPC edge.BlockRPC
 		if err := loadDataFromFile(file, &mockBlockRPC); err != nil {
 			return nil, err
 		}
@@ -195,7 +195,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 	log.Info().Msg("gRPC /GetTrace request received")
 
 	// Load trace data from file or generate random data.
-	var trace edgetypes.Trace
+	var trace types.Trace
 	switch config.Mode {
 	case modes.StaticMode:
 		// Parse the decoded trace mock file.
@@ -265,7 +265,7 @@ func loadDataFromFile(filePath string, target interface{}) error {
 
 // Load block number from block file.
 func getBlockNumberFromBlockFile(filePath string) (int64, error) {
-	var mockBlockRPC edgetypes.BlockRPC
+	var mockBlockRPC edge.BlockRPC
 	if err := loadDataFromFile(config.MockData.BlockFile, &mockBlockRPC); err != nil {
 		return 0, err
 	}
