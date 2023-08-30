@@ -4,7 +4,8 @@ import (
 	"crypto/rand"
 	"math/big"
 	"time"
-	"zero-provers/server/grpc/edge/types"
+
+	"github.com/0xPolygon/polygon-edge/types"
 )
 
 // GenerateRandomEdgeTrace generates a random `Trace` with random data.
@@ -12,7 +13,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 	trace := &types.Trace{
 		AccountTrie:     make(map[string]string),
 		StorageTrie:     make(map[string]string),
-		ParentStateRoot: generateRandomHash(),
+		ParentStateRoot: *generateRandomHash(),
 		TxnTraces:       []*types.TxnTrace{},
 	}
 
@@ -45,7 +46,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 
 	generateRandomJournalEntry := func() *types.JournalEntry {
 		entry := &types.JournalEntry{
-			Addr:    generateRandomAddress(),
+			Addr:    *generateRandomAddress(),
 			Balance: generateRandomBigInt(),
 			Nonce:   generateRandomNonce(),
 			Storage: make(map[types.Hash]types.Hash),
@@ -56,8 +57,8 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 
 		// Add some random storage entries.
 		for i := 0; i < storageEntriesAmount; i++ {
-			key := generateRandomHash()
-			value := generateRandomHash()
+			key := *generateRandomHash()
+			value := *generateRandomHash()
 			entry.Storage[key] = value
 		}
 
@@ -69,7 +70,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 		return &types.TxnTrace{
 			Transaction: txn.MarshalRLP(),
 			Delta: map[types.Address]*types.JournalEntry{
-				generateRandomAddress(): generateRandomJournalEntry(),
+				*generateRandomAddress(): generateRandomJournalEntry(),
 			},
 		}
 	}
@@ -85,12 +86,12 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 	// Generate a random EdgeBlock.
 	header := &types.Header{
-		ParentHash:   generateRandomHash(),
-		Sha3Uncles:   generateRandomHash(),
+		ParentHash:   *generateRandomHash(),
+		Sha3Uncles:   *generateRandomHash(),
 		Miner:        []byte{1, 2, 3},
-		StateRoot:    generateRandomHash(),
-		TxRoot:       generateRandomHash(),
-		ReceiptsRoot: generateRandomHash(),
+		StateRoot:    *generateRandomHash(),
+		TxRoot:       *generateRandomHash(),
+		ReceiptsRoot: *generateRandomHash(),
 		LogsBloom:    types.Bloom{},
 		Difficulty:   12345,
 		Number:       number,
@@ -98,9 +99,9 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 		GasUsed:      200000,
 		Timestamp:    uint64(time.Now().Unix()),
 		ExtraData:    []byte{4, 5, 6},
-		MixHash:      generateRandomHash(),
+		MixHash:      *generateRandomHash(),
 		Nonce:        types.Nonce{7, 8, 9, 10, 11, 12, 13, 14},
-		Hash:         generateRandomHash(),
+		Hash:         *generateRandomHash(),
 		BaseFee:      5,
 	}
 
@@ -115,12 +116,12 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 	var uncles []*types.Header
 	for i := 0; i < 2; i++ {
 		uncles = append(uncles, &types.Header{
-			ParentHash:   generateRandomHash(),
-			Sha3Uncles:   generateRandomHash(),
+			ParentHash:   *generateRandomHash(),
+			Sha3Uncles:   *generateRandomHash(),
 			Miner:        []byte{1, 2, 3},
-			StateRoot:    generateRandomHash(),
-			TxRoot:       generateRandomHash(),
-			ReceiptsRoot: generateRandomHash(),
+			StateRoot:    *generateRandomHash(),
+			TxRoot:       *generateRandomHash(),
+			ReceiptsRoot: *generateRandomHash(),
 			LogsBloom:    types.Bloom{},
 			Difficulty:   12345,
 			Number:       67890,
@@ -128,9 +129,9 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 			GasUsed:      200000,
 			Timestamp:    uint64(time.Now().Unix()),
 			ExtraData:    []byte{4, 5, 6},
-			MixHash:      generateRandomHash(),
+			MixHash:      *generateRandomHash(),
 			Nonce:        types.Nonce{7, 8, 9, 10, 11, 12, 13, 14},
-			Hash:         generateRandomHash(),
+			Hash:         *generateRandomHash(),
 			BaseFee:      5,
 		})
 	}
@@ -150,31 +151,31 @@ func generateRandomTx(nonce uint64) *types.Transaction {
 		GasTipCap: generateRandomBigInt(),
 		GasFeeCap: generateRandomBigInt(),
 		Gas:       21000,
-		To:        &randomAddress,
+		To:        randomAddress,
 		Value:     generateRandomBigInt(),
 		Input:     []byte{1, 2, 3},
 		V:         generateRandomBigInt(),
 		R:         generateRandomBigInt(),
 		S:         generateRandomBigInt(),
-		Hash:      generateRandomHash(),
-		From:      generateRandomAddress(),
+		Hash:      *generateRandomHash(),
+		From:      *randomAddress,
 		Type:      types.TxType(0),
 		ChainID:   generateRandomBigInt(),
 	}
 }
 
-func generateRandomHash() types.Hash {
+func generateRandomHash() *types.Hash {
 	bytes := generateRandomBytes(types.HashLength)
 	var hash types.Hash
 	copy(hash[:], bytes)
-	return hash
+	return &hash
 }
 
-func generateRandomAddress() types.Address {
+func generateRandomAddress() *types.Address {
 	bytes := generateRandomBytes(types.AddressLength)
 	var address types.Address
 	copy(address[:], bytes)
-	return address
+	return &address
 }
 
 func generateRandomBigInt() *big.Int {
