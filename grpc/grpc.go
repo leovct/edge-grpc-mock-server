@@ -182,7 +182,17 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 	default:
 		return nil, errWrongMode
 	}
-	//Log.Debug().Msgf("Decoded block: %+v", *block).
+	if block != nil {
+		log.Debug().Msgf("Decoded block header: %+v", *block.Header)
+		log.Debug().Msgf("Number of transactions: %d", len(block.Transactions))
+		for i, tx := range block.Transactions {
+			log.Debug().Msgf("Tx #%d: %+v", i, tx)
+		}
+		log.Debug().Msgf("Number of uncles: %d", len(block.Uncles))
+		for i, uncle := range block.Uncles {
+			log.Debug().Msgf("Uncle #%d: %+v", i, uncle)
+		}
+	}
 
 	// Encode the block using RLP.
 	encodedBlock := block.MarshalRLP()
