@@ -40,9 +40,9 @@ Flags:
   -p, --http-port int                       HTTP server port (default 8080)
   -e, --http-save-endpoint string           HTTP server save endpoint (default "/save")
       --mock-data-block-dir string          The mock data block directory (used in dynamic mode) (default "data/blocks")
-      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/blocks/block.json")
-      --mock-data-trace-dir string          The mock data trace directory (used in dynamic mode) (default "data/traces/encoded")
-      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/traces/encoded/trace3.json")
+      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/blocks/block-57.json")
+      --mock-data-trace-dir string          The mock data trace directory (used in dynamic mode) (default "data/traces")
+      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/traces/trace-57.json")
   -m, --mode string                         Mode of the mock server.
                                             - static: the server always return the same mock block data.
                                             - dynamic: the server returns new mock block data every {n} requests.
@@ -161,7 +161,7 @@ go run main.go \
   --http-port 8080 \
   --http-save-endpoint /save \
   --mock-data-block-dir data/blocks \
-  --mock-data-trace-dir data/traces/encoded \
+  --mock-data-trace-dir data/traces \
   --mode dynamic \
   --update-data-threshold 5 \
   --output-dir out \

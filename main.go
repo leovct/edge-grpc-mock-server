@@ -132,11 +132,11 @@ func main() {
 	// Static mode configuration.
 	rootCmd.PersistentFlags().StringVar(&config.MockBlockFile, "mock-data-block-file", "data/blocks/block-57.json", "The mock data block file path (used in static mode)")
 	rootCmd.PersistentFlags().StringVar(&config.MockTraceFile, "mock-data-trace-file", "data/traces/trace-57.json", "The mock data trace file path (used in static mode)")
-	rootCmd.PersistentFlags().IntVar(&config.UpdateDataThreshold, "update-data-threshold", 30, "The number of requests after which the server returns new data, block and trace (used in dynamic mode).")
 
 	// Dynamic mode configuration.
 	rootCmd.PersistentFlags().StringVar(&config.MockBlockDir, "mock-data-block-dir", "data/blocks", "The mock data block directory (used in dynamic mode)")
 	rootCmd.PersistentFlags().StringVar(&config.MockTraceDir, "mock-data-trace-dir", "data/traces", "The mock data trace directory (used in dynamic mode)")
+	rootCmd.PersistentFlags().IntVar(&config.UpdateDataThreshold, "update-data-threshold", 30, "The number of requests after which the server returns new data, block and trace (used in dynamic mode).")
 
 	// Random mode configuration.
 	rootCmd.PersistentFlags().IntVar(&config.UpdateBlockNumberThreshold, "update-block-number-threshold", 30, "The number of requests after which the server increments the block number (used in random mode)")
