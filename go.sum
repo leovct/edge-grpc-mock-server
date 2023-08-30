@@ -1,5 +1,3 @@
-github.com/0xPolygon/polygon-edge v1.1.1-0.20230829133304-db156bfeed78 h1:NyO0GslKH7DLPnHhQKCuEqjq6pXybrBs7S992v2BffU=
-github.com/0xPolygon/polygon-edge v1.1.1-0.20230829133304-db156bfeed78/go.mod h1:wEKNXl+jjq8aYnEJp++bCVOcNfTPbhIo3hI2tmM0JOc=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 h1:UQHMgLO+TxOElx5B5HZ4hJQsoJ/PvUvKRhJHDQXO8P8=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/Microsoft/go-winio v0.6.0 h1:slsWYD/zyx7lCXoZVlvQrj0hPTM1HI4+v1sIda2yDvg=
@@ -30,6 +28,8 @@ github.com/google/gofuzz v1.2.0 h1:xRy4A+RhZaiKjJ1bPfwQ8sedCA+YS2YcCHW6ec7JMi0=
 github.com/google/gofuzz v1.2.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+github.com/leovct/polygon-edge v0.0.0-20230830122837-41c23a680ef8 h1:1KmUAD437/whnyEx5+fkeYoyomAHSY7u3xqRW0E9vZA=
+github.com/leovct/polygon-edge v0.0.0-20230830122837-41c23a680ef8/go.mod h1:wEKNXl+jjq8aYnEJp++bCVOcNfTPbhIo3hI2tmM0JOc=
 github.com/mattn/go-colorable v0.1.12/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb520KVy5xxl4=
 github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
 github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
