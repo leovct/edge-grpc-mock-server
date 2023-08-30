@@ -124,6 +124,47 @@ jobs:
 
           make test
 
+  dynamic-mode-test:
+    name: dynamic-mode-test
+    needs: [lint, grpc-code-is-up-to-date]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Install go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Build code
+        run: go build -o mock-server main.go
+
+      - name: Install grpcurl
+        run: |
+          wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz
+          tar -xvf grpcurl_1.8.7_linux_x86_64.tar.gz
+          sudo mv grpcurl /usr/local/bin/
+          sudo chmod +x /usr/local/bin/grpcurl
+          grpcurl --version
+
+      - name: Run tests against a mock-server that returns static mock data
+        run: |
+          ./mock-server \
+            --grpc-port 8546 \
+            --http-port 8080 \
+            --http-save-endpoint /save \
+            --mock-data-block-dir data/blocks \
+            --mock-data-trace-dir data/traces \
+            --mode dynamic \
+            --update-data-threshold 5 \
+            --output-dir out \
+            --verbosity 0 \
+            &
+
+          ./scripts/loop.sh 100
+
   random-mode-test:
     name: random-mode-test
     needs: [lint, grpc-code-is-up-to-date]
@@ -161,4 +202,4 @@ jobs:
             --verbosity 0 \
             &
 
-          ./scripts/loop.sh 100
+          make test
