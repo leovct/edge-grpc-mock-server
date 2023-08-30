@@ -56,10 +56,10 @@ func (b *BlockRPC) ToBlockGrpc() *types.Block {
 	}
 
 	transactions := make([]*types.Transaction, len(b.Transactions))
-	for _, txGrpc := range b.Transactions {
+	for i, txGrpc := range b.Transactions {
 		txRPC := txGrpc.toTransactionGrpc()
 		if txRPC != nil {
-			transactions = append(transactions, txRPC)
+			transactions[i] = txRPC
 		}
 	}
 
