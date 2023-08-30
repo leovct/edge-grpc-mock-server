@@ -17,7 +17,7 @@ require (
 	github.com/sethvargo/go-retry v0.2.4 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/umbracle/ethgo v0.1.4-0.20230712173909-df37dddf16f0 // indirect
+	github.com/umbracle/ethgo v0.1.4-0.20230810113823-c9c19bcd8a1e // indirect
 	github.com/valyala/fastjson v1.6.3 // indirect
 )
 
@@ -26,10 +26,10 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/umbracle/fastrlp v0.1.1-0.20230504065717-58a1b8a9929d // indirect
-	golang.org/x/crypto v0.11.0 // indirect
-	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
-	golang.org/x/text v0.11.0 // indirect
+	golang.org/x/crypto v0.12.0 // indirect
+	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/text v0.12.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230530153820-e85fd2cbaebc // indirect
 )
 
@@ -37,4 +37,4 @@ require (
 // https://github.com/0xPolygon/polygon-edge/tree/feat/zero
 // 1. Add `replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge <commit_id>` to `go.mod`.
 // 2. Run `go mod tidy`, this will update `go.mod`.
-replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230802161734-6c2a377e1a4f
+replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230829133304-db156bfeed78
