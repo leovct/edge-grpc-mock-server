@@ -182,7 +182,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 	default:
 		return nil, errWrongMode
 	}
-	log.Debug().Msgf("Decoded block: %+v", &block)
+	//Log.Debug().Msgf("Decoded block: %+v", *block).
 
 	// Encode the block using RLP.
 	encodedBlock := block.MarshalRLP()

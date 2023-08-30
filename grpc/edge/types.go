@@ -58,7 +58,9 @@ func (b *BlockRPC) ToBlockGrpc() *types.Block {
 	transactions := make([]*types.Transaction, len(b.Transactions))
 	for _, txGrpc := range b.Transactions {
 		txRPC := txGrpc.toTransactionGrpc()
-		transactions = append(transactions, txRPC)
+		if txRPC != nil {
+			transactions = append(transactions, txRPC)
+		}
 	}
 
 	// Note: we don't parse uncles for the moment.
@@ -69,6 +71,19 @@ func (b *BlockRPC) ToBlockGrpc() *types.Block {
 		Transactions: transactions,
 		Uncles:       uncles,
 	}
+}
+
+func (b *BlockRPC) Copy() *BlockRPC {
+	bb := new(BlockRPC)
+	*bb = *b
+
+	bb.Miner = make([]byte, len(b.Miner))
+	copy(bb.Miner[:], b.Miner[:])
+
+	bb.ExtraData = make([]byte, len(b.ExtraData))
+	copy(bb.ExtraData[:], b.ExtraData[:])
+
+	return bb
 }
 
 // TransactionRPC represents a transaction returned by the edge RPC.
@@ -87,7 +102,7 @@ type TransactionRPC struct {
 	Hash      types.Hash     `json:"hash"`
 	From      types.Address  `json:"from"`
 
-	// Additional fields
+	// Additional fields.
 	BlockHash   *types.Hash `json:"blockHash"`
 	BlockNumber *argUint64  `json:"blockNumber"`
 	TxIndex     *argUint64  `json:"transactionIndex"`
