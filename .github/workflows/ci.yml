@@ -161,4 +161,4 @@ jobs:
             --verbosity 0 \
             &
 
-          make test
+          ./scripts/loop.sh 100
