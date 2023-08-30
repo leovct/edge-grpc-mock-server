@@ -63,8 +63,8 @@ go run main.go \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-block-file data/blocks/block1.json \
-  --mock-data-trace-file data/traces/encoded/trace3.json \
+  --mock-data-block-file data/blocks/block-57.json \
+  --mock-data-trace-file data/traces/trace-57.json \
   --mode static \
   --output-dir out \
   --verbosity 0
