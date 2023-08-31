@@ -14,22 +14,6 @@ gen: ## Compile protocol buffers and generate go code.
 list: ## List gRPC services (make sure gRPC server is listening on port 8546).
 	grpcurl -plaintext 127.0.0.1:8546 list v1.System
 
-##@ Build
-
-.PHONY: build
-build: gen ## Build binary.
-	go build -o bin/mock-server main.go
-
-##@ Test
-
-.PHONY: test
-test: ## Send a few gRPC/HTTP requests to the mock server.
-	./scripts/test.sh
-
-.PHONY: clean
-clean: ## Clean the proof directory.
-	rm out/*
-
 ##@ Lint
 
 .PHONY: tidy
@@ -56,3 +40,19 @@ golangci-lint: ## Run golangci-lint against code.
 
 .PHONY: lint
 lint: tidy vet golangci-lint ## Run all of these tools against code.
+
+##@ Build
+
+.PHONY: build
+build: gen ## Build binary.
+	go build -o bin/mock-server main.go
+
+##@ Test
+
+.PHONY: test
+test: ## Send a few gRPC/HTTP requests to the mock server.
+	./scripts/test.sh
+
+.PHONY: clean
+clean: ## Clean the proof directory.
+	rm out/*

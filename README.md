@@ -11,6 +11,7 @@
   - [1. Start the mock server](#1-start-the-mock-server)
   - [2. Start the zero-prover setup](#2-start-the-zero-prover-setup)
   - [3. Benchmark proof generation time](#3-benchmark-proof-generation-time)
+- [Datasets](#datasets)
 - [Contributing](#contributing)
 
 ## Introduction
@@ -114,7 +115,7 @@ go run main.go \
 
 We use the `dynamic` mode of the mock server to be able to return dynamic block and trace mock data. You can use `go run main.go --help` to see the other options and the default values.
 
-Here, the mock data will be updated every 30 `/GetStatus` request received by the mock server. At the beginning, the mock server will return the first block and trace mock files of the directories. Then, after each `n` update data threshold, it will return the files at index `n`. Once the server has iterated over all the files, it will simply return the last block and trace mock files.
+Here, the mock data will be updated every 30 `/GetStatus` requests received by the mock server. At the beginning, the mock server will return the first block and trace mock files of the directories. Then, after `n` requests, it will return the files at index `n`. Once the server has iterated over all the files, it will simply return the last block and trace mock files.
 
 ```sh
 $ go run main.go \
@@ -122,7 +123,7 @@ $ go run main.go \
   --http-port 8080 \
   --http-save-endpoint /save \
   --mock-data-block-dir data/blocks \
-  --mock-data-trace-dir data/traces/encoded \
+  --mock-data-trace-dir data/traces \
   --mode dynamic \
   --update-data-threshold 30 \
   --output-dir out \
@@ -131,7 +132,6 @@ Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:63 > HTTP server save endpoint: /
 Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:64 > HTTP server is starting on port 8080
 Thu Aug 24 18:53:26 CEST 2023 INF grpc/grpc.go:87 > gRPC server is starting on port 8546
 ```
-
 
 ### 2. Start the zero-prover setup
 
@@ -351,7 +351,7 @@ $ cat out/1.json | jq -r .trace | base64 -d | jq
 
 ### 3. Benchmark proof generation time
 
-To assess the time required for the leader/worker configuration to produce a proof for a specific trace, you can monitor logs.
+To assess the time required for the leader/worker configuration to produce proof for a specific trace, you can monitor logs.
 
 When you observe the log entry `gRPC /GetTrace request received`, it signifies that the leader has initiated a request for the block trace. This happens after the leader has requested other details such as block metadata and has decided that it should generate a proof for a block at a given height. In this process, distinct tasks are assigned to the workers, which involve the generation of diverse types of proofs like transaction, aggregation, block, or compressed block proofs.
 
@@ -366,6 +366,38 @@ Fri Aug 18 15:08:15 CEST 2023 INF http/http.go:70 > POST request received on /sa
 ```
 
 Given these logs, we can estimate the proof took approximately one minute to generate.
+
+## Datasets
+
+We provide different edge block and trace datasets to be used along a zero-prover setup under `data/archives/`. They have been manually generated using a real edge blockchain network and some load-testing tools like [`polycli loadtest`](https://github.com/maticnetwork/polygon-cli/blob/main/doc/polycli_loadtest.md). Some only include ERC721 mints while other include [Snowball](https://github.com/maticnetwork/jhilliard/blob/main/snowball/src/Snowball.sol) and Uniswap calls.
+
+```sh
+$ tree data/archives
+data/archives
+├── mock-erc721-mints.tar.bz2
+├── mock-mix-and-uniswap.tar.bz2
+├── mock-sstore-and-sha3.tar.bz2
+└── mock-uniswap-snowball.tar.bz2
+
+1 directory, 4 files
+```
+
+To extract those files and start using them, you can use the following command.
+
+```sh
+# For this example, we'll imagine you want to use the `mock-uniswap-snowball` dataset.
+# We'll extract the content of the archive under `data/mock-uniswap-snowball`.
+$ tar -xf data/archives/mock-uniswap-snowball.tar.bz2 -C data
+
+$ tree -L 1 data
+data
+├── archives
+├── blocks
+├── mock-uniswap-snowball
+└── traces
+
+5 directories, 0 files
+```
 
 ## Contributing
 
