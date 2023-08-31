@@ -4,7 +4,7 @@
 # But do not ignore these files/folders
 !.gitignore
 !archives
-!mock-sstore-and-sha3
-!mock-sstore-and-sha3/*
-!mock-sstore-and-sha3/blocks/*.json
-!mock-sstore-and-sha3/traces/*.json
+!blocks
+!blocks/*.json
+!traces
+!traces/*.json
