@@ -19,7 +19,7 @@ Simple mock of a [polygon-edge](https://github.com/0xPolygon/polygon-edge) gRPC 
 
 It consists of two servers:
 
-1. A gRPC server that mocks the functioning of an edge node. It only implements a subset of all the [methods](https://github.com/0xPolygon/polygon-edge/blob/feat/zero/server/proto/system.proto#L10) such as `GetStatus`, `BlockByNumber` and `GetTrace`. You can get the list of available methods using `make list` (make sure you started the server!). By default, the server returns mock data (see `data/set2/` folder) but it can also be randomly generated using the `random` flag.
+1. A gRPC server that mocks the functioning of an edge node. It only implements a subset of all the [methods](https://github.com/0xPolygon/polygon-edge/blob/feat/zero/server/proto/system.proto#L10) such as `GetStatus`, `BlockByNumber` and `GetTrace`. You can get the list of available methods using `make list` (make sure you started the server!). By default, the server returns mock data (see `data/` folder) but it can also be randomly generated using the `random` flag.
 
 2. An HTTP server that either saves HTTP POST request data to the filesystem.
 
@@ -37,10 +37,10 @@ Flags:
   -h, --help                                help for edge-grpc-mock-server
   -p, --http-port int                       HTTP server port (default 8080)
   -e, --http-save-endpoint string           HTTP server save endpoint (default "/save")
-      --mock-data-block-dir string          The mock data block directory (used in dynamic mode) (default "data/set2/blocks")
-      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/set2/blocks/block-57.json")
-      --mock-data-trace-dir string          The mock data trace directory (used in dynamic mode) (default "data/set2/traces")
-      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/set2/traces/trace-57.json")
+      --mock-data-block-dir string          The mock data block directory (used in dynamic mode) (default "data/blocks")
+      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/blocks/block-57.json")
+      --mock-data-trace-dir string          The mock data trace directory (used in dynamic mode) (default "data/traces")
+      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/traces/trace-57.json")
   -m, --mode string                         Mode of the mock server.
                                             - static: the server always return the same mock block data.
                                             - dynamic: the server returns new mock block data every {n} requests.
@@ -56,15 +56,15 @@ Flags:
 
 In `static` mode, the server will always return the same mock data.
 
-By default, it returns `data/set2/blocks/block-57.json` and `data/set2/traces/trace-57.json`.
+By default, it returns `data/blocks/block-57.json` and `data/traces/trace-57.json`.
 
 ```sh
 go run main.go \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-block-file data/set2/blocks/block-57.json \
-  --mock-data-trace-file data/set2/traces/trace-57.json \
+  --mock-data-block-file data/blocks/block-57.json \
+  --mock-data-trace-file data/traces/trace-57.json \
   --mode static \
   --output-dir out \
   --verbosity 0
@@ -83,8 +83,8 @@ go run main.go \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-block-dir data/set2/blocks \
-  --mock-data-trace-dir data/set2/traces \
+  --mock-data-block-dir data/blocks \
+  --mock-data-trace-dir data/traces \
   --mode dynamic \
   --update-data-threshold 30 \
   --output-dir out \
@@ -121,8 +121,8 @@ $ go run main.go \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-block-dir data/set2/blocks \
-  --mock-data-trace-dir data/set2/traces \
+  --mock-data-block-dir data/blocks \
+  --mock-data-trace-dir data/traces \
   --mode dynamic \
   --update-data-threshold 30 \
   --output-dir out \
