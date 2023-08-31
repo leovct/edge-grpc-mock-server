@@ -1,0 +1,42 @@
+{
+  "accountTrie": {
+    "0c345f1ee9b0ebf0e30cd2739a91d083917225abf5bae2c22ed6113267625276": "f851a0e29cd6451f96ed556022f6076eacfbb24d0680280f8a4a588419a89b9a4260aa80808080808080a05b889297fad645f44a14ea9096c485d3accff05e2826276282831733aa1725ea8080808080808080",
+    "446d377165582abb992c8b5312f698a806c016c9943b76b8a16f999e6a68f1b6": "f851808080808080808080a01ee5af32dd5edca3317aca4854247bb4d80a6bfa6000262a585381e18d2a81dd80a08f342a8df0569570dfa8188e00c1763a9105214e26e635ce457c859a39858ee78080808080",
+    "5b889297fad645f44a14ea9096c485d3accff05e2826276282831733aa1725ea": "f8729f30c7b7ae81a58eb98d9c78de4a1fd7fd9535fc953ed2be602daaa41767312ab850f84e808ad3c21bd2b1bb0fa9ff18a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "7876e7f3698f9187f395cb091d1fd34456c26a6c4e762e829a9c981da75a80bb": "f89180a031d1eb10fdf37ef90417d463e9e3d1dad5bab6a3e8b38ccc4eaa744250317457808080a0b8df159db082f0f123e011787a04ce9e3959949807ce8ff773c8fe37c9bbab43a088051b9667deb59e99614788c0d0aedaec2b9658bd714c851f16eb1d1ad3965280808080a0274e2e0e8f8fc8484e8dbec1d909ba8aa63f30695c18d02d0698ff7ac8d89b4b8080808080",
+    "83537dce7ae24b3d662b277ae9b259ed6a27764a34b1acb1a4d1e90479392d5c": "f871808080a00c345f1ee9b0ebf0e30cd2739a91d083917225abf5bae2c22ed6113267625276a0eb68126485dcaaca88731b1076aa5fe02a61cd409ffa5d95e08245b57d84c1afa03d2c9faa594230d254816429f8dc379c30c8b3679ef67f44dd31f3e6822f9a498080808080808080808080",
+    "a1a6b92c32ad7b7aba5fb900b3cfd599c9574d74d749f3aa22402eb92c97fb8e": "f8769f3eec2b84f0ba344fd4b4d2f022469febe7a772c4789acfc119eb558ab1da3db854f8528215498c033b2e3c5fcafa8a8ccf058fa056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "b8df159db082f0f123e011787a04ce9e3959949807ce8ff773c8fe37c9bbab43": "f85180a0a1a6b92c32ad7b7aba5fb900b3cfd599c9574d74d749f3aa22402eb92c97fb8e80808080808080808080a0b352e4c72d853473be5eac69cf10adfdc61a3747ec26a4b424f0a29292fc1d3780808080",
+    "c0e88beef502f6978994a4a1fefdf9c81bd7f3468f239ed670408da571ce1595": "f90211a09bd5985e83d92230c8f5e1f163da9b6a14db480ec2597a384ce775e4bbcb9321a0f85a4d33721990f360f3a7ee9bdc32272abf6b6019619092fc2dd4655895f542a0dd342585783a6ee4f0a371fc15d768acb4be61716720e20eecd272bbf094eb0ea04bb4c7cdcdeccf73fe237ac3243854cdbc243bf42d3c7310b243f70ae24e0deba033fd90bc1d66577d8671d8eb81f5253719db089c55f15834f98b8932a044a9e9a083537dce7ae24b3d662b277ae9b259ed6a27764a34b1acb1a4d1e90479392d5ca0f820e589d2219ae3f297594cfd731f2ec64d19b1ba0f918369e9b413c126732da028f484a5a5a91b5cd65ad2948085d0fd9da8bbd3076b393a781fa923ea698573a0446d377165582abb992c8b5312f698a806c016c9943b76b8a16f999e6a68f1b6a0e6e82a109ac4e5daed8f76043d8393d0298472e0518ff96a48b8492e479881fba07876e7f3698f9187f395cb091d1fd34456c26a6c4e762e829a9c981da75a80bba054cab2921d01b8ab026305874aca3f192ae1af8f0bb0c5d39e381645509e3931a0d2cc6121ad4f796e6bb1f344ca77b75174f6a7a912ebd02fbbc2ad4852ca95e3a0d5c3f35b3433034102536147a3dcfd190c7bb81fe37c4801a018ecc677f34deca061c55a2935a894ae408aa9e7e507d0646596aef8e3300527b4ec9aa50b3068b9a092825616236bb69e7dce9723d0bcf9a7f9da80602dcab4c489d1e8ed8f6b347f80",
+    "cfdc035bdf66c68c6fa8088c1551d21aefd40272799222ac6879c85c352c123f": "f873a0201e84137173633629f40faeb92a810dbcbf913533c7319539f3382ae8af9922b850f84e808ad3c21d4138734a3c856fa056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "f85a4d33721990f360f3a7ee9bdc32272abf6b6019619092fc2dd4655895f542": "f8718080808080a0162c91a1ecf6c3da75a44156f3567e6831e19d3723f161e6e9e257fc3c77b28c8080808080a0218942d17c031607cd121c93fcdd68e677a875886ab22833448c66aa74d9d036a0cfdc035bdf66c68c6fa8088c1551d21aefd40272799222ac6879c85c352c123f80808080"
+  },
+  "storageTrie": null,
+  "parentStateRoot": "0xc0e88beef502f6978994a4a1fefdf9c81bd7f3468f239ed670408da571ce1595",
+  "transactionTraces": [
+    {
+      "txn": "0x02f9047b8207d182154984b2d05e0084b2d05e0e83043e068080b9041e610410600e6000396104106000f361040456fefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe5b61040060005260206000f3c080a0564cdd5bdf5a253251bbac114edcb7faf751ac69966fe498355861f212b76fc7a024ca731ee3ef5ed15cc48a5b6ff1c0d33b2855ceb17acd5880904135f856c5be",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x70A0bb66cF004D0FbdB6880Db1E283871cF13D27": {
+          "address": "0x70A0bb66cF004D0FbdB6880Db1E283871cF13D27",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 5450,
+          "read": true
+        },
+        "0x9135B4e06eB8B54331DEAbfC991502bd8C7CFB07": {
+          "address": "0x9135B4e06eB8B54331DEAbfC991502bd8C7CFB07",
+          "nonce": 1,
+          "code": "YQQEVv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v5bYQQAYABSYCBgAPM=",
+          "read": true
+        }
+      }
+    }
+  ]
+}

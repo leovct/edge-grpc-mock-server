@@ -1,0 +1,385 @@
+{
+  "accountTrie": {
+    "0c7ceebba5ad365e36f74566c6f54a8a4b0e47d761d4f14d889fbcfd8d0f22dd": "f870a020b2adcfe18406ff7246f44d41408f7bc77391a1928be4fdde6b51a6c9c543f5b84df84b8087354a6ba7a18000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "191ebb8d0d4b7e419baa023acc96135e683a8b80170c8cdb59980a3f9b54245d": "f85180808080808080a00c7ceebba5ad365e36f74566c6f54a8a4b0e47d761d4f14d889fbcfd8d0f22dda0d6e7baf9ad6b04dff3a25f53357482c94918662b5267635373129b88ba77616f8080808080808080",
+    "29db788122d1085c4ec5e39c3d1f06faeb1de1952bc89796b9911587be02e5c4": "f901d1a0191ebb8d0d4b7e419baa023acc96135e683a8b80170c8cdb59980a3f9b54245d80a056bc46c2638a979e6d0d4cc9e468643f00ccfceb0ab3c785b632b3e79a12ddb2a0d379709dd7f28dcd01c9f7dad8b806aa54f8133adf378a7335aba34dc462cbcda082f0966ef8ab01281c51d08632c9904833a1cd83f7a3b88d8b1b6f64702e1520a08aa27d8a8dafaa146044d0376d86035002c257befa0d227b83407d5122886c09a055fb730a81af8615add1b4fb896303b1efd995f6da3da6dbb5022f05f150d5aba09e54942e5cbab33b4ec4216f6eeaf22c427135da3ee41438bcc4e7de07ffeee0a0364969fa64ed1edef177b8a87bbe20e26615582bf935df361abf64c0b7e2b589a0e6e82a109ac4e5daed8f76043d8393d0298472e0518ff96a48b8492e479881fba07bd7be238b42cb5ff289317e277a1d8a893ed7d9245b4c7945e1dedd3f4a2942a0641172028033391973b95cc84af3b17df365c017f41cc4593e4c201102a5a53da0e086c4db2fb20d0509e45cc93d81ebbb34392390d03ca817c15d77896cc23f7180a08333762fcaf7193e048ab228010951a924224adf67ad901b5e98441becfcbbd7a0b1a1bc9514be10d7a98c0693512e4b701ce1e1c08ce0913475c3a1e37a8bae2980",
+    "3381738c6ce1b720edd744076f146075e19da0428507af888e4c5ccabffb46f5": "f85180a0e3e71d50dca783e74f8360536f24b7df2ae0db68efc8255c9769301249d6ab7b80808080808080808080a0b352e4c72d853473be5eac69cf10adfdc61a3747ec26a4b424f0a29292fc1d3780808080",
+    "56bc46c2638a979e6d0d4cc9e468643f00ccfceb0ab3c785b632b3e79a12ddb2": "f873a032d99bef571219ad8b7007ff6a58b0bd81296db46821c9a73ce8861298b992aeb850f84e808ad3c21bf1ef7d40a96720a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "7bd7be238b42cb5ff289317e277a1d8a893ed7d9245b4c7945e1dedd3f4a2942": "f85180a031d1eb10fdf37ef90417d463e9e3d1dad5bab6a3e8b38ccc4eaa744250317457808080a03381738c6ce1b720edd744076f146075e19da0428507af888e4c5ccabffb46f58080808080808080808080",
+    "8aa27d8a8dafaa146044d0376d86035002c257befa0d227b83407d5122886c09": "f871a0ced277f6091f1c45b7f2da18d83c3610d7ee5dde16966f83c7b4917dc2e9e7d78080a091d13be76c8d7cbc7031cc7b07e59d553138a6dda8d41a5015f9c205134c3c7c80a03a6ab9252d625ee34450f5f40ef8aeaf895aedcd7be4a964969ea65a145d7a288080808080808080808080",
+    "91d13be76c8d7cbc7031cc7b07e59d553138a6dda8d41a5015f9c205134c3c7c": "f873a02080c7b7ae81a58eb98d9c78de4a1fd7fd9535fc953ed2be602daaa41767312ab850f84e808ad3c21bd13a2fb416bc82a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "e3e71d50dca783e74f8360536f24b7df2ae0db68efc8255c9769301249d6ab7b": "f8749f3eec2b84f0ba344fd4b4d2f022469febe7a772c4789acfc119eb558ab1da3db852f850148c033b2e3c9f4166060f47f4c4a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+  },
+  "storageTrie": null,
+  "parentStateRoot": "0x29db788122d1085c4ec5e39c3d1f06faeb1de1952bc89796b9911587be02e5c4",
+  "transactionTraces": [
+    {
+      "txn": "0xf86c1484b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a043018ed33dee77c1d0371a82ae4dfb16cda9c690336c73f4a5a0579f8a73d910a03484f9fa2b015d2e5dbfce1d2b9dcd054e1fa025b442ff25892753baa9b41edf",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 21,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1584b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a0684145e688663301f6c1b0cb53fbfe8fb5a93aa6bc896289cb9ab61920668ddaa06da496e00b3a8f74140ee117803f685d37d348ce812947b6b7ba8ee8745459f0",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 22,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1684b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a0c0a66b5b3ff6d1faece2d6aa847670a804b5dbffea7d83a03ce5196a8a562d42a06e00d178d0066ee835f9e11dc015a145600534cd7afc268e032c28a215eafba0",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 23,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1784b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a0ed3cc395c4e308694978063ba2ade8abcda7d817243c6d88f45927862940379fa0460945aabbb61896ff202437db4ceb46486aa864f5e4ae799c97ab5ce62583fa",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 24,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1884b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc6a0ddc637a554ddb45068a8bd2640b7241b3d3c3994d18201fc9408eb3b48788acda02f8e4545699171df9179451741cdfa4e266e1c772d960391958579022cb1a4bf",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 25,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1984b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a0cc17d3abc36db25272829801e41bfe47518118a54b110888c9cb00f04cba9727a0286122c0dd0ccff8bbee80e09a39a6f5ab5ff0b4f4dc5956ab90b6e78ec8d6be",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 26,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1a84b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a02c3fcbeaf23618cc5280a2c628e2b811e07c61e49b6f3d4653627904a9b42c45a05dca9a7744dd3840c36a1cc61857da626af6edf32323a53bcc5be1a1e23ec79a",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 27,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1b84b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a06260174467dddc3a2cc4c384ad6a40754ed24d94a3326c1d26be7e06b914e85ba03f10c2d8c867cabef35ee9a535b64cb9ebbd12a8acbcfb3b6558cc818d11be8a",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 28,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1c84b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a0d851575c76e674c13e7246b27e87c76a8a1b13e105f97afb9093d42e2d4be07da006d7e84a3156fc87374c32647e77a1072d99ebc31bff1e2c210d0bc63fd59ee6",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 29,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1d84b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a0ffdbb96731f25ac743e502296f9e8c75093b2541b35c87b427bf205ca46b0afda018075e108b1296647600dfb2f413d75c5f2bbcb64c4dd5539e2cb2a3518bc6ae",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 30,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1e84b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a096304ffec2852e67e02bdd2c4aa951087c1d2bf35209781b04e13a221458f6a2a06b47a2144a75ba3e6740e628a29350819f3af7923cd2631061a41b9d2f72d139",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 31,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c1f84b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a09bc438bc462bf705bb87ca76d904908260c72305369d33e3eaf818a6f7d15f0da025bb7e0d4432090aeabbe8685971dad4be48c095702d391cc22b1ebe7f0a624a",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 32,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c2084b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc6a072cbdb9456340937bfd2bfcfee8fcc72059c0ad6c8221e90ab1de79eb20fe485a0197e5e06a50df027f99007de2dd17bff9b423f356bc6dca5983b8734a21dd684",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 33,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c2184b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc5a027aeca0a01a57ac0d2c59902a4c74a112501c08948407ff46bbc79acb01773dfa075bad2d6c1a8dfe92ef992022b2930b6a6f287dc63d6d4f0822f0928957b4566",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 34,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c2284b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc6a00442c2276efab65d8ae569dd52151a4b78a561ea1c3c2cfd4c348d2a1f96b335a00c1ed90fc01c83c7e639fcb6fbdb33166715b7d640f401d8e3eb6d04f4590b63",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 35,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    },
+    {
+      "txn": "0xf86c2384b6c56b7282520894deadbeefdeadbeefdeadbeefdeadbeefdeadbeef87038d7ea4c6800080820fc6a08dca263afaad2fdb7a7fd4433f7d29a05c7271feebb6bfdb9e3c7642d7ad7b87a00b1f3ee8b760952d364de0a9ff534fc5efb3a299bf02af5b1a91af1f8c020b31",
+      "delta": {
+        "0x0000000000000000000000000000000000000000": {
+          "address": "0x0000000000000000000000000000000000000000",
+          "read": true
+        },
+        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
+          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
+          "nonce": 36,
+          "read": true
+        },
+        "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF": {
+          "address": "0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF",
+          "touched": true,
+          "read": true
+        },
+        "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253": {
+          "address": "0xaE61a307d07c9bc6ec66D13D6FdE4E0FAb33C253",
+          "read": true
+        }
+      }
+    }
+  ]
+}
