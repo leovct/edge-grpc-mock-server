@@ -11,6 +11,7 @@
   - [1. Start the mock server](#1-start-the-mock-server)
   - [2. Start the zero-prover setup](#2-start-the-zero-prover-setup)
   - [3. Benchmark proof generation time](#3-benchmark-proof-generation-time)
+- [Datasets](#datasets)
 - [Contributing](#contributing)
 
 ## Introduction
@@ -365,6 +366,38 @@ Fri Aug 18 15:08:15 CEST 2023 INF http/http.go:70 > POST request received on /sa
 ```
 
 Given these logs, we can estimate the proof took approximately one minute to generate.
+
+## Datasets
+
+We provide different edge block and trace datasets to be used along a zero-prover setup under `data/archives/`. They have been manually generated using a real edge blockchain network and some load-testing tools like [`polycli loadtest`](https://github.com/maticnetwork/polygon-cli/blob/main/doc/polycli_loadtest.md). Some only include ERC721 mints while other include [Snowball](https://github.com/maticnetwork/jhilliard/blob/main/snowball/src/Snowball.sol) and Uniswap calls.
+
+```sh
+$ tree data/archives
+data/archives
+├── mock-erc721-mints.tar.bz2
+├── mock-mix-and-uniswap.tar.bz2
+├── mock-sstore-and-sha3.tar.bz2
+└── mock-uniswap-snowball.tar.bz2
+
+1 directory, 4 files
+```
+
+To extract those files and start using them, you can use the following command.
+
+```sh
+# For this example, we'll imagine you want to use the `mock-uniswap-snowball` dataset.
+# We'll extract the content of the archive under `data/mock-uniswap-snowball`.
+$ tar -xf data/archives/mock-uniswap-snowball.tar.bz2 -C data
+
+$ tree -L 1 data
+data
+├── archives
+├── blocks
+├── mock-uniswap-snowball
+└── traces
+
+5 directories, 0 files
+```
 
 ## Contributing
 
