@@ -277,7 +277,7 @@ func loadDataFromFile(filePath string, target interface{}) error {
 // Load block number from block file.
 func getBlockNumberFromBlockFile(filePath string) (int64, error) {
 	var mockBlockRPC edge.BlockRPC
-	if err := loadDataFromFile(config.MockData.BlockFile, &mockBlockRPC); err != nil {
+	if err := loadDataFromFile(filePath, &mockBlockRPC); err != nil {
 		return 0, err
 	}
 	return int64(mockBlockRPC.Number), nil
