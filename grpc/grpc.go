@@ -279,7 +279,7 @@ func loadDataFromFile(filePath string, target interface{}) error {
 
 // Return file names in directory and sorted in natural order.
 func getFilesInDir(dirPath string) ([]string, error) {
-	files, err := filepath.Glob(filepath.Join(config.MockData.BlockDir, "*.json"))
+	files, err := filepath.Glob(filepath.Join(dirPath, "*.json"))
 	if err != nil {
 		return nil, err
 	}
