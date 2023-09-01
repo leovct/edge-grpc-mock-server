@@ -8,6 +8,9 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
 	"zero-provers/server/grpc/edge"
 	pb "zero-provers/server/grpc/pb"
 	"zero-provers/server/logger"
@@ -112,8 +115,8 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 		}
 
 	case modes.DynamicMode:
-		// List the block mock files under the block mock directory.
-		files, err := filepath.Glob(filepath.Join(config.MockData.BlockDir, "*.json"))
+		// List and sort the block mock files under the block mock directory.
+		files, err := getFilesInDir(filepath.Join(config.MockData.BlockDir, "*.json"))
 		if err != nil {
 			return nil, err
 		}
@@ -159,8 +162,8 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 		block = mockBlockRPC.ToBlockGrpc()
 
 	case modes.DynamicMode:
-		// List the block mock files under the block mock directory.
-		files, err := filepath.Glob(filepath.Join(config.MockData.BlockDir, "*.json"))
+		// List and sort the block mock files under the block mock directory.
+		files, err := getFilesInDir(filepath.Join(config.MockData.BlockDir, "*.json"))
 		if err != nil {
 			return nil, err
 		}
@@ -216,7 +219,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 
 	case modes.DynamicMode:
 		// List the block trace files under the trace mock directory.
-		files, err := filepath.Glob(filepath.Join(config.MockData.TraceDir, "*.json"))
+		files, err := getFilesInDir(filepath.Join(config.MockData.TraceDir, "*.json"))
 		if err != nil {
 			return nil, err
 		}
@@ -274,6 +277,20 @@ func loadDataFromFile(filePath string, target interface{}) error {
 	return nil
 }
 
+// Return file names in directory and sorted in natural order.
+func getFilesInDir(dirPath string) ([]string, error) {
+	files, err := filepath.Glob(filepath.Join(config.MockData.BlockDir, "*.json"))
+	if err != nil {
+		return nil, err
+	}
+
+	sort.Slice(files, func(i, j int) bool {
+		return naturalSort(files[i], files[j])
+	})
+
+	return files, nil
+}
+
 // Load block number from block file.
 func getBlockNumberFromBlockFile(filePath string) (int64, error) {
 	var mockBlockRPC edge.BlockRPC
@@ -281,4 +298,32 @@ func getBlockNumberFromBlockFile(filePath string) (int64, error) {
 		return 0, err
 	}
 	return int64(mockBlockRPC.Number), nil
+}
+
+// Sort files in natural order.
+func naturalSort(s1, s2 string) bool {
+	parts1 := strings.FieldsFunc(s1, func(r rune) bool {
+		return !((r >= '0' && r <= '9') || (r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z'))
+	})
+	parts2 := strings.FieldsFunc(s2, func(r rune) bool {
+		return !((r >= '0' && r <= '9') || (r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z'))
+	})
+
+	for i := 0; i < len(parts1) && i < len(parts2); i++ {
+		part1, part2 := parts1[i], parts2[i]
+		if part1 != part2 {
+			isDigit1 := part1[0] >= '0' && part1[0] <= '9'
+			isDigit2 := part2[0] >= '0' && part2[0] <= '9'
+
+			if isDigit1 && isDigit2 {
+				num1, _ := strconv.Atoi(part1)
+				num2, _ := strconv.Atoi(part2)
+				return num1 < num2
+			}
+
+			return part1 < part2
+		}
+	}
+
+	return len(parts1) < len(parts2)
 }
