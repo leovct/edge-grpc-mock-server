@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"zero-provers/server/grpc/edge"
 	pb "zero-provers/server/grpc/pb"
 	"zero-provers/server/logger"
@@ -38,6 +39,7 @@ var (
 	// Keep track of the number of `status` requests made to the mock server. The zero-prover constantly
 	// sends those requests, in order to be aware of new blocks and to start proving as soon as possible.
 	requestCounter int
+	lock           sync.RWMutex
 )
 
 type ServerConfig struct {
@@ -100,8 +102,10 @@ func StartgRPCServer(_config ServerConfig) error {
 func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, error) {
 	log.Info().Msg("gRPC /GetStatus request received")
 
+	lock.Lock()
 	requestCounter++
 	log.Debug().Msgf("Request counter: %d", requestCounter)
+	lock.Unlock()
 
 	// Load block number from file or increment block number based on the request counter.
 	var height int64
@@ -122,7 +126,9 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 		}
 
 		// Parse the block mock file at the current index and return the header number.
+		lock.RLock()
 		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
+		lock.RUnlock()
 		file := files[fileIndex]
 		height, err = getBlockNumberFromBlockFile(file)
 		if err != nil {
@@ -131,7 +137,9 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 
 	case modes.RandomMode:
 		// Increment the constant block number based on request counter.
+		lock.RLock()
 		height = int64(constantBlockHeight + requestCounter%config.UpdateBlockNumberThreshold)
+		lock.RUnlock()
 
 	default:
 		return nil, errWrongMode
@@ -169,7 +177,9 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 		}
 
 		// Parse the block mock file at the current index and convert it to the GRPC format.
+		lock.RLock()
 		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
+		lock.RUnlock()
 		file := files[fileIndex]
 		var mockBlockRPC edge.BlockRPC
 		if err := loadDataFromFile(file, &mockBlockRPC); err != nil {
@@ -179,7 +189,9 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 
 	case modes.RandomMode:
 		// Return a random block data.
+		lock.RLock()
 		height := uint64(constantBlockHeight + requestCounter%config.UpdateBlockNumberThreshold)
+		lock.RUnlock()
 		txnTracesAmount := uint64(10)
 		block = edge.GenerateRandomEdgeBlock(height, txnTracesAmount)
 
@@ -225,7 +237,9 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 		}
 
 		// Parse the decoded trace mock file at the current index.
+		lock.RLock()
 		fileIndex := computeIndex(requestCounter, config.UpdateDataThreshold, len(files))
+		lock.RUnlock()
 		file := files[fileIndex]
 		if err := loadDataFromFile(file, &trace); err != nil {
 			return nil, err
@@ -253,8 +267,8 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 // Compute the file index in the case of dynamic mode.
 // Iterate over all the indexes and if the index is greater than the number of files, return
 // the index of the last file.
-func computeIndex(requestCounter, updateThreshold int, numberOfFiles int) int {
-	index := (requestCounter - 1) / updateThreshold
+func computeIndex(counter, updateThreshold int, numberOfFiles int) int {
+	index := (counter - 1) / updateThreshold
 	if index > numberOfFiles-1 {
 		return numberOfFiles - 1
 	}
