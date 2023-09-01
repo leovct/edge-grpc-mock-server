@@ -4,6 +4,7 @@
 # But do not ignore these files/folders
 !.gitignore
 !archives
+!archives/*.tar.bz2
 !blocks
 !blocks/*.json
 !traces
