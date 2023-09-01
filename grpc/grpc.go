@@ -116,7 +116,7 @@ func (s *server) GetStatus(context.Context, *empty.Empty) (*pb.ChainStatus, erro
 
 	case modes.DynamicMode:
 		// List and sort the block mock files under the block mock directory.
-		files, err := getFilesInDir(filepath.Join(config.MockData.BlockDir, "*.json"))
+		files, err := getFilesInDir(config.MockData.BlockDir)
 		if err != nil {
 			return nil, err
 		}
@@ -163,7 +163,7 @@ func (s *server) BlockByNumber(context.Context, *pb.BlockNumber) (*pb.BlockData,
 
 	case modes.DynamicMode:
 		// List and sort the block mock files under the block mock directory.
-		files, err := getFilesInDir(filepath.Join(config.MockData.BlockDir, "*.json"))
+		files, err := getFilesInDir(config.MockData.BlockDir)
 		if err != nil {
 			return nil, err
 		}
@@ -219,7 +219,7 @@ func (s *server) GetTrace(context.Context, *pb.BlockNumber) (*pb.Trace, error) {
 
 	case modes.DynamicMode:
 		// List the block trace files under the trace mock directory.
-		files, err := getFilesInDir(filepath.Join(config.MockData.TraceDir, "*.json"))
+		files, err := getFilesInDir(config.MockData.TraceDir)
 		if err != nil {
 			return nil, err
 		}
