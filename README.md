@@ -128,9 +128,8 @@ $ go run main.go \
   --update-data-threshold 30 \
   --output-dir out \
   --verbosity 0
-Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:63 > HTTP server save endpoint: /save ready
-Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:64 > HTTP server is starting on port 8080
-Thu Aug 24 18:53:26 CEST 2023 INF grpc/grpc.go:87 > gRPC server is starting on port 8546
+Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:64 > HTTP server is listening on port 8080
+Thu Aug 24 18:53:26 CEST 2023 INF grpc/grpc.go:87 > gRPC server is listening on port 8546
 ```
 
 ### 2. Start the zero-prover setup

@@ -84,7 +84,7 @@ func StartgRPCServer(_config ServerConfig) error {
 	pb.RegisterSystemServer(s, &server{})
 
 	// Start serving incoming gRPC requests on the listener.
-	log.Info().Msgf("gRPC server is starting on port %d", config.Port)
+	log.Info().Msgf("gRPC server is listening on port %d", config.Port)
 	log.Debug().Msgf("Config: %+v", config)
 	if err := s.Serve(listener); err != nil {
 		log.Error().Err(err).Msg("Unable to start gRPC server")
