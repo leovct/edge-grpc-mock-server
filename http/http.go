@@ -60,8 +60,8 @@ func StartHTTPServer(config ServerConfig) error {
 	// Start the HTTP server.
 	saveEndpoint = config.SaveEndpoint
 	http.HandleFunc(saveEndpoint, saveHandler)
+	log.Debug().Msgf("HTTP server config: %+v", config)
 	log.Info().Msgf("HTTP server is listening on port %d", config.Port)
-	log.Debug().Msgf("Config: %+v", config)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", config.Port), nil); err != nil {
 		log.Error().Err(err).Msg("Unable to start the HTTP server")
 		return err
