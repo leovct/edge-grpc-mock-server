@@ -73,19 +73,6 @@ func (b *BlockRPC) ToBlockGrpc() *types.Block {
 	}
 }
 
-func (b *BlockRPC) Copy() *BlockRPC {
-	bb := new(BlockRPC)
-	*bb = *b
-
-	bb.Miner = make([]byte, len(b.Miner))
-	copy(bb.Miner[:], b.Miner[:])
-
-	bb.ExtraData = make([]byte, len(b.ExtraData))
-	copy(bb.ExtraData[:], b.ExtraData[:])
-
-	return bb
-}
-
 // TransactionRPC represents a transaction returned by the edge RPC.
 type TransactionRPC struct {
 	Nonce     argUint64      `json:"nonce"`
