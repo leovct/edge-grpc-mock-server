@@ -72,6 +72,9 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 			Delta: map[types.Address]*types.JournalEntry{
 				*generateRandomAddress(): generateRandomJournalEntry(),
 			},
+			ReceiptRoot: *generateRandomHash(),
+			TxnRoot:     *generateRandomHash(),
+			Hash:        *generateRandomHash(),
 		}
 	}
 
