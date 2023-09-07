@@ -122,14 +122,16 @@ $ go run main.go \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-block-dir data/blocks \
-  --mock-data-trace-dir data/traces \
+  --mock-data-block-dir edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks \
+  --mock-data-trace-dir edge-grpc-mock-server/data/mock-uniswap-snowball-2/traces \
   --mode dynamic \
   --update-data-threshold 30 \
   --output-dir out \
   --verbosity 0
-Thu Aug 24 18:53:26 CEST 2023 INF http/http.go:64 > HTTP server is listening on port 8080
-Thu Aug 24 18:53:26 CEST 2023 INF grpc/grpc.go:87 > gRPC server is listening on port 8546
+Thu Sep  7 11:14:50 UTC 2023 INF http/http.go:63 > HTTP server is listening on port 8080
+Thu Sep  7 11:14:50 UTC 2023 DBG http/http.go:64 > Config: {LogLevel:debug Port:8080 SaveEndpoint:/save ProofsOutputDir:out}
+Thu Sep  7 11:14:50 UTC 2023 INF grpc/grpc.go:92 > gRPC server is listening on port 8546
+Thu Sep  7 11:14:50 UTC 2023 DBG grpc/grpc.go:93 > Config: {LogLevel:debug Port:8546 Mode:dynamic UpdateDataThreshold:30 UpdateBlockNumberThreshold:30 MockData:{BlockDir:edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks TraceDir:edge-grpc-mock-server/data/mock-uniswap-snowball-2/traces BlockFile:data/blocks/block-57.json TraceFile:data/traces/trace-57.json}}
 ```
 
 ### 2. Start the zero-prover setup
@@ -157,117 +159,48 @@ $ zero_prover_leader \
     --commit-height-delta-before-generating-proofs 0 \
     -i 127.0.0.1 \
     -p 9001
-Received payload for 206672!
-Starting proof for height 206672...
-BlockProofInitProofPayload { block_metadata: BlockMetadata { block_beneficiary: 0x91d85d44647a4b074be799a67a53471c4d5e303e, block_timestamp: 1690559940, block_number: 1, block_difficulty: 1, block_gaslimit: 30000000, block_chain_id: 2001, block_base_fee: 878822934 }, skip_previous_block_proof: true, num_txns_in_block: 0 }
+ INFO  zero_prover_leader::full_node_adapter::edge::edge_node_adapter > Received new block for height 57
+Received payload for 57!
+Starting proof for height 57...
+Processing txn 0...
+Partial s_root check for 0xdaa3…c8a1 == 0xdaa3…c8a1
+BlockProofInitProofPayload { block_metadata: BlockMetadata { block_beneficiary: 0x719e1a8231e68b1cccdf5af1a1f496b3f317367f, block_timestamp: 1692971648, block_number: 57, block_difficulty: 1, block_gaslimit: 30000000, block_chain_id: 2001, block_base_fee: 0 }, skip_previous_block_proof: true, num_txns_in_block: 1 }
 ```
 
-Soon, you will see that the leader sends gRPC requests to the mock server.
+Soon, you will see that the leader sends gRPC `GetStatus` requests to the mock server.
 
 ```sh
-...
-Mon Aug 21 12:40:48 CEST 2023 INF grpc/grpc.go:161 > gRPC /GetStatus request received
-Mon Aug 21 12:40:48 CEST 2023 DBG grpc/grpc.go:165 > Mock StatusResponse number: 206672
-...
-Mon Aug 21 12:41:49 CEST 2023 INF grpc/grpc.go:183 > gRPC /BlockByNumber request received
-Mon Aug 21 12:41:49 CEST 2023 DBG grpc/grpc.go:189 > Mock BlockResponse encoded data: [249 2 211 249 ... 97 198 22 192 192]
-Mon Aug 21 12:41:49 CEST 2023 DBG grpc/grpc.go:209 > BlockResponse decoded data: {
-  "Header": {
-    "ParentHash": "0xf9c209d8c0be2bcfa58dc8d778be2d6910587a45268f3fc18315a00dce836c25",
-    "Sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-    "Miner": "kdhdRGR6SwdL55mmelNHHE1eMD4=",
-    "StateRoot": "0x08d0ddd07d0abc9aae8b5893052be5b571599dce1cf70b4af7982ed419aa28a0",
-    "TxRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-    "ReceiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
-    "LogsBloom": [
-      0,
-      ...,
-      0
-    ],
-    "Difficulty": 1,
-    "Number": 1,
-    "GasLimit": 30000000,
-    "GasUsed": 0,
-    "Timestamp": 1690559940,
-    "ExtraData": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD4scPAwIDA+EO4QCZRBJbgmHuiVvN4uMM8MNIOO+mJeKmSl91iQIiTsKI2Bm0Q1xyt4JlZv1Nn02DEXQFAo4FVePBKVQjIIbsMe3oN+GWAAaCErwLqiJA+0arX6KoNUUYwINRtsyswkU76eT36ukpB9qCErwLqiJA+0arX6KoNUUYwINRtsyswkU76eT36ukpB9qAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-    "MixHash": "0xadce6e5230abe012342a44e4e9b6d05997d6f015387ae0e59be924afc7ec70c1",
-    "Nonce": [
-      0,
-      ...,
-      0
-    ],
-    "Hash": "0x9e6fa83b9754e8ccbc35ea6b7516c2df3e6d9224991ae03c2627d507863b2a9f",
-    "baseFeePerGas": 0
-  },
-  "Transactions": null,
-  "Uncles": null
-}
-...
-Mon Aug 21 12:39:21 CEST 2023 INF grpc/grpc.go:220 > gRPC /GetTrace request received
-Mon Aug 21 12:39:21 CEST 2023 DBG grpc/grpc.go:225 > Mock TraceResponse encoded data: [123 10 32 32 ... 93 10 125 10]
-Mon Aug 21 12:39:21 CEST 2023 DBG grpc/grpc.go:250 > TraceResponce decoded trace: {
-  "accountTrie": {
-    "29fc6b8d0b979fe92b13053075fb24b19cb30a68cb043af8995c5ee7440f7aba": "f851808080a0b9b7e24499d6a857e9eb2e5ea5c8b30e068376c3519503472e41bbe5d947f8d98080808080a07f56f62b4ccf2e070be4d7c2e2c527367d6f5092f0fcbc504c96b77bcf24420b80808080808080",
-    "66924a3ec75079b9da77770472bae89720cbed69f477de0793cbb27d48ecc57b": "f873a02080c7b7ae81a58eb98d9c78de4a1fd7fd9535fc953ed2be602daaa41767312ab850f84e808ad3c21bcecceda1000000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-    "8b19ac819d2a7610bce525fa551308dec3268e8ae20276b5b4414d24f21b109b": "f90191a03f84f317ceea01d67e9da286f143aea01d93cc275c3d9fad2722ce1aeb8a39bf8080a0da6faea54d8a227cc3d7a7e901ca20c63a333ccf60df131f36a6b02239983985a0c9c8c5324bd2eef39d061b5ad2409d077f4f9e03a6f2b89da8ffc03f77f8cbc5a0ecfb2faf207149229c871e123d5a6e90a27325f495dc7a679ef626a24f264c81a069c217c002a710db060939d0c0e132862fe78accf4d9bd0e4386b7a36834f195a09cb3c4dacefe3caac1388a8a39378db830fb2bf3983ccc5507d2d9728f67e676a029fc6b8d0b979fe92b13053075fb24b19cb30a68cb043af8995c5ee7440f7abaa0e6e82a109ac4e5daed8f76043d8393d0298472e0518ff96a48b8492e479881fba0b1f14f8b14818bd3b02ead0ecb2437bb07c5c3abcfba5be21ff33a572054b9c9a0aa83d885b05246cb62598c50ea169ab8e2495493cee532a4ee6a7571e3ee93d3a0bca602c40edd041089ea7c49cf65d6320427d889b547c88ca764e2d3ea77fb7f80a02c7fadb7de8ceb143581c40f241f304aabb0baca2368258b5c11f6f1d95053078080",
-    "9b4ceef74bba9462847d8f4e4ad70505f36f9afe3a70b9580d0359894cfccff2": "f85180a0fd0838ecfbd0807d3b2cd7329e96f47c98dd9285e814ece852b12e9797b9ef6080808080808080808080a0b352e4c72d853473be5eac69cf10adfdc61a3747ec26a4b424f0a29292fc1d3780808080",
-    "b1f14f8b14818bd3b02ead0ecb2437bb07c5c3abcfba5be21ff33a572054b9c9": "f85180a031d1eb10fdf37ef90417d463e9e3d1dad5bab6a3e8b38ccc4eaa744250317457808080a09b4ceef74bba9462847d8f4e4ad70505f36f9afe3a70b9580d0359894cfccff28080808080808080808080",
-    "b9b7e24499d6a857e9eb2e5ea5c8b30e068376c3519503472e41bbe5d947f8d9": "f873a020e8b6a6f1f350490419424e9677d77d7356920536f752f0ed245592df04905db850f84e808ad3c21bcecceda1000000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-    "bca602c40edd041089ea7c49cf65d6320427d889b547c88ca764e2d3ea77fb7f": "f85180808080a06b795828f9b394ba531a3e97e87dce2b3e1153e14339019980089334951c7e28808080a02b552522c790b0433d466408318c5c61bfa7e2dbb9c2e13bfec3d1d51290addd8080808080808080",
-    "ecfb2faf207149229c871e123d5a6e90a27325f495dc7a679ef626a24f264c81": "f871808080a066924a3ec75079b9da77770472bae89720cbed69f477de0793cbb27d48ecc57b80a03469ef1dfb42bfdc6b32c6352ae4e463fa021a1b03d000d33818e9a4ceb46b23808080a08bf437b987501fdf4f79bc77f3ea409f43bcae24574eecd7a8b99318d32ee18d80808080808080",
-    "fd0838ecfbd0807d3b2cd7329e96f47c98dd9285e814ece852b12e9797b9ef60": "f8749f3eec2b84f0ba344fd4b4d2f022469febe7a772c4789acfc119eb558ab1da3db852f850808c033b2e3c9fd0803ce8000000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
-  },
-  "storageTrie": null,
-  "parentStateRoot": "0x8b19ac819d2a7610bce525fa551308dec3268e8ae20276b5b4414d24f21b109b",
-  "transactionTraces": [
-    {
-      "txn": "0xf92f6...765b",
-      "delta": {
-        "0x0000000000000000000000000000000000000000": {
-          "address": "0x0000000000000000000000000000000000000000",
-          "read": true
-        },
-        "0x6FdA56C57B0Acadb96Ed5624aC500C0429d59429": {
-          "address": "0x6FdA56C57B0Acadb96Ed5624aC500C0429d59429",
-          "nonce": 1,
-          "code": "YIBg...ADM=",
-          "read": true
-        },
-        "0x84eb9227FCD22c94ED6e53Baf27C070018802D47": {
-          "address": "0x84eb9227FCD22c94ED6e53Baf27C070018802D47",
-          "read": true
-        },
-        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
-          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
-          "nonce": 1,
-          "read": true
-        }
-      }
-    }
-  ]
-}
-Mon Aug 21 12:39:21 CEST 2023 INF grpc/grpc.go:255 > Decoding TraceResponce transactionTraces txn fields (RLP encoded)...
-Mon Aug 21 12:39:21 CEST 2023 INF grpc/grpc.go:269 > Transaction #1 decoded
-{
-  "Nonce": 0,
-  "GasPrice": 0,
-  "GasTipCap": null,
-  "GasFeeCap": null,
-  "Gas": 2644387,
-  "To": null,
-  "Value": 0,
-  "Input": "YIBg...Mw==",
-  "V": 4038,
-  "R": 107519757195806997439305138420673972387394027891232797455314865585635523889381,
-  "S": 38851201517106677587590729829229679179700367655464385643439700858251583911515,
-  "Hash": "0x2d6f97b42e8744513cfff5ba0f7ebbabb0644b41080a19f9c1c4b25cec82016f",
-  "From": "0x0000000000000000000000000000000000000000",
-  "Type": 0,
-  "ChainID": null
-}
-...
-Mon Aug 21 12:43:35 CEST 2023 INF http/http.go:70 > POST request received on /save endpoint
-Mon Aug 21 12:43:35 CEST 2023 INF http/http.go:94 > Proof saved to disk
+Thu Sep  7 11:15:09 UTC 2023 INF edge-grpc-mock-server/grpc/grpc.go:103 > gRPC /GetStatus request received
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:107 > Request counter: 1
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:280 > Fetching mock data from edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks/block_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:290 > Mock data loaded from edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks/block_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:148 > StatusResponse number: 1
+```
+
+After some time, the leader will ask for the block metadata and the trace.
+
+```sh
+Thu Sep  7 11:15:09 UTC 2023 INF edge-grpc-mock-server/grpc/grpc.go:159 > gRPC /BlockByNumber request received
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:280 > Fetching mock data from edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks/block_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:280 > Fetching mock data from edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks/block_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:290 > Mock data loaded from edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks/block_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:290 > Mock data loaded from edge-grpc-mock-server/data/mock-uniswap-snowball-2/blocks/block_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:202 > Decoded block header: {ParentHash:0xf25702fbe429a1f548c9ae8c346e641498eccdc4a8e2e1ad57c00b4490d3e79b Sha3Uncles:0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347 Miner:[70 197 150 32 144 185 61 96 80 181 234 193 35 65 185 205 175 6 235 35] StateRoot:0x0775babfe2f3484bc5152051b91d11367fe4eeafbd71bfd32798e8f2172bd134 TxRoot:0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421 ReceiptsRoot:0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421 LogsBloom:0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 Difficulty:1 Number:1 GasLimit:30000000 GasUsed:0 Timestamp:1693509241 ExtraData:[0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 248 108 192 192 194 128 128 248 101 128 1 160 2 169 42 81 26 206 16 248 215 57 28 160 129 117 88 51 130 185 87 97 86 37 218 227 6 231 80 250 104 29 234 150 160 2 169 42 81 26 206 16 248 215 57 28 160 129 117 88 51 130 185 87 97 86 37 218 227 6 231 80 250 104 29 234 150 160 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0] MixHash:0xadce6e5230abe012342a44e4e9b6d05997d6f015387ae0e59be924afc7ec70c1 Nonce:0x0000000000000000 Hash:0xe7c6886ee88392ecced3ae3bce52ea0165da0287d75bf21e30bc4ab71a1c217e BaseFee:878822934}
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:203 > Number of transactions: 0
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:207 > Number of uncles: 0
+```
+
+```sh
+Thu Sep  7 11:15:09 UTC 2023 INF edge-grpc-mock-server/grpc/grpc.go:221 > gRPC /GetTrace request received
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:280 > Fetching mock data from edge-grpc-mock-server/data/mock-uniswap-snowball-2/traces/trace_1.json
+Thu Sep  7 11:15:09 UTC 2023 DBG edge-grpc-mock-server/grpc/grpc.go:290 > Mock data loaded from edge-grpc-mock-server/data/mock-uniswap-snowball-2/traces/trace_1.json
+```
+
+Finally, you'll see this kind of message once the zero prover has finished generating the proof.
+
+```sh
+Thu Sep  7 11:15:09 UTC 2023 INF http/http.go:70 > POST request received on /save endpoint
+Thu Sep  7 11:15:09 UTC 2023 INF http/http.go:94 > Proof saved to disk
 ```
 
 Here is how it looks on the leader side after a few minutes.
@@ -281,72 +214,7 @@ Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, und
 Got a completed message for ProofKey { intern: ProofKeyIntern { b_height: 1, underlying_txns: ProofUnderlyingTxns { txn_idxs: 0..2 } }, p_type: CompressedBlock }
 ```
 
-You can check the content of the proofs folder. Note that the number of proofs may vary depending on how long you let the mock server run.
-
-```sh
-# Check the content of the proofs folder.
-$ tree out
-out
-├── 1.json
-├── 2.json
-├── 3.json
-├── 4.json
-└── 5.json
-
-1 directory, 5 files
-
-# Check the content of the first proof.
-$ cat out/1.json
-{
-  "trace": "ewog...Cn0K"
-}
-
-# Decode the first proof.
-# Note that this proof is very simple, if you want to see a more complex proof, check `data/trace2.json` and `data/decoded_trace2.json`.
-# To do the reverse operation (decoded -> encoded), use `echo "{\"trace\":\"$(cat data/decoded_trace3.json| base64)\"}" | jq > data/trace3.json`.
-$ cat out/1.json | jq -r .trace | base64 -d | jq
-{
-  "accountTrie": {
-    "29fc6b8d0b979fe92b13053075fb24b19cb30a68cb043af8995c5ee7440f7aba": "f851808080a0b9b7e24499d6a857e9eb2e5ea5c8b30e068376c3519503472e41bbe5d947f8d98080808080a07f56f62b4ccf2e070be4d7c2e2c527367d6f5092f0fcbc504c96b77bcf24420b80808080808080",
-    "66924a3ec75079b9da77770472bae89720cbed69f477de0793cbb27d48ecc57b": "f873a02080c7b7ae81a58eb98d9c78de4a1fd7fd9535fc953ed2be602daaa41767312ab850f84e808ad3c21bcecceda1000000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-    "8b19ac819d2a7610bce525fa551308dec3268e8ae20276b5b4414d24f21b109b": "f90191a03f84f317ceea01d67e9da286f143aea01d93cc275c3d9fad2722ce1aeb8a39bf8080a0da6faea54d8a227cc3d7a7e901ca20c63a333ccf60df131f36a6b02239983985a0c9c8c5324bd2eef39d061b5ad2409d077f4f9e03a6f2b89da8ffc03f77f8cbc5a0ecfb2faf207149229c871e123d5a6e90a27325f495dc7a679ef626a24f264c81a069c217c002a710db060939d0c0e132862fe78accf4d9bd0e4386b7a36834f195a09cb3c4dacefe3caac1388a8a39378db830fb2bf3983ccc5507d2d9728f67e676a029fc6b8d0b979fe92b13053075fb24b19cb30a68cb043af8995c5ee7440f7abaa0e6e82a109ac4e5daed8f76043d8393d0298472e0518ff96a48b8492e479881fba0b1f14f8b14818bd3b02ead0ecb2437bb07c5c3abcfba5be21ff33a572054b9c9a0aa83d885b05246cb62598c50ea169ab8e2495493cee532a4ee6a7571e3ee93d3a0bca602c40edd041089ea7c49cf65d6320427d889b547c88ca764e2d3ea77fb7f80a02c7fadb7de8ceb143581c40f241f304aabb0baca2368258b5c11f6f1d95053078080",
-    "9b4ceef74bba9462847d8f4e4ad70505f36f9afe3a70b9580d0359894cfccff2": "f85180a0fd0838ecfbd0807d3b2cd7329e96f47c98dd9285e814ece852b12e9797b9ef6080808080808080808080a0b352e4c72d853473be5eac69cf10adfdc61a3747ec26a4b424f0a29292fc1d3780808080",
-    "b1f14f8b14818bd3b02ead0ecb2437bb07c5c3abcfba5be21ff33a572054b9c9": "f85180a031d1eb10fdf37ef90417d463e9e3d1dad5bab6a3e8b38ccc4eaa744250317457808080a09b4ceef74bba9462847d8f4e4ad70505f36f9afe3a70b9580d0359894cfccff28080808080808080808080",
-    "b9b7e24499d6a857e9eb2e5ea5c8b30e068376c3519503472e41bbe5d947f8d9": "f873a020e8b6a6f1f350490419424e9677d77d7356920536f752f0ed245592df04905db850f84e808ad3c21bcecceda1000000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
-    "bca602c40edd041089ea7c49cf65d6320427d889b547c88ca764e2d3ea77fb7f": "f85180808080a06b795828f9b394ba531a3e97e87dce2b3e1153e14339019980089334951c7e28808080a02b552522c790b0433d466408318c5c61bfa7e2dbb9c2e13bfec3d1d51290addd8080808080808080",
-    "ecfb2faf207149229c871e123d5a6e90a27325f495dc7a679ef626a24f264c81": "f871808080a066924a3ec75079b9da77770472bae89720cbed69f477de0793cbb27d48ecc57b80a03469ef1dfb42bfdc6b32c6352ae4e463fa021a1b03d000d33818e9a4ceb46b23808080a08bf437b987501fdf4f79bc77f3ea409f43bcae24574eecd7a8b99318d32ee18d80808080808080",
-    "fd0838ecfbd0807d3b2cd7329e96f47c98dd9285e814ece852b12e9797b9ef60": "f8749f3eec2b84f0ba344fd4b4d2f022469febe7a772c4789acfc119eb558ab1da3db852f850808c033b2e3c9fd0803ce8000000a056e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421a0c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
-  },
-  "storageTrie": null,
-  "parentStateRoot": "0x8b19ac819d2a7610bce525fa551308dec3268e8ae20276b5b4414d24f21b109b",
-  "transactionTraces": [
-    {
-      "txn": "0xf92f...765b",
-      "delta": {
-        "0x0000000000000000000000000000000000000000": {
-          "address": "0x0000000000000000000000000000000000000000",
-          "read": true
-        },
-        "0x6FdA56C57B0Acadb96Ed5624aC500C0429d59429": {
-          "address": "0x6FdA56C57B0Acadb96Ed5624aC500C0429d59429",
-          "nonce": 1,
-          "code": "YIBg...ADM=",
-          "read": true
-        },
-        "0x84eb9227FCD22c94ED6e53Baf27C070018802D47": {
-          "address": "0x84eb9227FCD22c94ED6e53Baf27C070018802D47",
-          "read": true
-        },
-        "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6": {
-          "address": "0x85dA99c8a7C2C95964c8EfD687E95E632Fc533D6",
-          "nonce": 1,
-          "read": true
-        }
-      }
-    }
-  ]
-}
-```
+You can check the content of the proofs folder (by default, proofs are stored under `out/`). Note that the number of proofs may vary depending on how long you let the mock server run. To decode a proof simply use the following command: `cat <proof_file> | jq -r .trace | base64 -d | jq`.
 
 ### 3. Benchmark proof generation time
 
@@ -355,13 +223,13 @@ To assess the time required for the leader/worker configuration to produce proof
 When you observe the log entry `gRPC /GetTrace request received`, it signifies that the leader has initiated a request for the block trace. This happens after the leader has requested other details such as block metadata and has decided that it should generate a proof for a block at a given height. In this process, distinct tasks are assigned to the workers, which involve the generation of diverse types of proofs like transaction, aggregation, block, or compressed block proofs.
 
 ```sh
-Fri Aug 18 14:08:15 CEST 2023 INF grpc/grpc.go:209 > gRPC /GetTrace request received
+Thu Sep  7 11:15:09 UTC 2023 INF edge-grpc-mock-server/grpc/grpc.go:221 > gRPC /GetTrace request received
 ```
 
 After the proof generation phase is concluded, you'll encounter the log entry `POST request received on /save endpoint`. At this point, the leader forwards the compressed block proof to the designated HTTP server.
 
 ```sh
-Fri Aug 18 15:08:15 CEST 2023 INF http/http.go:70 > POST request received on /save endpoint
+Thu Sep  7 11:15:09 UTC 2023 INF http/http.go:77 > POST request received on /save endpoint
 ```
 
 Given these logs, we can estimate the proof took approximately one minute to generate.
