@@ -36,4 +36,4 @@ require (
 // https://github.com/0xPolygon/polygon-edge/tree/feat/zero
 // 1. Add `replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge <commit_id>` to `go.mod`.
 // 2. Run `go mod tidy`, this will update `go.mod`.
-replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230922133918-21487d446521
+replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230929152933-907104765c64
