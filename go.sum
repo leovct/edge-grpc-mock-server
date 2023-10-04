@@ -1,5 +1,5 @@
-github.com/0xPolygon/polygon-edge v1.1.1-0.20230922133918-21487d446521 h1:hWWggt2XdOB5vRY3WWzjdy/+vCUvyNZr1BWOaeWWF6E=
-github.com/0xPolygon/polygon-edge v1.1.1-0.20230922133918-21487d446521/go.mod h1:rZJU4CzEDQzic3204pD/Rbhakafcf9ycU8dwKZXzL5g=
+github.com/0xPolygon/polygon-edge v1.1.1-0.20230929152933-907104765c64 h1:U6TzEhDZQdD3XSuqP0P2hDa58+RIewr5wa9VzXbKcgU=
+github.com/0xPolygon/polygon-edge v1.1.1-0.20230929152933-907104765c64/go.mod h1:rZJU4CzEDQzic3204pD/Rbhakafcf9ycU8dwKZXzL5g=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 h1:UQHMgLO+TxOElx5B5HZ4hJQsoJ/PvUvKRhJHDQXO8P8=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
