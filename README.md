@@ -39,9 +39,9 @@ Flags:
   -p, --http-port int                       HTTP server port (default 8080)
   -e, --http-save-endpoint string           HTTP server save endpoint (default "/save")
       --mock-data-block-dir string          The mock data block directory (used in dynamic mode) (default "data/blocks")
-      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/blocks/block-57.json")
+      --mock-data-block-file string         The mock data block file path (used in static mode) (default "data/blocks/block_121.json")
       --mock-data-trace-dir string          The mock data trace directory (used in dynamic mode) (default "data/traces")
-      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/traces/trace-57.json")
+      --mock-data-trace-file string         The mock data trace file path (used in static mode) (default "data/traces/trace_121.json")
   -m, --mode string                         Mode of the mock server.
                                             - static: the server always return the same mock block data.
                                             - dynamic: the server returns new mock block data every {n} requests.
@@ -57,15 +57,15 @@ Flags:
 
 In `static` mode, the server will always return the same mock data.
 
-By default, it returns `data/blocks/block-57.json` and `data/traces/trace-57.json`.
+By default, it returns `data/blocks/block_121.json` and `data/traces/trace_121.json`.
 
 ```sh
 go run main.go \
   --grpc-port 8546 \
   --http-port 8080 \
   --http-save-endpoint /save \
-  --mock-data-block-file data/blocks/block-57.json \
-  --mock-data-trace-file data/traces/trace-57.json \
+  --mock-data-block-file data/blocks/block_121.json \
+  --mock-data-trace-file data/traces/trace_121.json \
   --mode static \
   --output-dir out \
   --verbosity 0
@@ -241,6 +241,7 @@ We provide different edge block and trace datasets to be used along a zero-prove
 ```sh
 $ tree data/archives
 data/archives
+├── ds-9071047.tar.bz2
 ├── mock-erc721-mints.tar.bz2
 ├── mock-mix-and-uniswap.tar.bz2
 ├── mock-sstore-and-sha3.tar.bz2
