@@ -16,16 +16,12 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Package versions.
   GO_VERSION: "1.21"
   # Check https://grpc.io/docs/languages/go/quickstart/ for `protoc` versions.
   PROTOC_VERSION: "24.3"
   PROTOC_GEN_GO_VERSION: "1.28"
   PROTOC_GEN_GO_GRPC_VERSION: "1.2"
   ARCH: "linux-x86_64"
-
-  # Job config.
-  TEST_TIMEOUT_MINUTES: 4
 
 jobs:
   lint:
@@ -93,7 +89,7 @@ jobs:
     name: static-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ env.TEST_TIMEOUT_MINUTES }}
+    timeout-minutes: 4
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -133,7 +129,7 @@ jobs:
     name: dynamic-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ env.TEST_TIMEOUT_MINUTES }}
+    timeout-minutes: 4
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -174,7 +170,7 @@ jobs:
     name: random-mode-test
     needs: [lint, grpc-code-is-up-to-date]
     runs-on: ubuntu-latest
-    timeout-minutes: ${{ env.TEST_TIMEOUT_MINUTES }}
+    timeout-minutes: 4
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3

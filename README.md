@@ -309,7 +309,7 @@ index 183d3e7..c3731a8 100644
 +replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge 9071047
 ```
 
-Finally, simply run `go mod tidy`. It will automatically update dependencies and reformat the `go.mod` file.
+Finally, simply run `go mod tidy`. It will automatically update dependencies and reformat `go.mod`.
 
 ```go
 replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230929152933-907104765c64
