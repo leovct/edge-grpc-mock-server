@@ -293,3 +293,24 @@ You can then run the server and experiment with it.
 Use `go run main.go --help` to list all the different flags available.
 
 Unit tests have not been implemented yet but you can run some HTTP/gRPC requests using [curl](https://curl.se/) and [grpcurl](https://github.com/fullstorydev/grpcurl) to test the behavior of the mock server. We provided a handy script called `scripts/test.sh` that you can execute using `make test` for this purpose.
+
+To integrate last changes from `polygon-edge@feat/zero` [branch](https://github.com/0xPolygon/polygon-edge/tree/feat/zero), copy the last commit you want to use (i.e. [9071047](https://github.com/0xPolygon/polygon-edge/commit/907104765c64fae5cf4f2a40a8561c7ff6184058)). Then modify the `replace` statement at the end of `go.mod`. It should look like the following.
+
+```diff
+diff --git a/go.mod b/go.mod
+index 183d3e7..c3731a8 100644
+--- a/go.mod
++++ b/go.mod
+@@ -34,4 +34,4 @@ require (
+
+ // Use polygon-edge@feat/zero last commit.
+ // https://github.com/0xPolygon/polygon-edge/tree/feat/zero
+-replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230929152933-907104765c64
++replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge 9071047
+```
+
+Finally, simply run `go mod tidy`. It will automatically update dependencies and reformat the `go.mod` file.
+
+```go
+replace github.com/0xPolygon/polygon-edge => github.com/0xPolygon/polygon-edge v1.1.1-0.20230929152933-907104765c64
+```
