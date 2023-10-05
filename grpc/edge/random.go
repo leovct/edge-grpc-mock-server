@@ -50,7 +50,7 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 			Balance: generateRandomBigInt(),
 			Nonce:   generateRandomNonce(),
 			Storage: make(map[types.Hash]types.Hash),
-			Code:    generateRandomBytes(64),
+			Code:    generateRandomByteSlice(64),
 			Suicide: generateRandomBool(),
 			Touched: generateRandomBool(),
 		}
@@ -67,14 +67,18 @@ func GenerateRandomEdgeTrace(accountTriesAmount, storageTriesAmount, storageEntr
 
 	generateRandomTxnTrace := func(nonce uint64) *types.TxnTrace {
 		txn := generateRandomTx(nonce)
+		receipt := generateRandomReceipt()
 		return &types.TxnTrace{
 			Transaction: txn.MarshalRLP(),
 			Delta: map[types.Address]*types.JournalEntry{
 				*generateRandomAddress(): generateRandomJournalEntry(),
 			},
 			ReceiptRoot: *generateRandomHash(),
+			Receipt:     receipt.MarshalRLP(),
 			TxnRoot:     *generateRandomHash(),
 			Hash:        *generateRandomHash(),
+			GasUsed:     generateRandomBigInt().Uint64(),
+			Bloom:       types.Bloom{},
 		}
 	}
 
@@ -96,16 +100,16 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 		TxRoot:       *generateRandomHash(),
 		ReceiptsRoot: *generateRandomHash(),
 		LogsBloom:    types.Bloom{},
-		Difficulty:   12345,
+		Difficulty:   generateRandomBigInt().Uint64(),
 		Number:       number,
-		GasLimit:     21000000,
-		GasUsed:      200000,
+		GasLimit:     generateRandomBigInt().Uint64(),
+		GasUsed:      generateRandomBigInt().Uint64(),
 		Timestamp:    uint64(time.Now().Unix()),
 		ExtraData:    []byte{4, 5, 6},
 		MixHash:      *generateRandomHash(),
 		Nonce:        types.Nonce{7, 8, 9, 10, 11, 12, 13, 14},
 		Hash:         *generateRandomHash(),
-		BaseFee:      5,
+		BaseFee:      generateRandomBigInt().Uint64(),
 	}
 
 	// Generate a list of random transactions.
@@ -126,10 +130,10 @@ func GenerateRandomEdgeBlock(number, txnTracesAmount uint64) *types.Block {
 			TxRoot:       *generateRandomHash(),
 			ReceiptsRoot: *generateRandomHash(),
 			LogsBloom:    types.Bloom{},
-			Difficulty:   12345,
-			Number:       67890,
-			GasLimit:     21000000,
-			GasUsed:      200000,
+			Difficulty:   generateRandomBigInt().Uint64(),
+			Number:       generateRandomBigInt().Uint64(),
+			GasLimit:     generateRandomBigInt().Uint64(),
+			GasUsed:      generateRandomBigInt().Uint64(),
 			Timestamp:    uint64(time.Now().Unix()),
 			ExtraData:    []byte{4, 5, 6},
 			MixHash:      *generateRandomHash(),
@@ -153,7 +157,7 @@ func generateRandomTx(nonce uint64) *types.Transaction {
 		GasPrice:  generateRandomBigInt(),
 		GasTipCap: generateRandomBigInt(),
 		GasFeeCap: generateRandomBigInt(),
-		Gas:       21000,
+		Gas:       generateRandomBigInt().Uint64(),
 		To:        randomAddress,
 		Value:     generateRandomBigInt(),
 		Input:     []byte{1, 2, 3},
@@ -167,15 +171,32 @@ func generateRandomTx(nonce uint64) *types.Transaction {
 	}
 }
 
+func generateRandomReceipt() *types.Receipt {
+	status := types.ReceiptStatus(types.ReceiptSuccess)
+	gasUsed := generateRandomBigInt().Uint64()
+	return &types.Receipt{
+		Root:              *generateRandomHash(),
+		CumulativeGasUsed: generateRandomBigInt().Uint64() * gasUsed,
+		LogsBloom:         types.Bloom{},
+		Logs:              []*types.Log{},
+		Status:            &status,
+
+		GasUsed:         gasUsed,
+		ContractAddress: generateRandomAddress(),
+		TxHash:          *generateRandomHash(),
+		TransactionType: types.LegacyTx,
+	}
+}
+
 func generateRandomHash() *types.Hash {
-	bytes := generateRandomBytes(types.HashLength)
+	bytes := generateRandomByteSlice(types.HashLength)
 	var hash types.Hash
 	copy(hash[:], bytes)
 	return &hash
 }
 
 func generateRandomAddress() *types.Address {
-	bytes := generateRandomBytes(types.AddressLength)
+	bytes := generateRandomByteSlice(types.AddressLength)
 	var address types.Address
 	copy(address[:], bytes)
 	return &address
@@ -186,8 +207,7 @@ func generateRandomBigInt() *big.Int {
 	return n
 }
 
-// generateRandomBytes generates a slice of random bytes with the given length.
-func generateRandomBytes(length int) []byte {
+func generateRandomByteSlice(length int) []byte {
 	b := make([]byte, length)
 	_, err := rand.Read(b)
 	if err != nil {
