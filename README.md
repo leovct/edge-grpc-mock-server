@@ -241,6 +241,7 @@ We provide different edge block and trace datasets to be used along a zero-prove
 ```sh
 $ tree data/archives
 data/archives
+├── ds-9071047.tar.bz2
 ├── mock-erc721-mints.tar.bz2
 ├── mock-mix-and-uniswap.tar.bz2
 ├── mock-sstore-and-sha3.tar.bz2
