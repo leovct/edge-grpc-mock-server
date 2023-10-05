@@ -130,8 +130,8 @@ func main() {
 `)
 
 	// Static mode configuration.
-	rootCmd.PersistentFlags().StringVar(&config.MockBlockFile, "mock-data-block-file", "data/blocks/block-57.json", "The mock data block file path (used in static mode)")
-	rootCmd.PersistentFlags().StringVar(&config.MockTraceFile, "mock-data-trace-file", "data/traces/trace-57.json", "The mock data trace file path (used in static mode)")
+	rootCmd.PersistentFlags().StringVar(&config.MockBlockFile, "mock-data-block-file", "data/blocks/block_121.json", "The mock data block file path (used in static mode)")
+	rootCmd.PersistentFlags().StringVar(&config.MockTraceFile, "mock-data-trace-file", "data/traces/trace_121.json", "The mock data trace file path (used in static mode)")
 
 	// Dynamic mode configuration.
 	rootCmd.PersistentFlags().StringVar(&config.MockBlockDir, "mock-data-block-dir", "data/blocks", "The mock data block directory (used in dynamic mode)")
